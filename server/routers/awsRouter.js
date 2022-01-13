@@ -1,7 +1,15 @@
 import express from 'express';
-import { STSClient, AssumeRoleCommand } from '@aws-sdk/client-sts';
-import { Lambda, LambdaClient, ListFunctionsCommand, AddLayerVersionPermissionCommand, CreateFunctionCommand, InvokeCommand } from '@aws-sdk/client-lambda';
-import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
+
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand } from '@aws-sdk/client-lambda';
+import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { CloudWatchClient, GetMetricDataCommand } from '@aws-sdk/client-cloudwatch';
+
+import path from 'path';
+import fs from 'fs';
+import JSZip from 'jszip';
+
+
+
 
 // set up .env file accessibility
 import dotenv from 'dotenv';
@@ -23,11 +31,36 @@ const lambdaClient = new LambdaClient({
   'credentials': credentials,
 });
 
+// create the s3 client
+const s3Client = new S3Client({
+  'region': region,
+  'credentials': credentials,
+})
 
+// create the cwClient
+const cwClient = new CloudWatchClient({
+  'region': region,
+  'credentials': credentials,
+});
 
+// function testFunc(num) {
+//   return num + 2;
+// }
 
+const testFunc = (num) => {
+  return num + 2;
+};
 
+const lambdaFunc = `exports.handler = async (event) => {
+  // TODO implement
 
+  let temp = event.num+3;
+  const response = {
+      statusCode: 200,
+      body: JSON.stringify(temp),
+  };
+  return response;
+};`;
 
 //set up express router
 const router = express.Router();
@@ -71,14 +104,16 @@ router.get('/command', (req, res, next) => {
   
   //input parameters for running the aws lambda function
   const params = { 
-    // //needed function name
-    // FunctionName: 'testLambda',
-    // //role
-    // Role: 'arn:aws:iam::122194345396:role/lambda-role', 
-    FunctionName: 'test2',
-    Role: 'arn:aws:lambda:us-east-1:122194345396:function:test2',
+    //needed function name
+    FunctionName: 'testLambda',
+    //role
+    Role: 'arn:aws:iam::122194345396:role/lambda-role', 
 
-    //pass in arguments for the lambda function (input payload)
+    // alt function call
+    // FunctionName: 'test2',
+    // Role: 'arn:aws:lambda:us-east-1:122194345396:function:test2',
+
+    // pass in arguments for the lambda function (input payload)
     // Payload: {keyword: 'hello'},
 
     //default options that we may not need to change
@@ -86,11 +121,12 @@ router.get('/command', (req, res, next) => {
     LogType: 'Tail',
   };
 
-  lambdaClient.send(new InvokeCommand(params)) //--> invokecommand is a class that lets lambdaclient know that we want to run the function that is specified in the params 
+  // invokecommand is a class that lets lambdaclient know that we want to run the function that is specified in the params 
+  lambdaClient.send(new InvokeCommand(params)) 
     .then(data => {
-      // lambda client returns utf8 which needs to be decoded and parsed
-      const response = JSON.parse(new TextDecoder('utf-8').decode(data.Payload)); //--> data.payload is the result of the lambda function invocation
-      //saves it locally
+      // lambda client returns data.payload which is utf8 and  needs to be decoded and parsed
+      const response = JSON.parse(new TextDecoder('utf-8').decode(data.Payload)); 
+      // saves it locally
       res.locals.lambdaResponse = response;
       // next();
       console.log(res.locals.lambdaResponse);
@@ -102,29 +138,114 @@ router.get('/command', (req, res, next) => {
     });
 });
 
-router.use('/Sts', (req, res, next) => {
-  console.log('    using sts');
-  const stsClient = new STSClient({
-    region: region,
-    credentials: credentials,
-  });
-  const roleParams = {
-    RoleArn: req.body.arn,
-    RoleSessionName: 'ShepherdSession',
+// creates a zip file from the lambda func
+router.get('/zipFile', (req, res, next) => {
+  console.log('      awsRouter.create zip file');
+
+  // //create an Output.txt file with the testFunc as a string
+  // fs.writeFile('Output.txt', testFunc.toString(), (err) => {   
+  //   // In case of a error throw err.
+  //   if (err) throw err;
+  //   console.log('creating Output.txt');
+  // });
+
+  // create the zip instance
+  const zip = new JSZip();
+
+  // creates a file index.js with the string of lambdaFunc in it
+  zip.file('index.js', lambdaFunc);
+  console.log(zip);
+
+  // create the output file out.zip
+  let temp = zip.generateNodeStream({type:'nodebuffer',streamFiles:true})
+    .pipe(fs.createWriteStream('out.zip'))
+    .on('finish', () => console.log('    out.zip written.'));
+  
+  res.status(200).json('done');
+});
+
+router.get('/sendS3', async (req, res, next) => {
+  console.log('Created file')
+
+  const fileStream = await fs.createReadStream('Output.txt');
+  // console.log(fileStream);
+  
+  const uploadParams = {
+    Bucket: "testbucketny30",
+    // Add the required 'Key' parameter using the 'path' module.
+    Key: path.basename('Output.txt'),
+    // Add the required 'Body' parameter
+    Body: fileStream,
   };
-    
-  stsClient.send(new AssumeRoleCommand(roleParams))
+
+  s3Client.send(new PutObjectCommand(uploadParams))
+    .then(data => console.log(data));
+
+  res.status(200).json('done');
+})
+
+router.get('/sendLambdaFunc', (res, req, next) => {
+  //parameters for lambda command
+  const params = { 
+    Code: {S3Bucket: 'testbucketny30', S3Key: 'out.zip' },
+    FunctionName: 'add3',
+    Runtime: 'nodejs14.x',
+    Handler: 'index.handler',
+    Role: 'arn:aws:iam::122194345396:role/lambda-role'
+  };
+
+  //sends a command via lambdaClient to list all functions
+  lambdaClient.send(new CreateFunctionCommand(params))
     .then(data => {
-      const accessKeyId = assumedRole.Credentials.AccessKeyId;
-      const secretAccessKey = assumedRole.Credentials.SecretAccessKey;
-      const sessionToken = assumedRole.Credentials.SessionToken;
-      res.locals.credentials = { accessKeyId, secretAccessKey, sessionToken };
-      return next();
+      console.log(data);   
     })
     .catch(err => {
-      console.log('Error in lambda function invokation: ', err);
+      console.log('Error in lambda CreateFunctionCommand: ', err);
       return next(err);
     });
+
+  res.status(200).json('done');
+})
+
+router.get('/getMetrics', (req, res, next) => {
+  //initialize the variables for creating the inputs for AWS request
+  let graphPeriod, graphUnits, graphMetricName, graphMetricStat;
+
+  graphMetricName = req.params.metricName;
+
+  if (req.body.timePeriod === '30min') {
+    [graphPeriod, graphUnits] = [30, 'minutes'];
+  } else if (req.body.timePeriod === '1hr') {
+    [graphPeriod, graphUnits] = [60, 'minutes'];
+  } else if (req.body.timePeriod === '24hr') {
+    [graphPeriod, graphUnits] = [24, 'hours'];
+  } else if (req.body.timePeriod === '7d') {
+    [graphPeriod, graphUnits] = [7, 'days'];
+  } else if (req.body.timePeriod === '14d') {
+    [graphPeriod, graphUnits] = [14, 'days'];
+  } else if (req.body.timePeriod === '30d') {
+    [graphPeriod, graphUnits] = [30, 'days'];
+  }
+
+  if (!req.body.metricStat) graphMetricStat = 'Sum';
+  else graphMetricStat = req.body.metricStat;
+
+  //Metrics for All Functions (combined)
+  //Prepare the input parameters for the AWS getMetricsData API Query
+  const metricAllFuncInputParams = AWSUtilFunc.prepCwMetricQueryLambdaAllFunc(
+    graphPeriod,
+    graphUnits,
+    graphMetricName,
+    graphMetricStat
+  );
+
+  try {
+    const metricAllFuncResult = await cwClient.send(
+      new GetMetricDataCommand(metricAllFuncInputParams)
+    )}
+    catch(error) {
+      console.log(error);
+    }
 });
 
 
