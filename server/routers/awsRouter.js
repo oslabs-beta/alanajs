@@ -207,7 +207,7 @@ router.get('/sendLambdaFunc', (res, req, next) => {
   res.status(200).json('done');
 })
 
-router.get('/getMetrics', (req, res, next) => {
+router.get('/getMetrics', async (req, res, next) => {
   //initialize the variables for creating the inputs for AWS request
   let graphPeriod, graphUnits, graphMetricName, graphMetricStat;
 
