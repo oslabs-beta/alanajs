@@ -43,14 +43,6 @@ const cwClient = new CloudWatchClient({
   'credentials': credentials,
 });
 
-// function testFunc(num) {
-//   return num + 2;
-// }
-
-const testFunc = (num) => {
-  return num + 2;
-};
-
 const lambdaFunc = `exports.handler = async (event) => {
   // TODO implement
 
@@ -124,6 +116,11 @@ router.get('/command', (req, res, next) => {
   // invokecommand is a class that lets lambdaclient know that we want to run the function that is specified in the params 
   lambdaClient.send(new InvokeCommand(params)) 
     .then(data => {
+      console.log(data);
+      
+      //This will output the invokation data log into a readable string
+      console.log(Buffer.from(data.LogResult,'base64').toString('ascii'));
+
       // lambda client returns data.payload which is utf8 and  needs to be decoded and parsed
       const response = JSON.parse(new TextDecoder('utf-8').decode(data.Payload)); 
       // saves it locally
@@ -164,16 +161,16 @@ router.get('/zipFile', (req, res, next) => {
   res.status(200).json('done');
 });
 
-router.get('/sendS3', async (req, res, next) => {
+router.get('/sendS3', (req, res, next) => {
   console.log('Created file')
 
-  const fileStream = await fs.createReadStream('Output.txt');
+  const fileStream = fs.createReadStream('Out.zip');
   // console.log(fileStream);
   
   const uploadParams = {
     Bucket: "testbucketny30",
     // Add the required 'Key' parameter using the 'path' module.
-    Key: path.basename('Output.txt'),
+    Key: path.basename('Out.zip'),
     // Add the required 'Body' parameter
     Body: fileStream,
   };
@@ -187,7 +184,7 @@ router.get('/sendS3', async (req, res, next) => {
 router.get('/sendLambdaFunc', (res, req, next) => {
   //parameters for lambda command
   const params = { 
-    Code: {S3Bucket: 'testbucketny30', S3Key: 'out.zip' },
+    Code: {S3Bucket: 'testbucketny30', S3Key: 'Out.zip' },
     FunctionName: 'add3',
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
