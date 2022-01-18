@@ -35,12 +35,17 @@ router.get('/zipFile', (req, res, next) => {
 // sends the file to S3 bucket. Not finished. Need to adjust parameters to accept different bucket name and file name
 router.get('/sendS3', s3Controller.sendFile, (req, res, next) => {
   res.status(200).json('done');
-})
+});
+
+// sends the file to S3 bucket. Not finished. Need to adjust parameters to accept different bucket name and file name
+router.get('/createBucket', s3Controller.createBucket, (req, res, next) => {
+  res.status(200).json(res.locals.data);
+});
 
 // sends the file to S3 bucket. Not finished. need to adjust parameters to accept diff bucket name, file name, function name
 router.get('/sendLambdaFunc', lambdaController.createFunction, (res, req, next) => {
   res.status(200).json('done');
-})
+});
 
 // completely not working yet
 router.get('/getMetrics', cloudWatchController.getMetrics, (req, res, next) => {

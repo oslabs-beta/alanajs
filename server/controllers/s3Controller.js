@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, CreateBucketCommand, GetBucketAclCommand } from '@aws-sdk/client-s3';
 import path from 'path';
 import fs from 'fs';
 
@@ -21,7 +21,7 @@ s3Controller.sendFile = (req, res, next) => {
   
   const uploadParams = {
     // s3 bucket
-    Bucket: "testbucketny30",
+    Bucket: 'testbucketny30',
     // Add the required 'Key' parameter using the 'path' module.
     Key: path.basename('out.zip'),
     // Add the required 'Body' parameter
@@ -30,7 +30,20 @@ s3Controller.sendFile = (req, res, next) => {
 
   s3Client.send(new PutObjectCommand(uploadParams))
     .then(data => console.log(data));
-}
+};
 
+s3Controller.createBucket = (req, res, next) => {
+  const uploadParams = {
+    // s3 bucket
+    Bucket: 'testbucketny34',
+    
+  };
+  
+  s3Client.send(new CreateBucketCommand(uploadParams))
+    .then(data => {
+      res.locals.data = data;
+      next();
+    });
+};
 
 export default s3Controller;
