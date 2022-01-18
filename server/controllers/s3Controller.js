@@ -19,7 +19,7 @@ s3Controller.sendFile = (req, res, next) => {
   const fileStream = fs.createReadStream('out.zip');
   // console.log(fileStream);
   
-  const uploadParams = {
+  const params = {
     // s3 bucket
     Bucket: 'testbucketny30',
     // Add the required 'Key' parameter using the 'path' module.
@@ -28,18 +28,18 @@ s3Controller.sendFile = (req, res, next) => {
     Body: fileStream,
   };
 
-  s3Client.send(new PutObjectCommand(uploadParams))
+  s3Client.send(new PutObjectCommand(params))
     .then(data => console.log(data));
 };
 
 s3Controller.createBucket = (req, res, next) => {
-  const uploadParams = {
-    // s3 bucket
+  // params needed to create a s3 bucket
+  const params = {
+    // bucket name
     Bucket: 'testbucketny34',
-    
   };
   
-  s3Client.send(new CreateBucketCommand(uploadParams))
+  s3Client.send(new CreateBucketCommand(params))
     .then(data => {
       res.locals.data = data;
       next();

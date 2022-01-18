@@ -1,5 +1,5 @@
 {
-  "name": "OpenSourceProject",
+  "name": "alanajs",
   "version": "0.1",
   "description": "",
   "main": "server/server.js",
@@ -11,6 +11,7 @@
   "type": "module",
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.46.0",
+    "@aws-sdk/client-iam": "^3.47.0",
     "@aws-sdk/client-lambda": "^3.46.0",
     "@aws-sdk/client-s3": "^3.46.0",
     "@babel/preset-env": "^7.16.8",
