@@ -1,5 +1,5 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand } from '@aws-sdk/client-lambda';
-
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCode, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
+import path from 'path';
 import awsParams from './util/awsCredentials.js';
 
 // create the lambda client
@@ -10,6 +10,9 @@ const lambdaController = {};
 // FuncName: getFuncList
 // Description: this will send a command to get all the function names
 //
+// output:
+// res.locals.functionList - an array of function names as strings
+//
 lambdaController.getFuncList = (req, res, next) => {
   console.log('      using lambdaController.getFuncList');
   //parameters for lambda command
@@ -18,7 +21,7 @@ lambdaController.getFuncList = (req, res, next) => {
   //sends a command via lambdaClient to list all functions
   lambdaClient.send(new ListFunctionsCommand(params))
     .then(data => {
-      console.log(data);
+      // console.log(data);
 
       //parses out the function names from the functionList
       const functionList = data.Functions.map((el) => el.FunctionName);
@@ -38,6 +41,9 @@ lambdaController.getFuncList = (req, res, next) => {
 // req.body.funcName - the name of the function
 // req.body.params - the parameters for the function
 //
+// output:
+// res.locals.lambdaResponse - the invocation response
+// 
 lambdaController.invoke = (req, res, next) => {
   console.log('      using lambdaController.invoke');
   
@@ -78,22 +84,22 @@ lambdaController.invoke = (req, res, next) => {
 // FuncName: createFunction
 // Description: this will create the function based on the file given in the S3 bucket
 // input:
-// req.body.funcName - the name of the function
-// req.body.params - the parameters for the function
+// req.body.funcName - the name of the function, user input 
+// res.locals.outputZip - the file name of the zip file
 //
 lambdaController.createFunction = (req, res, next) => {
   console.log('      using lambdaController.createFunction');
 
   // parameters for lambda command
   const params = { 
-    Code: {S3Bucket: 'testbucketny30', S3Key: 'Out.zip' },
-    FunctionName: 'add3',
+    Code: {S3Bucket: 'testbucketny30', S3Key: res.locals.outputZip },
+    FunctionName: req.body.funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role'
   };
 
-  //sends a command via lambdaClient to list all functions
+  //sends a command via lambdaClient to create a function
   lambdaClient.send(new CreateFunctionCommand(params))
     .then(data => {
       console.log(data);   
@@ -101,6 +107,57 @@ lambdaController.createFunction = (req, res, next) => {
     })
     .catch(err => {
       console.log('Error in lambda CreateFunctionCommand: ', err);
+      return next(err);
+    });
+};
+
+lambdaController.updateFunction = (req, res, next) => {
+  console.log('    using lambdaController.updateFunction'); 
+  
+    
+  const params = {
+    FunctionName: 'add3', 
+    Publish: true, 
+    S3Key: path.basename(res.locals.outputZip)
+  };
+
+  lambdaClient.send(new UpdateFunctionCode(params))
+    .then(data => {
+      console.log(data);
+    })
+    .catch(err => {
+      console.log('Error in lambda updateFunctionCode:', err); 
+      return next(err); 
+    });
+  res.status(200).json('done'); 
+};
+
+lambdaController.deleteFunction = (req, res, next) => {
+  console.log('      using lambdaController.deleteFunction');
+
+  // parameters for lambda command
+  const params = { 
+    FunctionName: 'arn:aws:iam::122194345396:function:add3'
+  };
+
+  //sends a command via lambdaClient to list all functions
+  // lambdaClient.send(new DeleteFunctionCommand(params))
+  //   .then(data => {
+  //     console.log(data);   
+  //     next();
+  //   })
+  //   .catch(err => {
+  //     console.log('Error in lambda DeleteFunctionCommand: ', err);
+  //     return next(err);
+  //   });
+
+  lambdaClient.send(new DeleteFunctionCommand(params))
+    .then(data => {
+      console.log(data);   
+      next();
+    })
+    .catch(err => {
+      console.log('Error in lambda DeleteFunctionCommand: ', err);
       return next(err);
     });
 };
