@@ -8,9 +8,6 @@ import path from 'path';
 import fs from 'fs';
 import JSZip from 'jszip';
 
-
-
-
 // set up .env file accessibility
 import dotenv from 'dotenv';
 dotenv.config();
@@ -97,9 +94,9 @@ router.get('/command', (req, res, next) => {
   //input parameters for running the aws lambda function
   const params = { 
     //needed function name
-    FunctionName: 'testLambda',
+    FunctionName: 'add2',
     //role
-    Role: 'arn:aws:iam::122194345396:role/lambda-role', 
+    // Role: ' arn:aws:iam::122194345396:role/service-role/testGetLogs-role-zp4j3336 ', 
 
     // alt function call
     // FunctionName: 'test2',
@@ -118,7 +115,7 @@ router.get('/command', (req, res, next) => {
     .then(data => {
       console.log(data);
       
-      //This will output the invokation data log into a readable string
+      //This will output the invocation data log into a readable string
       console.log(Buffer.from(data.LogResult,'base64').toString('ascii'));
 
       // lambda client returns data.payload which is utf8 and  needs to be decoded and parsed
@@ -162,7 +159,7 @@ router.get('/zipFile', (req, res, next) => {
 });
 
 router.get('/sendS3', (req, res, next) => {
-  console.log('Created file')
+  console.log('    Sending created file to S3')
 
   const fileStream = fs.createReadStream('Out.zip');
   // console.log(fileStream);
