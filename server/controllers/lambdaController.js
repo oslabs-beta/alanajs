@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCode, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 import awsParams from './util/awsCredentials.js';
 
@@ -111,45 +111,49 @@ lambdaController.createFunction = (req, res, next) => {
     });
 };
 
+// FuncName: updateFunction
+// Description: this will update the function FunctionName based on the file given in the S3 bucket
+// input:
+// req.body.funcName - the name of the function, user input 
+// res.locals.outputZip - the file name of the zip file
+//
 lambdaController.updateFunction = (req, res, next) => {
   console.log('    using lambdaController.updateFunction'); 
-  
-    
+  console.log('req.body.funcName', req.body.funcName); 
+  // params for lambda command
   const params = {
-    FunctionName: 'add3', 
+    FunctionName: req.body.funcName, 
     Publish: true, 
+    S3Bucket: 'testbucketny30', 
     S3Key: path.basename(res.locals.outputZip)
   };
-
-  lambdaClient.send(new UpdateFunctionCode(params))
+  
+  // send the update function command
+  lambdaClient.send(new UpdateFunctionCodeCommand(params))
     .then(data => {
       console.log(data);
+      next();
     })
     .catch(err => {
       console.log('Error in lambda updateFunctionCode:', err); 
       return next(err); 
     });
-  res.status(200).json('done'); 
 };
 
+// FuncName: deleteFunction
+// Description: this will delete the function FunctionName
+// input:
+// req.body.funcName - the name of the function, user input 
+//
 lambdaController.deleteFunction = (req, res, next) => {
-  console.log('      using lambdaController.deleteFunction');
+  console.log('    using lambdaController.deleteFunction');
 
   // parameters for lambda command
+  //qualifier: optional version to delete
   const params = { 
-    FunctionName: 'arn:aws:iam::122194345396:function:add3'
+    FunctionName: req.body.funcName,
+    Qualifier: '1'
   };
-
-  //sends a command via lambdaClient to list all functions
-  // lambdaClient.send(new DeleteFunctionCommand(params))
-  //   .then(data => {
-  //     console.log(data);   
-  //     next();
-  //   })
-  //   .catch(err => {
-  //     console.log('Error in lambda DeleteFunctionCommand: ', err);
-  //     return next(err);
-  //   });
 
   lambdaClient.send(new DeleteFunctionCommand(params))
     .then(data => {

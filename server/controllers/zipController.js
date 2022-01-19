@@ -21,8 +21,7 @@ zipController.zip = (req, res, next) => {
   const jszip = new JSZip();
 
   // breaks up fileArr into the first file and the rest
-  let index, args;
-  [index, ...args] = fileArr;
+  const [index, ...args] = fileArr;
   
   // adds the first file as index.js
   let stream = fs.createReadStream('LambdaFunctions/' + index);
