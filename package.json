@@ -2,7 +2,7 @@
   "name": "alanajs",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "npm_package/index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=production webpack",
