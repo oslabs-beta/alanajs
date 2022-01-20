@@ -1,8 +1,8 @@
 {
   "name": "alanajs",
-  "version": "0.1",
+  "version": "0.0.1",
   "description": "",
-  "main": "server/server.js",
+  "main": "index.js",
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=production webpack",
