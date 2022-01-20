@@ -35,6 +35,13 @@ lambdaController.getFuncList = (req, res, next) => {
     });
 };
 
+
+// FuncName: getFuncList
+// Description: this will send a command to get all the function names
+//
+// output:
+// functionList - an array of function names as strings
+//
 lambdaController.getFuncList2 = () => {
   console.log('      using lambdaController.getFuncList');
   // console.log('this is awsParams',awsParams);
@@ -50,7 +57,7 @@ lambdaController.getFuncList2 = () => {
       const functionList = data.Functions.map((el) => el.FunctionName);
       // res.locals.functionList = functionList;
       console.log('functionList: ', functionList);
-      // next();
+      return functionList;
     })
     .catch(err => {
       console.log('Error in lambdaController.getFuncList: ', err);
@@ -133,7 +140,12 @@ lambdaController.createFunction = (req, res, next) => {
     });
 };
 
-
+// FuncName: createFunction
+// Description: this will create the function based on the file given in the S3 bucket
+// input:
+// funcName - the name of the function, user input 
+// outputZip - the file name of the zip file
+//
 lambdaController.createFunction2 = (outputZip, funcName) => {
   console.log('      using lambdaController.createFunction2');
 
@@ -187,6 +199,12 @@ lambdaController.updateFunction = (req, res, next) => {
     });
 };
 
+// FuncName: updateFunction
+// Description: this will update the function FunctionName based on the file given in the S3 bucket
+// input:
+// funcName - the name of the function, user input 
+// outputZip - the file name of the zip file
+//
 lambdaController.updateFunction2 = (outputZip, funcName) => {
   console.log('    using lambdaController.updateFunction'); 
   console.log('funcName', funcName); 
@@ -233,6 +251,33 @@ lambdaController.deleteFunction = (req, res, next) => {
     .catch(err => {
       console.log('Error in lambda DeleteFunctionCommand: ', err);
       return next(err);
+    });
+};
+
+// FuncName: deleteFunction
+// Description: this will delete the function FunctionName
+// input:
+// funcName - the name of the function, user input 
+//
+lambdaController.deleteFunction2 = (funcName, qualifier) => {
+  console.log('    using lambdaController.deleteFunction');
+  console.log('Func name is ',funcName);
+
+  // parameters for lambda command
+  //qualifier: optional version to delete
+  const params = { 
+    FunctionName: funcName,
+    Qualifier: qualifier
+  };
+
+  lambdaClient.send(new DeleteFunctionCommand(params))
+    .then(data => {
+      // console.log(data);   
+      // next();
+    })
+    .catch(err => {
+      console.log('Error in lambda DeleteFunctionCommand: ', err);
+      // return next(err);
     });
 };
 
