@@ -5,16 +5,17 @@ import awsParams from './util/awsCredentials.js';
 // create the lambda client
 const lambdaClient = new LambdaClient(awsParams);
 
-const lambdaController = {};
+const lambda = {};
 
 // FuncName: getFuncList
 // Description: this will send a command to get all the function names
 //
 // output:
-// res.locals.functionList - an array of function names as strings
+// functionList - an array of function names as strings
 //
-lambdaController.getFuncList = (req, res, next) => {
+lambda.getFuncList = () => {
   console.log('      using lambdaController.getFuncList');
+  // console.log('this is awsParams',awsParams);
   //parameters for lambda command
   const params = { FunctionVersion: 'ALL' };
 
@@ -25,13 +26,13 @@ lambdaController.getFuncList = (req, res, next) => {
 
       //parses out the function names from the functionList
       const functionList = data.Functions.map((el) => el.FunctionName);
-      res.locals.functionList = functionList;
-      console.log('functionList: ', res.locals.functionList);
-      next();
+      // res.locals.functionList = functionList;
+      console.log('functionList: ', functionList);
+      return functionList;
     })
     .catch(err => {
       console.log('Error in lambdaController.getFuncList: ', err);
-      return next(err);
+      // return next(err);
     });
 };
 
@@ -44,7 +45,7 @@ lambdaController.getFuncList = (req, res, next) => {
 // output:
 // res.locals.lambdaResponse - the invocation response
 // 
-lambdaController.invoke = (req, res, next) => {
+lambda.invoke = (req, res, next) => {
   console.log('      using lambdaController.invoke');
   
   //input parameters for running the aws lambda function
@@ -84,85 +85,96 @@ lambdaController.invoke = (req, res, next) => {
 // FuncName: createFunction
 // Description: this will create the function based on the file given in the S3 bucket
 // input:
-// req.body.funcName - the name of the function, user input 
-// res.locals.outputZip - the file name of the zip file
+// funcName - the name of the function, user input 
+// outputZip - the file name of the zip file
 //
-lambdaController.createFunction = (req, res, next) => {
-  console.log('      using lambdaController.createFunction');
-  console.log('outputzip in createFunc', res.locals.outputZip, 'end of outputzip');
+
+lambda.createFunction = async(outputZip, funcName) => {
+
+  console.log('      using lambdaController.createFunction2');
+
   // parameters for lambda command
   const params = { 
-    Code: {S3Bucket: 'testbucketny30', S3Key: res.locals.outputZip },
-    FunctionName: req.body.funcName,
+    Code: {S3Bucket: 'testbucketny30', S3Key: outputZip },
+    FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
-    Role: 'arn:aws:iam::122194345396:role/lambda-role'
+    Role: 'arn:aws:iam::122194345396:role/lambda-role',
   };
+
   //sends a command via lambdaClient to create a function
-  lambdaClient.send(new CreateFunctionCommand(params))
+
+  await lambdaClient.send(new CreateFunctionCommand(params))
+
     .then(data => {
-      console.log(data);   
-      next();
+      // console.log(data);   
+      // next();
     })
     .catch(err => {
       console.log('Error in lambda CreateFunctionCommand: ', err);
-      return next(err);
+      // return next(err);
     });
 };
 
 // FuncName: updateFunction
 // Description: this will update the function FunctionName based on the file given in the S3 bucket
 // input:
-// req.body.funcName - the name of the function, user input 
-// res.locals.outputZip - the file name of the zip file
+// funcName - the name of the function, user input 
+// outputZip - the file name of the zip file
 //
-lambdaController.updateFunction = (req, res, next) => {
+
+lambda.updateFunction = async (outputZip, funcName) => {
+
   console.log('    using lambdaController.updateFunction'); 
-  console.log('req.body.funcName', req.body.funcName); 
+  console.log('funcName', funcName); 
   // params for lambda command
   const params = {
-    FunctionName: req.body.funcName, 
+    FunctionName: funcName, 
     Publish: true, 
     S3Bucket: 'testbucketny30', 
-    S3Key: path.basename(res.locals.outputZip)
+    S3Key: path.basename(outputZip)
   };
   
   // send the update function command
-  lambdaClient.send(new UpdateFunctionCodeCommand(params))
+
+  await lambdaClient.send(new UpdateFunctionCodeCommand(params))
+
     .then(data => {
-      console.log(data);
-      next();
+      // console.log(data);
+      // next();
     })
     .catch(err => {
       console.log('Error in lambda updateFunctionCode:', err); 
-      return next(err); 
+      // return next(err); 
     });
 };
 
 // FuncName: deleteFunction
 // Description: this will delete the function FunctionName
 // input:
-// req.body.funcName - the name of the function, user input 
+// funcName - the name of the function, user input 
 //
-lambdaController.deleteFunction = (req, res, next) => {
+lambda.deleteFunction = (funcName, qualifier) => {
   console.log('    using lambdaController.deleteFunction');
+  console.log('Func name is ',funcName);
 
   // parameters for lambda command
   //qualifier: optional version to delete
   const params = { 
-    FunctionName: req.body.funcName,
-    Qualifier: '1'
+    FunctionName: funcName,
+    Qualifier: qualifier
   };
 
   lambdaClient.send(new DeleteFunctionCommand(params))
     .then(data => {
-      console.log(data);   
-      next();
+      // console.log(data);   
+      // next();
     })
     .catch(err => {
       console.log('Error in lambda DeleteFunctionCommand: ', err);
-      return next(err);
+      // return next(err);
     });
 };
 
-export default lambdaController;
+
+export default lambda;
