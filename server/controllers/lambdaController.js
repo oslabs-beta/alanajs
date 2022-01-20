@@ -146,7 +146,9 @@ lambdaController.createFunction = (req, res, next) => {
 // funcName - the name of the function, user input 
 // outputZip - the file name of the zip file
 //
+
 lambdaController.createFunction2 = async(outputZip, funcName) => {
+
   console.log('      using lambdaController.createFunction2');
 
   // parameters for lambda command
@@ -159,7 +161,9 @@ lambdaController.createFunction2 = async(outputZip, funcName) => {
   };
 
   //sends a command via lambdaClient to create a function
+
   await lambdaClient.send(new CreateFunctionCommand(params))
+
     .then(data => {
       // console.log(data);   
       // next();
@@ -205,7 +209,9 @@ lambdaController.updateFunction = (req, res, next) => {
 // funcName - the name of the function, user input 
 // outputZip - the file name of the zip file
 //
+
 lambdaController.updateFunction2 = async (outputZip, funcName) => {
+
   console.log('    using lambdaController.updateFunction'); 
   console.log('funcName', funcName); 
   // params for lambda command
@@ -217,7 +223,9 @@ lambdaController.updateFunction2 = async (outputZip, funcName) => {
   };
   
   // send the update function command
+
   await lambdaClient.send(new UpdateFunctionCodeCommand(params))
+
     .then(data => {
       // console.log(data);
       // next();

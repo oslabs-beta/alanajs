@@ -59,9 +59,9 @@ zipController.zip = (req, res, next) => {
 //
 zipController.zip2 = async (fileArr) => {
   console.log('    using zipController.zip2');
+  
+  fileArr = [fileArr];
 
-  console.log(path.resolve('LambdaFunctions/'));
-  // fileArr = [fileArr];
   console.log('fileArr', fileArr);
   // create the zip instance
   const jszip = new JSZip();
@@ -72,7 +72,6 @@ zipController.zip2 = async (fileArr) => {
   // adds the first file as index.js
   let stream = fs.createReadStream(path.join('../LambdaFunctions/') + '/' + index);
   jszip.file('index.js', stream);
-  // console.log(stream);
 
   //iterate over the remaining file names in fileArr and add them as their original names
   for (const file of args) {

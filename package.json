@@ -2,7 +2,12 @@
   "name": "alanajs",
   "version": "0.0.1",
   "description": "",
+
   "main": "npm_package/index.js",
+  "bin":{
+    "ami": "./bin/cli.js"
+  },
+
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=production webpack",
