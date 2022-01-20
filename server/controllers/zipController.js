@@ -1,5 +1,6 @@
 import path from 'path';
 import fs, { ReadStream } from 'fs';
+import {writeFile} from 'fs/promises';
 import JSZip from 'jszip';
 
 const zipController = {};
@@ -41,6 +42,30 @@ zipController.zip = (req, res, next) => {
       res.locals.outputZip = index + '.zip';
       next();
     });
+};
+
+zipController.zip2 = async (fileArr) => {
+  console.log('    using zipController.zip');
+
+  fileArr = [fileArr];
+  console.log('fileArr', fileArr);
+  // create the zip instance
+  const jszip = new JSZip();
+
+  // breaks up fileArr into the first file and the rest
+  const [index, ...args] = fileArr;
+  
+  // adds the first file as index.js
+  let stream = fs.createReadStream('../LambdaFunctions/' + index);
+  jszip.file('index.js', stream);
+  //iterate over the remaining file names in fileArr and add them as their original names
+  for (const file of args) {
+    stream = fs.createReadStream('../LambdaFunctions/' + file);
+    jszip.file(file, stream);
+  }
+  const response = await jszip.generateAsync({type:'nodebuffer'}); //promise to generate zipfile w/ type of nodebuffer
+  await writeFile(index + '.zip', response); //use fs/promise so writeFile will return promise, so await will work
+  console.log('finished writing zip file');
 };
 
 export default zipController;

@@ -48,4 +48,21 @@ s3Controller.createBucket = (req, res, next) => {
     });
 };
 
+s3Controller.sendFile2 = async (outputZip) => {
+  console.log('    using S3Controller.sendFile');
+  // creates a file stream of the zip file
+  const fileStream = fs.createReadStream(outputZip);
+  
+  const params = {
+    // s3 bucket
+    Bucket: 'testbucketny30',
+    // Add the required 'Key' parameter using the 'path' module.
+    Key: path.basename(outputZip),
+    // Add the required 'Body' parameter
+    Body: fileStream,
+  };
+
+  let result = await s3Client.send(new PutObjectCommand(params));
+};
+
 export default s3Controller;

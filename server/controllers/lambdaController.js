@@ -35,6 +35,29 @@ lambdaController.getFuncList = (req, res, next) => {
     });
 };
 
+lambdaController.getFuncList2 = () => {
+  console.log('      using lambdaController.getFuncList');
+  // console.log('this is awsParams',awsParams);
+  //parameters for lambda command
+  const params = { FunctionVersion: 'ALL' };
+
+  //sends a command via lambdaClient to list all functions
+  lambdaClient.send(new ListFunctionsCommand(params))
+    .then(data => {
+      // console.log(data);
+
+      //parses out the function names from the functionList
+      const functionList = data.Functions.map((el) => el.FunctionName);
+      // res.locals.functionList = functionList;
+      console.log('functionList: ', functionList);
+      // next();
+    })
+    .catch(err => {
+      console.log('Error in lambdaController.getFuncList: ', err);
+      // return next(err);
+    });
+};
+
 // FuncName: invoke
 // Description: this will invoke the function specified in the parameters
 // input:
@@ -89,7 +112,7 @@ lambdaController.invoke = (req, res, next) => {
 //
 lambdaController.createFunction = (req, res, next) => {
   console.log('      using lambdaController.createFunction');
-
+  console.log('outputzip in createFunc', res.locals.outputZip, 'end of outputzip');
   // parameters for lambda command
   const params = { 
     Code: {S3Bucket: 'testbucketny30', S3Key: res.locals.outputZip },
@@ -98,7 +121,6 @@ lambdaController.createFunction = (req, res, next) => {
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role'
   };
-
   //sends a command via lambdaClient to create a function
   lambdaClient.send(new CreateFunctionCommand(params))
     .then(data => {
@@ -108,6 +130,31 @@ lambdaController.createFunction = (req, res, next) => {
     .catch(err => {
       console.log('Error in lambda CreateFunctionCommand: ', err);
       return next(err);
+    });
+};
+
+
+lambdaController.createFunction2 = (outputZip, funcName) => {
+  console.log('      using lambdaController.createFunction2');
+
+  // parameters for lambda command
+  const params = { 
+    Code: {S3Bucket: 'testbucketny30', S3Key: outputZip },
+    FunctionName: funcName,
+    Runtime: 'nodejs14.x',
+    Handler: 'index.handler',
+    Role: 'arn:aws:iam::122194345396:role/lambda-role',
+  };
+
+  //sends a command via lambdaClient to create a function
+  lambdaClient.send(new CreateFunctionCommand(params))
+    .then(data => {
+      // console.log(data);   
+      // next();
+    })
+    .catch(err => {
+      console.log('Error in lambda CreateFunctionCommand: ', err);
+      // return next(err);
     });
 };
 
@@ -137,6 +184,29 @@ lambdaController.updateFunction = (req, res, next) => {
     .catch(err => {
       console.log('Error in lambda updateFunctionCode:', err); 
       return next(err); 
+    });
+};
+
+lambdaController.updateFunction2 = (outputZip, funcName) => {
+  console.log('    using lambdaController.updateFunction'); 
+  console.log('funcName', funcName); 
+  // params for lambda command
+  const params = {
+    FunctionName: funcName, 
+    Publish: true, 
+    S3Bucket: 'testbucketny30', 
+    S3Key: path.basename(outputZip)
+  };
+  
+  // send the update function command
+  lambdaClient.send(new UpdateFunctionCodeCommand(params))
+    .then(data => {
+      // console.log(data);
+      // next();
+    })
+    .catch(err => {
+      console.log('Error in lambda updateFunctionCode:', err); 
+      // return next(err); 
     });
 };
 
