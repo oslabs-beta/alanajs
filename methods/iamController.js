@@ -10,9 +10,9 @@ const iamController = {};
 // FuncName: createRole
 // Description: ASYNC. This will create a role in aws for the user to invoke lambda functions
 // input:
-// need a role name
+// roleName - a string containing the role name
 //
-iamController.createRole = async (req, res, next) => {
+iamController.createRole = async (roleName) => {
   console.log('      using iamController.createRole');
 
   // the basic policy needed from AWS in order to create a role for lambda
@@ -32,7 +32,7 @@ iamController.createRole = async (req, res, next) => {
   // creating the params for an aws role with no policies attached
   const roleParams = {
     AssumeRolePolicyDocument: JSON.stringify(basicPolicy),
-    RoleName: 'test4-lambda-role'
+    RoleName: roleName
   };
   await iamClient.send(new CreateRoleCommand(roleParams))
     .then(data => console.log(data));
@@ -40,13 +40,14 @@ iamController.createRole = async (req, res, next) => {
 
   // create the params to add the lambda basic execution role for global functions
   const arnParams = {
-    RoleName: 'test4-lambda-role',
+    RoleName: roleName,
     // default policy for lambda functions
     PolicyArn: 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
   };
   await iamClient.send(new AttachRolePolicyCommand(arnParams))
     .then(data => console.log(data));
 
-  next();
+  return;
 };
+
 export default iamController;

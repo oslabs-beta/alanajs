@@ -3,24 +3,32 @@ import path from 'path';
 import fs from 'fs';
 
 import awsParams from './util/awsCredentials.js';
+import { response } from 'express';
 
 // create the s3 client
 const s3Client = new S3Client(awsParams);
 
 const s3 = {};
 
-s3.createBucket = (req, res, next) => {
+// FuncName: createBucket
+// Description: this will create an s3 bucket
+// input:
+// bucketName - a string representing the s3 bucket name
+//
+s3.createBucket = async (bucketName) => {
   // params needed to create a s3 bucket
   const params = {
     // bucket name
-    Bucket: 'testbucketny34',
+    Bucket: bucketName,
   };
   
-  s3Client.send(new CreateBucketCommand(params))
+  // create the bucket
+  const response = await s3Client.send(new CreateBucketCommand(params))
     .then(data => {
-      res.locals.data = data;
-      next();
+      // do something with data
     });
+
+  return response;
 };
 
 

@@ -39,22 +39,22 @@ lambda.getFuncList = () => {
 // FuncName: invoke
 // Description: this will invoke the function specified in the parameters
 // input:
-// req.body.funcName - the name of the function
-// req.body.params - the parameters for the function
+// uncName - the name of the function
+// params - the parameters for the function
 //
 // output:
-// res.locals.lambdaResponse - the invocation response
+// the invocation response
 // 
-lambda.invoke = (req, res, next) => {
+lambda.invoke = (funcName, params) => {
   console.log('      using lambdaController.invoke');
   
   //input parameters for running the aws lambda function
-  const params = { 
+  const lambdaParams = { 
     //needed function name
-    FunctionName: req.body.funcName,
+    FunctionName: funcName,
 
     // pass in arguments for the lambda function (input payload)
-    Payload: JSON.stringify(req.body.params),
+    Payload: JSON.stringify(params),
 
     //default options that we may not need to change
     InvocationType: 'RequestResponse',
@@ -62,7 +62,7 @@ lambda.invoke = (req, res, next) => {
   };
 
   // invokecommand is a class that lets lambdaclient know that we want to run the function that is specified in the params 
-  lambdaClient.send(new InvokeCommand(params)) 
+  lambdaClient.send(new InvokeCommand(lambdaParams)) 
     .then(data => {
       console.log(data);
       
@@ -71,14 +71,12 @@ lambda.invoke = (req, res, next) => {
 
       // lambda client returns data.payload which is utf8 and  needs to be decoded and parsed
       const response = JSON.parse(new TextDecoder('utf-8').decode(data.Payload)); 
-      // saves it locally
-      res.locals.lambdaResponse = response;
-      console.log(res.locals.lambdaResponse);
-      next();
+      console.log(response);
+      return response;
     })
     .catch(err => {
-      console.log('Error in lambdaController.invoke: ', err);
-      return next(err);
+      console.log('Error in invoke: ', err);
+      return err;
     });
 };
 
@@ -108,11 +106,11 @@ lambda.createFunction = async(outputZip, funcName) => {
 
     .then(data => {
       // console.log(data);   
-      // next();
+      return data;
     })
     .catch(err => {
       console.log('Error in lambda CreateFunctionCommand: ', err);
-      // return next(err);
+      return err;
     });
 };
 
@@ -141,11 +139,11 @@ lambda.updateFunction = async (outputZip, funcName) => {
 
     .then(data => {
       // console.log(data);
-      // next();
+      return data;
     })
     .catch(err => {
       console.log('Error in lambda updateFunctionCode:', err); 
-      // return next(err); 
+      return err;
     });
 };
 
@@ -154,7 +152,7 @@ lambda.updateFunction = async (outputZip, funcName) => {
 // input:
 // funcName - the name of the function, user input 
 //
-lambda.deleteFunction = (funcName, qualifier) => {
+lambda.deleteFunction = async (funcName, qualifier) => {
   console.log('    using lambdaController.deleteFunction');
   console.log('Func name is ',funcName);
 
@@ -165,14 +163,14 @@ lambda.deleteFunction = (funcName, qualifier) => {
     Qualifier: qualifier
   };
 
-  lambdaClient.send(new DeleteFunctionCommand(params))
+  await lambdaClient.send(new DeleteFunctionCommand(params))
     .then(data => {
       // console.log(data);   
-      // next();
+      return data;
     })
     .catch(err => {
       console.log('Error in lambda DeleteFunctionCommand: ', err);
-      // return next(err);
+      return err;
     });
 };
 
