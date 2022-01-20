@@ -1,16 +1,14 @@
 #!/usr/bin/env node
-
 import { program, Command } from 'commander';
-import lambdaController from '../server/controllers/lambdaController.js';
-import zipController from '../server/controllers/zipController.js';
-import s3Controller from '../server/controllers/s3Controller.js';
-
+import lambda from '../methods/lambda.js';
+import s3 from '../methods/s3.js';
+import zip from '../methods/zip.js';
 
 program
   .command('list')
   .description('list lambda functions')
   .action(() => {
-    lambdaController.getFuncList2();
+    lambda.getFuncList();
   });
 
 //node cli delete <funcname>
@@ -21,7 +19,7 @@ program
   .description('delete lambda function')
   .action( (funcName, qualifier) => {
     // console.log('in delete');
-    lambdaController.deleteFunction2(funcName, qualifier);
+    lambda.deleteFunction(funcName, qualifier);
   });
 
 program
@@ -32,9 +30,9 @@ program
   .action(async (funcName, fileArr) => {
     // console.log('in create');
     const outputZip = `${fileArr}.zip`;
-    await zipController.zip2(fileArr);
-    await s3Controller.sendFile2(outputZip);
-    lambdaController.createFunction2(outputZip, funcName);
+    await zip.zipFiles(fileArr);
+    await s3.sendFile(outputZip);
+    lambda.createFunction(outputZip, funcName);
   });
 
 program
@@ -45,9 +43,9 @@ program
   .action(async (funcName, fileArr) => {
     // console.log('in update');
     const outputZip = `${fileArr}.zip`;
-    await zipController.zip2(fileArr);
-    await s3Controller.sendFile2(outputZip);
-    lambdaController.updateFunction2(outputZip, funcName);
+    await zip.zipFiles(fileArr);
+    await s3.sendFile(outputZip);
+    lambda.updateFunction(outputZip, funcName);
   });
 
 program.parse(process.argv);
