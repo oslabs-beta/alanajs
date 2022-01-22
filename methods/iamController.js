@@ -1,6 +1,6 @@
 import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
 
-import awsParams from './util/awsCredentials.js';
+import awsParams from './util/aws.js';
 
 // create the lambda client
 const iamClient = new IAMClient(awsParams);

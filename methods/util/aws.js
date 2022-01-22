@@ -16,4 +16,9 @@ const awsParams = {
   'credentials': credentials,
 };
 
-export default awsParams;
+//gets the .env bucket name and awsRole
+const awsBucket = process.env.S3BUCKETNAME;
+
+const awsRole = process.env.ARNNAME;
+
+export {awsParams, awsBucket, awsRole};

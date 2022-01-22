@@ -1,9 +1,15 @@
 import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
-import awsParams from './util/awsCredentials.js';
+import chalk from 'chalk';
+
+import { awsParams, awsBucket } from './util/aws.js';
+
+const starting = chalk.bold;
+const error = chalk.bold.red;
 
 // create the lambda client
 const lambdaClient = new LambdaClient(awsParams);
+
 
 const lambda = {};
 
@@ -13,27 +19,34 @@ const lambda = {};
 // output:
 // functionList - an array of function names as strings
 //
-lambda.getFuncList = () => {
-  console.log('      using lambdaController.getFuncList');
+lambda.getFuncList = async () => {
+  console.log(starting('Getting a list of Lambda functions'));
   // console.log('this is awsParams',awsParams);
   //parameters for lambda command
   const params = { FunctionVersion: 'ALL' };
 
   //sends a command via lambdaClient to list all functions
-  lambdaClient.send(new ListFunctionsCommand(params))
-    .then(data => {
-      // console.log(data);
-
-      //parses out the function names from the functionList
-      const functionList = data.Functions.map((el) => el.FunctionName);
-      // res.locals.functionList = functionList;
-      console.log('functionList: ', functionList);
-      return functionList;
-    })
+  const data = await lambdaClient.send(new ListFunctionsCommand(params))
     .catch(err => {
-      console.log('Error in lambdaController.getFuncList: ', err);
-      // return next(err);
+      console.log(error('Error in getting the Lambda Function list: ', err));
     });
+  
+  if (!data) return;
+  //parses out the function names from the functionList into a console.table object
+  const functionList = {};
+
+  // creates a class called lambdaFunc
+  function lambdaFunc(description, version, lastModified) {
+    this.Description = description;
+    this.Version = version;
+    this.LastModified = lastModified;
+  }
+  
+  data.Functions.map((el) => {
+    functionList[el.FunctionName] = new lambdaFunc(el.Description, el.Version, el.LastModified.toLocaleString());
+  });
+  // res.locals.functionList = functionList;
+  return functionList;
 };
 
 // FuncName: invoke
@@ -87,13 +100,13 @@ lambda.invoke = (funcName, params) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.createFunction = async(outputZip, funcName) => {
+lambda.createFunction = async(outputZip, funcName, options = {bucketName: awsBucket }) => {
 
-  console.log('      using lambdaController.createFunction2');
+  console.log(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${options.bucketName}"`);
 
   // parameters for lambda command
   const params = { 
-    Code: {S3Bucket: 'testbucketny30', S3Key: outputZip },
+    Code: {S3Bucket: options.bucketName, S3Key: outputZip },
     FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
@@ -103,15 +116,15 @@ lambda.createFunction = async(outputZip, funcName) => {
   //sends a command via lambdaClient to create a function
 
   await lambdaClient.send(new CreateFunctionCommand(params))
-
     .then(data => {
-      // console.log(data);   
+      console.log('  Finished creating the function in Lambda.\n');   
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda CreateFunctionCommand: ', err);
+      console.log(error('\n  Error in lambda CreateFunctionCommand: ', err.message));
       return err;
     });
+
 };
 
 // FuncName: updateFunction
@@ -121,15 +134,15 @@ lambda.createFunction = async(outputZip, funcName) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.updateFunction = async (outputZip, funcName) => {
+lambda.updateFunction = async (outputZip, funcName, options = {bucketName: awsBucket, publish: false } ) => {
 
   console.log('    using lambdaController.updateFunction'); 
   console.log('funcName', funcName); 
   // params for lambda command
   const params = {
     FunctionName: funcName, 
-    Publish: true, 
-    S3Bucket: 'testbucketny30', 
+    Publish: options.publish, 
+    S3Bucket: options.bucketName, 
     S3Key: path.basename(outputZip)
   };
   
@@ -160,9 +173,10 @@ lambda.deleteFunction = async (funcName, qualifier) => {
   //qualifier: optional version to delete
   const params = { 
     FunctionName: funcName,
-    Qualifier: qualifier
   };
-
+  
+  if(qualifier) params.Qualifier = qualifier;
+  
   await lambdaClient.send(new DeleteFunctionCommand(params))
     .then(data => {
       // console.log(data);   

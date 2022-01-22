@@ -2,8 +2,7 @@ import { S3Client, PutObjectCommand, CreateBucketCommand, GetBucketAclCommand } 
 import path from 'path';
 import fs from 'fs';
 
-import awsParams from './util/awsCredentials.js';
-import { response } from 'express';
+import {awsParams, awsBucket} from './util/aws.js';
 
 // create the s3 client
 const s3Client = new S3Client(awsParams);
@@ -15,7 +14,7 @@ const s3 = {};
 // input:
 // bucketName - a string representing the s3 bucket name
 //
-s3.createBucket = async (bucketName) => {
+s3.createBucket = async (bucketName = awsBucket) => {
   // params needed to create a s3 bucket
   const params = {
     // bucket name
@@ -37,21 +36,28 @@ s3.createBucket = async (bucketName) => {
 // input:
 // outputZip - a string representing the zip file that needs to be sent to S3
 //
-s3.sendFile = async (outputZip) => {
-  console.log('    using S3Controller.sendFile');
+s3.sendFile = async (outputZip, bucketName = awsBucket) => {
+  console.log(`Sending the file "${outputZip} to the AWS S3 Bucket "${bucketName}"`);
   // creates a file stream of the zip file
   const fileStream = fs.createReadStream(outputZip);
   
   const params = {
     // s3 bucket
-    Bucket: 'testbucketny30',
+    Bucket: bucketName,
     // Add the required 'Key' parameter using the 'path' module.
     Key: path.basename(outputZip),
     // Add the required 'Body' parameter
     Body: fileStream,
   };
 
-  await s3Client.send(new PutObjectCommand(params));
+  await s3Client.send(new PutObjectCommand(params))
+    .then(data => {
+      // console.log(data);
+    })
+    .catch(error => {
+      console.log(error.message);
+    });
+  console.log('  Finished sending file.\n');
 };
 
 export default s3;
