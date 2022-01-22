@@ -186,11 +186,11 @@ program
       });
     }
 
-    // create ARN
-    await createArn(options.arn);
+    // // create ARN
+    // await createArn(options.arn);
     
-    // create S3 bucket
-    await createBucket(options.bucket);
+    // // create S3 bucket
+    // await createBucket(options.bucket);
 
     console.log(finished('AWS configuration finished!'));
   }
