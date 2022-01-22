@@ -15,7 +15,7 @@ alana.createFunction = async (params) => {
   console.log('alana.createFunc invoked'); 
   
   const zipFile = await zipController.zip2(fileArr); 
-  console.log("zipfile after zipcontroller", zipFile);
+  console.log('zipfile after zipcontroller', zipFile);
   await s3Controller.sendFile2(zipFile); 
   await lambdaController.createFunction2(zipFile, funcName); 
   console.log('Lambda function has been created');
@@ -23,7 +23,7 @@ alana.createFunction = async (params) => {
 
 alana.updateFunction = async (params) => {
   const {fileArr, funcName} = params; 
-  console.log('alana.updateFunction invoked')
+  console.log('alana.updateFunction invoked');
   const zipFile = await zipController.zip2(fileArr); 
   await s3Controller.sendFile2(zipFile); 
   await lambdaController.updateFunction2(zipFile, funcName);

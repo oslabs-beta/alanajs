@@ -70,12 +70,12 @@ zipController.zip2 = async (fileArr) => {
   const [index, ...args] = fileArr;
 
   // adds the first file as index.js
-  let stream = fs.createReadStream(path.join('../LambdaFunctions/') + '/' + index);
+  let stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + index);
   jszip.file('index.js', stream);
 
   //iterate over the remaining file names in fileArr and add them as their original names
   for (const file of args) {
-    stream = fs.createReadStream(path.join('../LambdaFunctions/') + '/' + file);
+    stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + file);
     jszip.file(file, stream);
   }
 
