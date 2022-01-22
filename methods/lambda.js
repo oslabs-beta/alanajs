@@ -97,19 +97,21 @@ lambda.invoke = (funcName, params) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.createFunction = async(outputZip, funcName, options = {bucket: AwsBucket, description: '', publish: false}) => {
+lambda.createFunction = async(outputZip, funcName, options) => {
+  // destructure and set defaults to options if not included;
+  const {bucket = AwsBucket, description = '', publish = false} = options;
 
-  console.log(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${options.bucketName}"`);
+  console.log(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`);
 
   // parameters for lambda command
   const params = { 
-    Code: {S3Bucket: options.bucket, S3Key: outputZip },
+    Code: {S3Bucket: bucket, S3Key: outputZip },
     FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role',
-    Description: options.description,
-    Publish: options.publish
+    Description: description,
+    Publish: publish
   };
 
   //sends a command via lambdaClient to create a function
@@ -133,15 +135,17 @@ lambda.createFunction = async(outputZip, funcName, options = {bucket: AwsBucket,
 // outputZip - the file name of the zip file
 //
 
-lambda.updateFunction = async (outputZip, funcName, options = {bucket: AwsBucket, publish: false } ) => {
+lambda.updateFunction = async (outputZip, funcName, options) => {
+  // destructure options
+  const {bucket = AwsBucket, publish = false } = options;
 
   console.log('    using lambdaController.updateFunction'); 
   console.log('funcName', funcName); 
   // params for lambda command
   const params = {
     FunctionName: funcName, 
-    Publish: options.publish, 
-    S3Bucket: options.bucket, 
+    Publish: publish, 
+    S3Bucket: bucket, 
     S3Key: path.basename(outputZip)
   };
   

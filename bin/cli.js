@@ -6,12 +6,13 @@ import {writeFile, appendFile} from 'fs/promises';
 import dotenv from 'dotenv';
 import { IAMClient, GetPolicyCommand } from '@aws-sdk/client-iam';
 
-import {LambdaBasicARN} from '../methods/util/aws.js';
+import {AwsBucket, AwsParams, AwsRole, LambdaBasicARN} from '../methods/util/aws.js';
 import iam from '../methods/iam.js';
 import lambda from '../methods/lambda.js';
 import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import { verify } from 'crypto';
 
 dotenv.config();
 
@@ -19,13 +20,18 @@ const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRE
 const defaultARN = 'defaultLambdaRole';
 const defaultBucket = 'defaultbucketny30';
 
-// console.clear();
+console.clear();
 
-async function createArn(roleName) {
-  await iam.createRole(roleName);
+// verifies that the role exists and create if create is true
+async function verifyARN(roleName, create = false) {
+
+  const verifyResult = await iam.verifyRole(roleName);
+  if (verifyResult) console.log(verifyResult.Role);
+  if (create) await iam.createRole(roleName);
 }
 
-async function createBucket(bucket) {
+// verifies  that the bucket exists and create if otherwise
+async function verifyBucket(bucket) {
   await s3.createBucket(bucket);
 }
 
@@ -186,12 +192,6 @@ program
       });
     }
 
-    // // create ARN
-    // await createArn(options.arn);
-    
-    // // create S3 bucket
-    // await createBucket(options.bucket);
-
     console.log(finished('AWS configuration finished!'));
   }
 
@@ -216,7 +216,7 @@ if (hasCredentials) {
     .description('this allows you create functions. aws ARNs, S3 buckets')
     .argument('[funcName]', 'the name of the Lambda function to be create')
     .argument('[fileArr...]', 'the file array that needs to be inclided for the Lambda function')
-  // .option('-A, --ARN <arn name>', 'Amazon Resource Name (ARN)')
+    .option('-A, --arn <arn name>', 'Amazon Resource Name (ARN)')
     .option('-b, --bucket <bucket name>', 'an alternate S3 bucket name if the default bucket is not wanted')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
@@ -224,7 +224,8 @@ if (hasCredentials) {
     .action(async (funcName, fileArr, options) => {
     // console.log('in create');
       console.log(options);
-      options.ARN ? iam.createRole(options.ARN) : ()=>{};
+      options.arn ? verifyARN(options.arn) : verifyARN(AwsRole);
+      // options.bucket ? verifyBucket(options.bucket) : verifyBucket(AwsBucket);
       const outputZip = await zip.zipFiles(fileArr);
       await s3.sendFile(outputZip, options.bucket);
       lambda.createFunction(outputZip, funcName, options);
@@ -248,17 +249,27 @@ if (hasCredentials) {
       lambda.deleteFunction(funcName, qualifier);
     });
 
-
   program
     .command('update')
     .argument('<funcName>')
-    .argument('<fileArr>')
+    .argument('<fileArr...>')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr) => {
       const outputZip = `${fileArr}.zip`;
       await zip.zipFiles(fileArr);
       await s3.sendFile(outputZip);
       lambda.updateFunction(outputZip, funcName);
+    });
+
+  program
+    .command('roles')
+    .description('interact with AWS Roles')
+    .argument('[role]', 'the name of the AWS Role', defaultARN)
+    .option('-A, --arn <arn name>', 'Amazon Resource Name (ARN)')
+    .option('-c, --create', 'Create the role if it does not exist')
+    .action(async (role, options) => {
+      if (options.arn) await verifyARN(options.arn, options.create);
+      if (!options.arn && role !== defaultARN) await verifyARN(role, options.create);
     });
 }
 

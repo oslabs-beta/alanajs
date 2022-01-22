@@ -1,4 +1,4 @@
-import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand } from '@aws-sdk/client-iam';
+import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, GetRoleCommand } from '@aws-sdk/client-iam';
 import { AwsParams, AwsRole, BasicPolicy, LambdaBasicARN } from './util/aws.js';
 
 import { starting, code, error, finished } from './util/chalkColors.js';
@@ -7,6 +7,35 @@ import { starting, code, error, finished } from './util/chalkColors.js';
 const iamClient = new IAMClient(AwsParams);
 
 const iam = {};
+
+// FuncName: verifyRole
+// Description: ASYNC. This will check to see if a role in aws exists
+// input:
+// roleName - a string containing the role name
+//
+// output:
+// ARN object from the roleName
+//
+iam.verifyRole = async (roleName = AwsRole) => {
+  console.log(starting(`Verifying the AWS Role named ${roleName}`));
+
+  const params = {
+    RoleName: roleName
+  };
+
+  const data = await iamClient.send(new GetRoleCommand(params))
+    .then(data => {
+      // console.log(data);
+      console.log(`  The role ${roleName} exists.`);
+      return data;
+    })
+    .catch(err => {
+      console.log(error(`Error while verifying AWS role: ${err.message}`));
+      return;
+    });
+
+  return data;
+}
 
 // FuncName: createRole
 // Description: ASYNC. This will create a role in aws for the user to invoke lambda functions
@@ -21,8 +50,6 @@ iam.createRole = async (roleName = AwsRole) => {
     AssumeRolePolicyDocument: JSON.stringify(BasicPolicy),
     RoleName: roleName
   };
-  console.log(AwsParams);
-  console.log(roleParams);
 
   await iamClient.send(new CreateRoleCommand(roleParams))
     .then(data => {

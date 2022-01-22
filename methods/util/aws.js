@@ -16,8 +16,6 @@ const AwsParams = {
   'credentials': credentials,
 };
 
-console.log('aws params being read', AwsParams);
-
 // the basic policy needed from AWS in order to create a role for lambda
 const BasicPolicy = {
   'Version': '2012-10-17',
