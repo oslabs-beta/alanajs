@@ -2,10 +2,11 @@ import { S3Client, PutObjectCommand, CreateBucketCommand, GetBucketAclCommand } 
 import path from 'path';
 import fs from 'fs';
 
-import {awsParams, awsBucket} from './util/aws.js';
+import {AwsParams, AwsBucket} from './util/aws.js';
+import { starting, code, error, finished } from './util/chalkColors.js';
 
 // create the s3 client
-const s3Client = new S3Client(awsParams);
+const s3Client = new S3Client(AwsParams);
 
 const s3 = {};
 
@@ -14,7 +15,9 @@ const s3 = {};
 // input:
 // bucketName - a string representing the s3 bucket name
 //
-s3.createBucket = async (bucketName = awsBucket) => {
+s3.createBucket = async (bucketName = AwsBucket) => {
+  console.log(starting(`Creating an AWS S3 bucket named ${bucketName}`));
+
   // params needed to create a s3 bucket
   const params = {
     // bucket name
@@ -25,9 +28,14 @@ s3.createBucket = async (bucketName = awsBucket) => {
   const response = await s3Client.send(new CreateBucketCommand(params))
     .then(data => {
       // do something with data
+      console.log(finished('  Finished creating a new S3 bucket.\n'));
+      return response;
+    })
+    .catch(err => {
+      console.log(error(`There's an error with creating an S3 bucket: ${err.message}`));
+      return;
     });
 
-  return response;
 };
 
 
@@ -36,8 +44,8 @@ s3.createBucket = async (bucketName = awsBucket) => {
 // input:
 // outputZip - a string representing the zip file that needs to be sent to S3
 //
-s3.sendFile = async (outputZip, bucketName = awsBucket) => {
-  console.log(`Sending the file "${outputZip} to the AWS S3 Bucket "${bucketName}"`);
+s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
+  console.log(starting(`Sending the file "${outputZip} to the AWS S3 Bucket "${bucketName}"`));
   // creates a file stream of the zip file
   const fileStream = fs.createReadStream(outputZip);
   
@@ -53,11 +61,13 @@ s3.sendFile = async (outputZip, bucketName = awsBucket) => {
   await s3Client.send(new PutObjectCommand(params))
     .then(data => {
       // console.log(data);
+      console.log(finished('  Finished sending file.\n'));
+      return outputZip;
     })
-    .catch(error => {
-      console.log(error.message);
+    .catch(err => {
+      console.log(error(err.message));
+      return;
     });
-  console.log('  Finished sending file.\n');
 };
 
 export default s3;

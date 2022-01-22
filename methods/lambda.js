@@ -1,14 +1,11 @@
 import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
-import chalk from 'chalk';
 
-import { awsParams, awsBucket } from './util/aws.js';
-
-const starting = chalk.bold;
-const error = chalk.bold.red;
+import {starting, error} from './util/chalkColors.js';
+import { AwsParams, AwsBucket } from './util/aws.js';
 
 // create the lambda client
-const lambdaClient = new LambdaClient(awsParams);
+const lambdaClient = new LambdaClient(AwsParams);
 
 
 const lambda = {};
@@ -100,17 +97,19 @@ lambda.invoke = (funcName, params) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.createFunction = async(outputZip, funcName, options = {bucketName: awsBucket }) => {
+lambda.createFunction = async(outputZip, funcName, options = {bucket: AwsBucket, description: '', publish: false}) => {
 
   console.log(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${options.bucketName}"`);
 
   // parameters for lambda command
   const params = { 
-    Code: {S3Bucket: options.bucketName, S3Key: outputZip },
+    Code: {S3Bucket: options.bucket, S3Key: outputZip },
     FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role',
+    Description: options.description,
+    Publish: options.publish
   };
 
   //sends a command via lambdaClient to create a function
@@ -134,7 +133,7 @@ lambda.createFunction = async(outputZip, funcName, options = {bucketName: awsBuc
 // outputZip - the file name of the zip file
 //
 
-lambda.updateFunction = async (outputZip, funcName, options = {bucketName: awsBucket, publish: false } ) => {
+lambda.updateFunction = async (outputZip, funcName, options = {bucket: AwsBucket, publish: false } ) => {
 
   console.log('    using lambdaController.updateFunction'); 
   console.log('funcName', funcName); 
@@ -142,7 +141,7 @@ lambda.updateFunction = async (outputZip, funcName, options = {bucketName: awsBu
   const params = {
     FunctionName: funcName, 
     Publish: options.publish, 
-    S3Bucket: options.bucketName, 
+    S3Bucket: options.bucket, 
     S3Key: path.basename(outputZip)
   };
   

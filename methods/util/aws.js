@@ -11,14 +11,30 @@ const credentials = {
 // set up AWS region
 const region = process.env.AWS_REGION;
 
-const awsParams = {
+const AwsParams = {
   'region': region,
   'credentials': credentials,
 };
 
+console.log('aws params being read', AwsParams);
+
+// the basic policy needed from AWS in order to create a role for lambda
+const BasicPolicy = {
+  'Version': '2012-10-17',
+  'Statement': [
+    {
+      'Effect': 'Allow',
+      Principal: {
+        Service: 'lambda.amazonaws.com',
+      },
+      'Action': 'sts:AssumeRole',
+    }
+  ]
+};
+const LambdaBasicARN = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole';
+
 //gets the .env bucket name and awsRole
-const awsBucket = process.env.S3BUCKETNAME;
+const AwsBucket = process.env.S3BUCKETNAME;
+const AwsRole = process.env.ARNNAME;
 
-const awsRole = process.env.ARNNAME;
-
-export {awsParams, awsBucket, awsRole};
+export {AwsParams, AwsBucket, AwsRole, BasicPolicy, LambdaBasicARN};
