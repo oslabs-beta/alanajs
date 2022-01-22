@@ -36,5 +36,9 @@ alana.deleteFunction = async (funcName) => {
   console.log('Lambda function has been deleted'); 
 }; 
 
-
+alana.invoke = async (funcName, params) => {
+  console.log('alana.invoke invoked');
+  await lambda.invoke(funcName);
+  console.log('Lambda function has been invoked');
+};
 export default alana;
