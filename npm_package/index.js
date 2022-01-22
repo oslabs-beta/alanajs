@@ -36,5 +36,13 @@ alana.deleteFunction = async (funcName) => {
   console.log('Lambda function has been deleted'); 
 }; 
 
+alana.addLambdaLayers = async (params) => {
+  const {fileArr, layerName} = params; 
+  console.log('alana.deleteFunction invoked'); 
+  const zipFile = await zip.zipFiles(fileArr); 
+  // await s3.sendFile(zipFile); 
+  await lambda.addLambdaLayers(zipFile, layerName); 
+  console.log('Lambda layer has been created'); 
+}; 
 
 export default alana;
