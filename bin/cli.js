@@ -17,22 +17,23 @@ import { verify } from 'crypto';
 dotenv.config();
 
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
-const defaultARN = 'defaultLambdaRole';
+const defaultARN = 'defaultLambdaRole2';
 const defaultBucket = 'defaultbucketny30';
 
 console.clear();
 
 // verifies that the role exists and create if create is true
 async function verifyARN(roleName, create = false) {
-
   const verifyResult = await iam.verifyRole(roleName);
-  if (verifyResult) console.log(verifyResult.Role);
-  if (create) await iam.createRole(roleName);
+  verifyResult ? console.log(finished('  Role exists\n')) : console.log(fail('  Role doesn\'t exist\n'));
+  if (create && !verifyResult) await iam.createRole(roleName);
 }
 
 // verifies  that the bucket exists and create if otherwise
-async function verifyBucket(bucket) {
-  await s3.createBucket(bucket);
+async function verifyBucket(bucket, create = false) {
+  const verifyResult = await s3.verifyBucket(bucket);
+  verifyResult ? console.log(finished('  Bucket exists\n')) : console.log(fail('  Bucket doesn\'t exist\n'));
+  if (create && !verifyResult) await s3.createBucket(bucket);
 }
 
 if (!hasCredentials) {
@@ -213,22 +214,25 @@ if (hasCredentials) {
   
   program
     .command('create')
-    .description('this allows you create functions. aws ARNs, S3 buckets')
-    .argument('[funcName]', 'the name of the Lambda function to be create')
+    .description('allows you to create functions. will verify that the requirements exist before creation')
+    .argument('[funcName]', 'the name of the Lambda function to be create. If not specified, will only verify and create requirements')
     .argument('[fileArr...]', 'the file array that needs to be inclided for the Lambda function')
-    .option('-A, --arn <arn name>', 'Amazon Resource Name (ARN)')
-    .option('-b, --bucket <bucket name>', 'an alternate S3 bucket name if the default bucket is not wanted')
+    .option('-A, --arn <arn name>', 'specifying a different Amazon Resource Name (ARN) than default')
+    .option('-b, --bucket <bucket name>', 'specifying a different S3 bucket name than default')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and create lambda function')
     .action(async (funcName, fileArr, options) => {
     // console.log('in create');
-      console.log(options);
-      options.arn ? verifyARN(options.arn) : verifyARN(AwsRole);
-      // options.bucket ? verifyBucket(options.bucket) : verifyBucket(AwsBucket);
+      if (funcName && fileArr.length === 0) {
+        console.log(error('File names are required if a function is to be created'));
+        return;
+      }
+      options.arn ? await verifyARN(options.arn, true) : await verifyARN(AwsRole, true);
+      options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
       const outputZip = await zip.zipFiles(fileArr);
-      await s3.sendFile(outputZip, options.bucket);
-      lambda.createFunction(outputZip, funcName, options);
+      const response = await s3.sendFile(outputZip, options.bucket);
+      if (response) lambda.createFunction(outputZip, funcName, options);
     });
 
   program
@@ -267,9 +271,48 @@ if (hasCredentials) {
     .argument('[role]', 'the name of the AWS Role', defaultARN)
     .option('-A, --arn <arn name>', 'Amazon Resource Name (ARN)')
     .option('-c, --create', 'Create the role if it does not exist')
+    .option('-l, --list', 'List all the roles in AWS')
+    .option('--delete', 'delete the specified role')
     .action(async (role, options) => {
+      if (options.delete) {
+        if (role === defaultARN) {
+          console.log(fail('Cannot delete default role. Change default role before deleting'));
+          return;
+        }
+        let data;
+        if (options.arn) data = await iam.deleteARN(options.arn);
+        if (!options.arn && role !== defaultARN) data = await iam.deleteARN(role);
+        if (data) console.log(finished(`  AWS role '${options.arn || role}' deleted.`));
+        return;
+      }
+      if (options.list) console.log(await iam.getRoleList());
       if (options.arn) await verifyARN(options.arn, options.create);
       if (!options.arn && role !== defaultARN) await verifyARN(role, options.create);
+    });
+
+  program
+    .command('buckets')
+    .description('interact with AWS S3 buckets')
+    .argument('[s3bucket]', 'the name of the AWS S3 bucket', defaultBucket)
+    .option('-b, --bucket <bucket name>', 'S3 bucket name')
+    .option('-c, --create', 'Create the bucket if it does not exist')
+    .option('-l, --list', 'List all the buckets in S3')
+    .option('--delete', 'delete the specified bucket')
+    .action(async (s3bucket, options) => {
+      if (options.delete) {
+        if (s3bucket === defaultBucket) {
+          console.log(fail('Cannot delete default bucket. Change default bucket before deleting'));
+          return;
+        }
+        let data;
+        if (options.bucket) data = await s3.deleteBucket(options.bucket);
+        if (!options.bucket && s3bucket !== defaultBucket) data = await s3.deleteBucket(s3bucket);
+        if (data) console.log(finished(`  S3 bucket '${options.bucket || s3bucket}' deleted.`));
+        return;
+      }
+      if (options.list) console.log(await s3.getBucketList());
+      if (options.bucket) await verifyBucket(options.bucket, options.create);
+      if (!options.bucket && s3bucket !== defaultBucket) await verifyBucket(s3bucket, options.create);
     });
 }
 
