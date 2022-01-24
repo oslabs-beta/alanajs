@@ -164,9 +164,9 @@ program
           data += awsID;
           console.log('AWS Access Key ID Added');
         }
-        if (!data.includes('AWS_ACCESS_SECRET_KEY')) {
+        if (!data.includes('AWS_SECRET_ACCESS_KEY')) {
           data += awsKey;
-          console.log('AWS Access Secret Key Added');
+          console.log('AWS Secret Access Key Added');
         }
         if (!data.includes('AWS_REGION')) {
           data += awsRegion;
@@ -277,7 +277,7 @@ if (hasCredentials) {
     .command('roles')
     .description('interact with AWS Roles')
     .argument('[awsRole]', 'the name of the AWS role', defaultRole)
-    .option('-A, --role <role name>', 'the name of the AWS role')
+    .option('-r, --role <role name>', 'the name of the AWS role')
     .option('-c, --create', 'Create the role if it does not exist')
     .option('-l, --list', 'List all the roles in AWS')
     .option('--delete', 'delete the specified role')
