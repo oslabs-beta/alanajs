@@ -57,5 +57,9 @@ router.get('/getMetrics', cloudWatchController.getMetrics, (req, res) => {
   
 });
 
+router.get('/createLayer', zipController.zip, s3Controller.sendFile, lambdaController.addLambdaLayers, (req, res) => {
+  res.status(200).json('Lambda layer created'); 
+}); 
+
 
 export default router;
