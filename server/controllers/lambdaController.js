@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, PublishLayerVersionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 import awsParams from './util/awsCredentials.js';
 
@@ -163,6 +163,33 @@ lambdaController.deleteFunction = (req, res, next) => {
       console.log('Error in lambda DeleteFunctionCommand: ', err);
       return next(err);
     });
+
+  lambdaController.addLambdaLayers = (req, res, next) => {
+    console.log(' using lambdaController.addLambdaLayers'); 
+  
+    const params = { 
+      Code: {S3Bucket: 'testbucketny30', S3Key: res.locals.outputZip },
+      Runtime: 'nodejs14.x',
+      Role: 'arn:aws:iam::122194345396:role/lambda-role',
+      // The function layer archive. - zip file
+      Content: res.locals.outputZip,
+      // The name or Amazon Resource Name (ARN) of the layer.
+      LayerName: req.body.layerName
+    };
+  
+    lambdaClient.send(new PublishLayerVersionCommand(params))
+      .then(data => {
+        console.log(data);   
+        next();
+      })
+      .catch(err => {
+        console.log('Error in lambda PublishLayerVersionCommand: ', err); 
+        return next(err);
+      }); 
+  };
+
+
+    
 };
 
 export default lambdaController;
