@@ -2,12 +2,10 @@
   "name": "alanajs",
   "version": "0.0.1",
   "description": "",
-
   "main": "npm_package/index.js",
-  "bin":{
+  "bin": {
     "ami": "./bin/cli.js"
   },
-
   "scripts": {
     "build": "NODE_ENV=production webpack",
     "start": "NODE_ENV=production webpack",
@@ -22,6 +20,7 @@
     "@babel/preset-env": "^7.16.8",
     "@babel/preset-react": "^7.16.7",
     "babel-loader": "^8.2.3",
+    "chalk": "^5.0.0",
     "concurrently": "^7.0.0",
     "css-loader": "^6.5.1",
     "dotenv": "^11.0.0",
