@@ -67,7 +67,7 @@ lambda.getFuncVersionList = async (funcName) => {
 // 
 lambda.invoke = (funcName, params, options) => {
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description = '', publish = false} = options;
+  const {bucket = AwsBucket, description = undefined, publish = false} = options;
   options.version ? console.log(starting(`Invoking the function "${funcName}" with the Qualifier "${options.version}"`)) : console.log(starting(`Invoking the function "${funcName}"`));
   
   //input parameters for running the aws lambda function
@@ -113,7 +113,7 @@ lambda.invoke = (funcName, params, options) => {
 
 lambda.createFunction = async(outputZip, funcName, options) => {
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description = '', publish = false} = options;
+  const {bucket = AwsBucket, description =undefined, publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
 
