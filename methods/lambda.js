@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -113,10 +113,10 @@ lambda.invoke = (funcName, params, options) => {
 
 lambda.createFunction = async(outputZip, funcName, options) => {
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description =undefined, publish = false} = options;
+  const {bucket = AwsBucket, description = undefined, layerArr = [''], publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
-
+  
   // parameters for lambda command
   const params = { 
     Code: {S3Bucket: bucket, S3Key: outputZip },
@@ -124,9 +124,21 @@ lambda.createFunction = async(outputZip, funcName, options) => {
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role',
-    Description: description,
-    Publish: publish
+    Description: description, 
+    Publish: publish,
+    Layers: layerArr
   };
+
+  const layerConfig = [];
+  if(layerArr){
+    
+    for (let i = 0; i < layerArr.length; i++){
+      const layerName = layerArr[i].layerName;
+      const layerVersion = layerArr[i].layerVersion;
+      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+    }
+    if(layerConfig.length > 0) params.Layers = layerConfig;
+  }
 
   //sends a command via lambdaClient to create a function
 
@@ -204,5 +216,22 @@ lambda.deleteFunction = async (funcName, qualifier) => {
     });
 };
 
+//TODO: HARDCODED S3 BUCKET FIX 
+lambda.createLambdaLayer = async (outputZip, layerName) => {
+  console.log(' using lambdaController.addLambdaLayers'); 
+
+  const params = { 
+    Content: {S3Bucket: 'testbucketny30', S3Key: outputZip},
+    LayerName: layerName
+  };
+  console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
+  await lambdaClient.send(new PublishLayerVersionCommand(params))
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda PublishLayerVersionCommand: ', err); 
+    }); 
+};
 
 export default lambda;

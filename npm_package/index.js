@@ -10,14 +10,14 @@ alana.getFuncList = () => {
   console.log('Finished getting Lambda function list');
 };
 
-alana.createFunction = async (params) => {
+alana.createFunction = async (params, options = {}) => {
   const {fileArr, funcName} = params; 
   console.log('alana.createFunc invoked'); 
   
   const zipFile = await zip.zipFiles(fileArr); 
   console.log('zipfile after zipcontroller', zipFile);
   await s3.sendFile(zipFile); 
-  await lambda.createFunction(zipFile, funcName); 
+  await lambda.createFunction(zipFile, funcName, options); 
   console.log('Lambda function has been created');
 };
 
@@ -34,6 +34,15 @@ alana.deleteFunction = async (funcName) => {
   console.log('alana.deleteFunction invoked'); 
   await lambda.deleteFunction(funcName);
   console.log('Lambda function has been deleted'); 
+}; 
+
+alana.createLambdaLayer = async (params) => {
+  const {fileArr, layerName} = params; 
+  console.log('alana.deleteFunction invoked'); 
+  const zipFile = await zip.zipFiles(fileArr); 
+  await s3.sendFile(zipFile); 
+  await lambda.createLambdaLayer(zipFile, layerName); 
+  console.log('Lambda layer has been created'); 
 }; 
 
 alana.invoke = async (funcName, params) => {

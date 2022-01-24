@@ -35,4 +35,7 @@ const LambdaBasicARN = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecu
 const AwsBucket = process.env.S3BUCKETNAME;
 const AwsRole = process.env.ARNNAME;
 
+
+
+
 export {AwsParams, AwsBucket, AwsRole, BasicPolicy, LambdaBasicARN};
