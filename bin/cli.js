@@ -17,13 +17,13 @@ import { verify } from 'crypto';
 dotenv.config();
 
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
-const defaultARN = 'defaultLambdaRole2';
+const defaultRole = 'defaultLambdaRole2';
 const defaultBucket = 'defaultbucketny30';
 
 console.clear();
 
 // verifies that the role exists and create if create is true
-async function verifyARN(roleName, create = false) {
+async function verifyRole(roleName, create = false) {
   const verifyResult = await iam.verifyRole(roleName);
   verifyResult ? console.log(finished('  Role exists\n')) : console.log(fail('  Role doesn\'t exist\n'));
   if (create && !verifyResult) await iam.createRole(roleName);
@@ -52,7 +52,7 @@ program
   .argument('<AWS_ACCESS_KEY_ID>', 'this is your AWS access key ID')
   .argument('<AWS_SECRET_ACCESS_KEY>', 'this is your AWS secret access key')
   .argument('[region]', 'this is your preferred AWS region', 'us-east-1')
-  .option('-A, --arn <ARN Name>', 'the Amazon Resource Name to be used', defaultARN)
+  .option('-r, --role <Role Name>', 'the AWS Role to be used', defaultRole)
   .option('-b, --bucket <S3 Bucket Name>', 'the name of the S3 bucket to be used', defaultBucket)
   .option('-u, --update', 'set this flag to override and update AWS credentials')
   .action(async (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, region, options) => {
@@ -114,12 +114,12 @@ program
     const awsKey = `AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}\n`;
     const awsRegion = `AWS_REGION=${region}\n`;
     const bucket = `S3BUCKETNAME=${options.bucket}\n`;
-    const ARN = `ARNNAME=${options.arn}\n`;
+    const role = `ARNNAME=${options.role}\n`;
 
     // check if .env exists
     if (!fs.existsSync(path.resolve('./.env'))) {
       //if it doesn't exist, create it with .env
-      await writeFile('./.env', awsID + awsKey + awsRegion + bucket + ARN)
+      await writeFile('./.env', awsID + awsKey + awsRegion + bucket + role)
         .catch(err => {
           console.log(error(`Error writing to the file ./.env : ${err.message}`));
           return;
@@ -149,7 +149,7 @@ program
 
           // if there are options
           if (region !== 'us-east-1') delete data_array[textLine('AWS_REGION')];
-          if (options.ARN && options.ARN !== defaultARN) delete data_array[textLine('ARNNAME')];
+          if (options.role && options.role !== defaultRole) delete data_array[textLine('ARNNAME')];
           if (options.bucket && options.bucket !== defaultBucket) delete data_array[textLine('S3BUCKETNAME')];
 
           // turn back into string while ignoring whitespaces
@@ -173,7 +173,7 @@ program
           console.log('AWS Region Added');
         }
         if (!data.includes('ARNNAME')) {
-          data += ARN;
+          data += role;
           console.log('ARN Name Added');
         }
         if (!data.includes('S3BUCKETNAME')) {
@@ -214,10 +214,10 @@ if (hasCredentials) {
   
   program
     .command('create')
-    .description('allows you to create functions. will verify that the requirements exist before creation')
+    .description('allows you to create functions. will verify that the requirements exist and create them before attempting to creating a function.')
     .argument('[funcName]', 'the name of the Lambda function to be create. If not specified, will only verify and create requirements')
     .argument('[fileArr...]', 'the file array that needs to be inclided for the Lambda function')
-    .option('-A, --arn <arn name>', 'specifying a different Amazon Resource Name (ARN) than default')
+    .option('-r, --role [role name]', 'specifying a different AWS role than default specifically for this function')
     .option('-b, --bucket <bucket name>', 'specifying a different S3 bucket name than default')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
@@ -228,8 +228,11 @@ if (hasCredentials) {
         console.log(error('File names are required if a function is to be created'));
         return;
       }
-      options.arn ? await verifyARN(options.arn, true) : await verifyARN(AwsRole, true);
+      options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
       options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
+      
+      // do not create a function if the options don't exist
+      if (!funcName && fileArr.length === 0) return;
       const outputZip = await zip.zipFiles(fileArr);
       const response = await s3.sendFile(outputZip, options.bucket);
       if (response) lambda.createFunction(outputZip, funcName, options);
@@ -237,8 +240,13 @@ if (hasCredentials) {
 
   program
     .command('list')
-    .description('list lambda functions')
-    .action(async () => {
+    .description('list the lambda function names')
+    .option('-f, --function <function name>', 'list a specific function versions')
+    .action(async (options) => {
+      if (options.function) {
+        lambda.getFuncVersionList(options.function);
+        return;
+      }
       const list = await lambda.getFuncList();
       console.table(list);
     });
@@ -268,26 +276,26 @@ if (hasCredentials) {
   program
     .command('roles')
     .description('interact with AWS Roles')
-    .argument('[role]', 'the name of the AWS Role', defaultARN)
-    .option('-A, --arn <arn name>', 'Amazon Resource Name (ARN)')
+    .argument('[awsRole]', 'the name of the AWS role', defaultRole)
+    .option('-A, --role <role name>', 'the name of the AWS role')
     .option('-c, --create', 'Create the role if it does not exist')
     .option('-l, --list', 'List all the roles in AWS')
     .option('--delete', 'delete the specified role')
-    .action(async (role, options) => {
+    .action(async (awsRole, options) => {
       if (options.delete) {
-        if (role === defaultARN) {
+        if (awsRole === defaultRole) {
           console.log(fail('Cannot delete default role. Change default role before deleting'));
           return;
         }
         let data;
-        if (options.arn) data = await iam.deleteARN(options.arn);
-        if (!options.arn && role !== defaultARN) data = await iam.deleteARN(role);
-        if (data) console.log(finished(`  AWS role '${options.arn || role}' deleted.`));
+        if (options.role) data = await iam.deleteRole(options.role);
+        if (!options.role && awsRole !== defaultRole) data = await iam.deleteRole(awsRole);
+        if (data) console.log(finished(`  AWS role '${options.role || awsRole}' deleted.`));
         return;
       }
       if (options.list) console.log(await iam.getRoleList());
-      if (options.arn) await verifyARN(options.arn, options.create);
-      if (!options.arn && role !== defaultARN) await verifyARN(role, options.create);
+      if (options.role) await verifyRole(options.role, options.create);
+      if (!options.role && awsRole !== defaultRole) await verifyRole(awsRole, options.create);
     });
 
   program
@@ -314,6 +322,17 @@ if (hasCredentials) {
       if (options.bucket) await verifyBucket(options.bucket, options.create);
       if (!options.bucket && s3bucket !== defaultBucket) await verifyBucket(s3bucket, options.create);
     });
+
+  program
+    .command('run')
+    .description('invokes an AWS Lambda function')
+    .argument('<funcName>', 'the name of the AWS Lambda function')
+    .argument('[params...]', 'the parameters being passed into the AWS Lambda function')
+    .option('-v, --version <version number>', 'the version of the AWS Lambda function being invoked. Must exist')
+    .action(async (funcName, params, options) => {
+      lambda.invoke(funcName, params, options);
+    });
 }
+
 
 program.parse();

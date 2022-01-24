@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -46,6 +46,16 @@ lambda.getFuncList = async () => {
   return functionList;
 };
 
+lambda.getFuncVersionList = async (funcName) => {
+  console.log(starting(`Getting a list of versions of Lambda function "${funcName}"`));
+  const params = {FunctionName: funcName};
+  const data = await lambdaClient.send(new ListVersionsByFunctionCommand(params))
+    .catch(err => {
+      console.log(error('Error in getting the Lambda Function versions: ', err.message));
+    });
+  if (!data) return;
+  console.log(data);
+};
 // FuncName: invoke
 // Description: this will invoke the function specified in the parameters
 // input:
@@ -55,8 +65,10 @@ lambda.getFuncList = async () => {
 // output:
 // the invocation response
 // 
-lambda.invoke = (funcName, params) => {
-  console.log('      using lambdaController.invoke');
+lambda.invoke = (funcName, params, options) => {
+  // destructure and set defaults to options if not included;
+  const {bucket = AwsBucket, description = '', publish = false} = options;
+  options.version ? console.log(starting(`Invoking the function "${funcName}" with the Qualifier "${options.version}"`)) : console.log(starting(`Invoking the function "${funcName}"`));
   
   //input parameters for running the aws lambda function
   const lambdaParams = { 
@@ -71,13 +83,15 @@ lambda.invoke = (funcName, params) => {
     LogType: 'Tail',
   };
 
+  if (options.version) lambdaParams.Qualifier = options.version;
+
   // invokecommand is a class that lets lambdaclient know that we want to run the function that is specified in the params 
   lambdaClient.send(new InvokeCommand(lambdaParams)) 
     .then(data => {
-      console.log(data);
+      // console.log(data);
       
       //This will output the invocation data log into a readable string
-      console.log(Buffer.from(data.LogResult,'base64').toString('ascii'));
+      // console.log(Buffer.from(data.LogResult,'base64').toString('ascii'));
 
       // lambda client returns data.payload which is utf8 and  needs to be decoded and parsed
       const response = JSON.parse(new TextDecoder('utf-8').decode(data.Payload)); 
@@ -85,7 +99,7 @@ lambda.invoke = (funcName, params) => {
       return response;
     })
     .catch(err => {
-      console.log('Error in invoke: ', err);
+      console.log(error('Error in invoke: ', err.message));
       return err;
     });
 };
@@ -101,7 +115,7 @@ lambda.createFunction = async(outputZip, funcName, options) => {
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = '', publish = false} = options;
 
-  console.log(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`);
+  console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
 
   // parameters for lambda command
   const params = { 
@@ -158,7 +172,7 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda updateFunctionCode:', err); 
+      console.log(error('Error in lambda updateFunctionCode:', err.message)); 
       return err;
     });
 };
@@ -169,15 +183,14 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
 // funcName - the name of the function, user input 
 //
 lambda.deleteFunction = async (funcName, qualifier) => {
-  console.log('    using lambdaController.deleteFunction');
-  console.log('Func name is ',funcName);
+  qualifier ? console.log(starting(`Deleting the function "${funcName}" with the Qualifier "${qualifier}"`)) : console.log(starting(`Deleting the function "${funcName}"`));
 
   // parameters for lambda command
-  //qualifier: optional version to delete
   const params = { 
     FunctionName: funcName,
   };
   
+  //qualifier: optional version to delete
   if(qualifier) params.Qualifier = qualifier;
   
   await lambdaClient.send(new DeleteFunctionCommand(params))
@@ -186,7 +199,7 @@ lambda.deleteFunction = async (funcName, qualifier) => {
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda DeleteFunctionCommand: ', err);
+      console.log(error('Error in lambda DeleteFunctionCommand: ', err.message));
       return err;
     });
 };

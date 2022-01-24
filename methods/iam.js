@@ -88,7 +88,7 @@ iam.createRole = async (roleName = AwsRole) => {
 
 };
 
-iam.deleteARN = async (role) => {
+iam.deleteRole = async (role) => {
   const params = {
     RoleName: role
   };
