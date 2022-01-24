@@ -204,5 +204,4 @@ lambda.deleteFunction = async (funcName, qualifier) => {
     });
 };
 
-
 export default lambda;
