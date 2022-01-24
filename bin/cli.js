@@ -265,12 +265,13 @@ if (hasCredentials) {
     .command('update')
     .argument('<funcName>')
     .argument('<fileArr...>')
+    .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .description('zip and update lambda function')
-    .action(async (funcName, fileArr) => {
+    .action(async (funcName, fileArr, options) => {
       const outputZip = `${fileArr}.zip`;
       await zip.zipFiles(fileArr);
       await s3.sendFile(outputZip);
-      lambda.updateFunction(outputZip, funcName);
+      lambda.updateFunction(outputZip, funcName, options);
     });
 
   program

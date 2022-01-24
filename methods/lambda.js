@@ -113,7 +113,7 @@ lambda.invoke = (funcName, params, options) => {
 
 lambda.createFunction = async(outputZip, funcName, options) => {
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description =undefined, publish = false} = options;
+  const {bucket = AwsBucket, description = undefined, publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
 
@@ -163,6 +163,8 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
     S3Key: path.basename(outputZip)
   };
   
+  if (options.description) params.Description = options.description;
+
   // send the update function command
 
   await lambdaClient.send(new UpdateFunctionCodeCommand(params))
