@@ -7,7 +7,15 @@ const alana = {};
 alana.getFuncList = () => {
   console.log('alana.getFuncList invoked'); 
   const functionList = lambda.getFuncList();
+  console.table(functionList);
   console.log('Finished getting Lambda function list');
+};
+
+alana.getFuncVersions = (funcName) => {
+  console.log('alana.getFuncVersions invoked'); 
+  const versionList = lambda.getFuncVersions(funcName);
+  console.table(versionList);
+  console.log('Finished getting Lambda function versions');
 };
 
 alana.createFunction = async (params) => {
