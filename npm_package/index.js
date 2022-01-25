@@ -1,6 +1,7 @@
 import lambda from '../methods/lambda.js';
 import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
+import archiver from '../methods/zip.js';
 
 const alana = {}; 
 
@@ -32,7 +33,7 @@ alana.createFunction = async (params, options = {}) => {
 alana.updateFunction = async (params) => {
   const {fileArr, funcName} = params; 
   console.log('alana.updateFunction invoked');
-  const zipFile = await zip.zipFiles(fileArr); 
+  const zipFile = await archiver.zipFiles(fileArr); 
   await s3.sendFile(zipFile); 
   await lambda.updateFunction(zipFile, funcName);
   console.log('Lambda function has been updated');
@@ -47,7 +48,7 @@ alana.deleteFunction = async (funcName) => {
 alana.createLambdaLayer = async (params) => {
   const {fileArr, layerName} = params; 
   console.log('alana.deleteFunction invoked'); 
-  const zipFile = await zip.zipFiles(fileArr); 
+  const zipFile = await archiver.zipFiles(fileArr); 
   await s3.sendFile(zipFile); 
   await lambda.createLambdaLayer(zipFile, layerName); 
   console.log('Lambda layer has been created'); 
