@@ -237,6 +237,7 @@ if (hasCredentials) {
       if (!funcName && fileArr.length === 0) return;
       const outputZip = await archiver.zipFiles(fileArr);
       const response = await s3.sendFile(outputZip, options.bucket);
+      // console.log('REsponse', response);
       if (response) lambda.createFunction(outputZip, funcName, options);
     });
 
@@ -268,12 +269,15 @@ if (hasCredentials) {
     .argument('<funcName>')
     .argument('<fileArr...>')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
+    .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr, options) => {
       const outputZip = `${fileArr}.zip`;
       await archiver.zipFiles(fileArr);
       await s3.sendFile(outputZip);
-      lambda.updateFunction(outputZip, funcName, options);
+      await lambda.updateFunction(outputZip, funcName, options);
+      console.log('lambda function updated'); 
+
     });
 
   program
@@ -372,7 +376,42 @@ if (hasCredentials) {
 
       await lambda.addLayerToFunc(funcName, layerArr); 
 
-    });  
+    });
+    
+  program 
+    .command('createAlias')
+    .description('Create alias function for each Lamda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ca, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.createAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('updateAlias')
+    .description('Update alias function for each Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ua, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.updateAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('deleteAlias')
+    .description('Delete alias from Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .option('-da, --aliasName <aliasName>')
+    .action(async(funcName) => {
+
+      await lambda.deleteAlias(funcName); 
+
+    });
 }
 
 
