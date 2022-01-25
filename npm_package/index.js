@@ -45,6 +45,13 @@ alana.createLambdaLayer = async (params) => {
   console.log('Lambda layer has been created'); 
 }; 
 
+alana.createAlias = async (params) => {
+  const {funcName} = params; 
+  console.log('alana.updateFunction invoked');
+  await lambda.funcName(funcName);
+  console.log('Alias has been updated');
+};
+
 alana.invoke = async (funcName, params) => {
   console.log('alana.invoke invoked');
   await lambda.invoke(funcName);

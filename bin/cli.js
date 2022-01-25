@@ -235,6 +235,7 @@ if (hasCredentials) {
       if (!funcName && fileArr.length === 0) return;
       const outputZip = await zip.zipFiles(fileArr);
       const response = await s3.sendFile(outputZip, options.bucket);
+      // console.log('REsponse', response);
       if (response) lambda.createFunction(outputZip, funcName, options);
     });
 
@@ -270,7 +271,8 @@ if (hasCredentials) {
       const outputZip = `${fileArr}.zip`;
       await zip.zipFiles(fileArr);
       await s3.sendFile(outputZip);
-      lambda.updateFunction(outputZip, funcName);
+      const response = await lambda.updateFunction(outputZip, funcName);
+
     });
 
   program
