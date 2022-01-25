@@ -111,9 +111,10 @@ lambda.invoke = (funcName, params, options) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.createFunction = async(outputZip, funcName, options) => {
+lambda.createFunction = async(outputZip, funcName, options={}) => {
+  console.log('createFunction outputZip',outputZip, 'funcName',funcName)
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description = undefined, layerArr = [''], publish = false} = options;
+  const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
   
@@ -161,7 +162,7 @@ lambda.createFunction = async(outputZip, funcName, options) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.updateFunction = async (outputZip, funcName, options) => {
+lambda.updateFunction = async (outputZip, funcName, options={}) => {
   // destructure options
   const {bucket = AwsBucket, publish = false } = options;
 

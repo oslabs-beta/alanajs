@@ -50,4 +50,10 @@ alana.invoke = async (funcName, params) => {
   await lambda.invoke(funcName);
   console.log('Lambda function has been invoked');
 };
+
+alana.zip = async (fileArr, params) => {
+  console.log('alana.zip invoked');
+  const zipFile = await zip.zipFiles(fileArr); 
+  console.log('zipfile after zipcontroller', zipFile);
+};
 export default alana;

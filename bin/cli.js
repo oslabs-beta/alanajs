@@ -234,6 +234,7 @@ if (hasCredentials) {
       // do not create a function if the options don't exist
       if (!funcName && fileArr.length === 0) return;
       const outputZip = await zip.zipFiles(fileArr);
+      console.log('outputzip in cli',outputZip);
       const response = await s3.sendFile(outputZip, options.bucket);
       if (response) lambda.createFunction(outputZip, funcName, options);
     });
@@ -332,6 +333,35 @@ if (hasCredentials) {
     .action(async (funcName, params, options) => {
       lambda.invoke(funcName, params, options);
     });
+
+  program
+    .command('zip')
+    .description('zips an array')
+    .argument('<fileArr...>')
+    // .argument('[params...]', 'the parameters being passed into the AWS Lambda function')
+    // .option('-v, --version <version number>', 'the version of the AWS Lambda function being invoked. Must exist')
+    .action(async (fileArr) => {
+      const outputZip = `${fileArr}.zip`;
+      await zip.zipFiles(fileArr);
+      await s3.sendFile(outputZip);
+  });
+
+  program
+    .command('zip2')
+    .description('zips an array')
+    .argument('<funcName>')
+    .argument('<fileArr...>')
+    // .argument('[params...]', 'the parameters being passed into the AWS Lambda function')
+    // .option('-v, --version <version number>', 'the version of the AWS Lambda function being invoked. Must exist')
+    .action(async (funcName,fileArr) => {
+      const outputZip = `${fileArr[0]}.zip`;
+      await zip.zipFiles2(fileArr);
+      console.log('this is outputZip in cli zip2', outputZip);
+      // await s3.sendFile(outputZip);
+      const response = await s3.sendFile(outputZip);
+      if (response) lambda.createFunction(outputZip, funcName);
+  });
+
 }
 
 
