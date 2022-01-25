@@ -65,13 +65,9 @@ zip.zipFiles2 = async (fileArr, outputFileName) => {
   console.log(starting(`Adding the following files/directories to the output zip file "${outputFileName}.zip" : `));
   console.log(code(`     ${index}`));
 
-  // create the zip instance
   // create a file to stream archive data to.
   const output = fs.createWriteStream(`${outputFileName}.zip`);
 
-  // const archive = archiver('zip', {
-  //   zlib: { level: 9 } // Sets the compression level.
-  // });
   const archive = archiver('zip');
 
   archive.on('warning', function(err) {
@@ -100,24 +96,13 @@ zip.zipFiles2 = async (fileArr, outputFileName) => {
   // finalize the archive (ie we are done appending files but streams have to finish yet)
   await archive.finalize();
   
-  // await stream.finished(output, () => {
-  //   console.log('output finished writing');
-  // })
   const data = await finishedStreamWriting(output, {}, (err) => {
     if(err){
       console.log(err);
-    }else{
-    console.log('output finished writing');
+    } else{
+      console.log('output finished writing');
     }
   });
-
-  console.log('data', data);
-  // output.finish(() => console.log(`finished writing to "${outputFileName}.zip"`));
-  // setTimeout(()=>{
-  //     output.on('finish', function (){
-  //     console.log ('output finished');
-  //   });
-  // }, 1000);
 
   return `${outputFileName}.zip`;
 };
