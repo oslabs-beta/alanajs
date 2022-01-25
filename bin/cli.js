@@ -222,6 +222,7 @@ if (hasCredentials) {
     .option('-b, --bucket <bucket name>', 'specifying a different S3 bucket name than default')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
+    .option('-la, --layerArr [layer arrays]', 'add AWS lambda layer to function')
     .description('zip and create lambda function')
     .action(async (funcName, fileArr, options) => {
     // console.log('in create');
@@ -235,7 +236,6 @@ if (hasCredentials) {
       // do not create a function if the options don't exist
       if (!funcName && fileArr.length === 0) return;
       const outputZip = await archiver.zipFiles(fileArr);
-      console.log('outputzip in cli',outputZip);
       const response = await s3.sendFile(outputZip, options.bucket);
       if (response) lambda.createFunction(outputZip, funcName, options);
     });
@@ -335,6 +335,43 @@ if (hasCredentials) {
       lambda.invoke(funcName, params, options);
     });
 
+  program 
+    .command('createLayer')
+    .description('creates an AWS Lambda layer')
+    .argument('<layerName>', 'name of the created layer')
+    .argument('<fileArr>', 'files to be converted into a Lambda layer')
+    .action(async(layerName, fileArr) => {
+      
+      if(!fileArr || !layerName){
+        console.log(error('both fileArr and layerName are required fields')); 
+        return; 
+      }
+      const outputZip = `${fileArr}.zip`;
+      await zip.zipFiles(fileArr);
+      await s3.sendFile(outputZip);
+      await lambda.createLambdaLayer(layerName, outputZip); 
+
+    }
+    );  
+
+  program 
+    .command('addLayerToFunc')
+    .description('adds AWS Lambda Layer to existant function')
+    .argument('<funcName>', 'name of function to append')
+    .option('-la, --layerName <layerName>')
+    .option('-lv, --layerVersion <layerVersion>')
+    .action(async(funcName, options) => {
+
+      const layerArr = [{layerName: options.layerName, layerVersion: options.layerVersion}]; 
+      
+      if(!funcName || !layerArr){
+        console.log(error('funcName, layerName, and layerVersion are required fields')); 
+        return; 
+      }
+
+      await lambda.addLayerToFunc(funcName, layerArr); 
+
+    });  
 }
 
 

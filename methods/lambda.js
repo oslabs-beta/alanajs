@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, UpdateFunctionConfigurationCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -166,7 +166,7 @@ lambda.updateFunction = async (outputZip, funcName, options={}) => {
   // destructure options
   const {bucket = AwsBucket, publish = false } = options;
 
-  console.log('    using lambdaController.updateFunction'); 
+  console.log('    using lambda.updateFunction'); 
   console.log('funcName', funcName); 
   // params for lambda command
   const params = {
@@ -217,12 +217,12 @@ lambda.deleteFunction = async (funcName, qualifier) => {
     });
 };
 
-//TODO: HARDCODED S3 BUCKET FIX 
-lambda.createLambdaLayer = async (outputZip, layerName) => {
-  console.log(' using lambdaController.addLambdaLayers'); 
+
+lambda.createLambdaLayer = async (layerName, outputZip) => {
+  console.log(' using lambda.addLambdaLayers'); 
 
   const params = { 
-    Content: {S3Bucket: 'testbucketny30', S3Key: outputZip},
+    Content: {S3Bucket: AwsBucket, S3Key: outputZip},
     LayerName: layerName
   };
   console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
@@ -232,6 +232,36 @@ lambda.createLambdaLayer = async (outputZip, layerName) => {
     })
     .catch(err => {
       console.log('Error in lambda PublishLayerVersionCommand: ', err); 
+    }); 
+};
+
+lambda.addLayerToFunc = async (funcName, layerArr) => {
+  console.log('using lambda.addLayerToFunc'); 
+
+  console.log('the layerArr is ', layerArr); 
+
+  const params = {
+    FunctionName : funcName
+  };
+
+  const layerConfig = [];
+  if(layerArr){
+    
+    for (let i = 0; i < layerArr.length; i++){
+      const layerName = layerArr[i].layerName;
+      const layerVersion = layerArr[i].layerVersion;
+      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+    }
+    if(layerConfig.length > 0) params.Layers = layerConfig;
+    console.log(params.Layers)
+  }
+
+  await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda updateFunctionConfigurationCommand: ', err); 
     }); 
 };
 
