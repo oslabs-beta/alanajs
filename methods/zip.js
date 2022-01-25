@@ -17,7 +17,7 @@ const zip = {};
 // the output zip file name (string)
 //
 zip.zipFiles = async (fileArr, outputFileName) => {
-
+  console.log('filearr is', fileArr);
   // create the zip instance
   const jszip = new JSZip();
 
@@ -27,6 +27,9 @@ zip.zipFiles = async (fileArr, outputFileName) => {
   // if there's no specified output filename, set it to index
   if (!outputFileName) outputFileName = index;
 
+  console.log('the index ', index);
+
+  console.log('outputFileName', outputFileName)
   console.log(starting(`Adding the following files to the output zip file "${outputFileName}.zip" : `));
   console.log(code(`     ${index}`));
 
@@ -35,11 +38,11 @@ zip.zipFiles = async (fileArr, outputFileName) => {
   jszip.file('index.js', stream);
 
   //iterate over the remaining file names in fileArr and add them as their original names
-  for (const file of args) {
-    console.log(code(`     ${file}`));
-    stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + file);
-    jszip.file(file, stream);
-  }
+  // for (const file of args) {
+  //   console.log(code(`     ${file}`));
+  //   stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + file);
+  //   jszip.file(file, stream);
+  // }
 
   // promise to generate zipfile w/ type of nodebuffer
   const response = await jszip.generateAsync({type:'nodebuffer'}); 

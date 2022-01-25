@@ -57,4 +57,10 @@ alana.invoke = async (funcName, params) => {
   await lambda.invoke(funcName);
   console.log('Lambda function has been invoked');
 };
+
+alana.addLayerToFunc = async (funcName, layerArr) => {
+  console.log('alana.addLayerToFunc invoked'); 
+  await lambda.addLayerToFunc(funcName, layerArr); 
+  console.log('Lambda layer added to function'); 
+};
 export default alana;
