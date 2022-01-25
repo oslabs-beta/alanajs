@@ -11,6 +11,7 @@ import iam from '../methods/iam.js';
 import lambda from '../methods/lambda.js';
 import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
+import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
 import { verify } from 'crypto';
 
@@ -234,7 +235,7 @@ if (hasCredentials) {
       
       // do not create a function if the options don't exist
       if (!funcName && fileArr.length === 0) return;
-      const outputZip = await zip.zipFiles(fileArr);
+      const outputZip = await archiver.zipFiles(fileArr);
       const response = await s3.sendFile(outputZip, options.bucket);
       // console.log('REsponse', response);
       if (response) lambda.createFunction(outputZip, funcName, options);
@@ -270,7 +271,7 @@ if (hasCredentials) {
     .description('zip and update lambda function')
     .action(async (funcName, fileArr) => {
       const outputZip = `${fileArr}.zip`;
-      await zip.zipFiles(fileArr);
+      await archiver.zipFiles(fileArr);
       await s3.sendFile(outputZip);
       const response = await lambda.updateFunction(outputZip, funcName);
 
