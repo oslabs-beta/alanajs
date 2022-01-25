@@ -110,8 +110,7 @@ lambda.invoke = (funcName, params, options) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.createFunction = async(outputZip, funcName, options={}) => {
-  console.log('createFunction outputZip',outputZip, 'funcName',funcName)
+lambda.createFunction = async(outputZip, funcName, options = {}) => {
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
@@ -161,7 +160,7 @@ lambda.createFunction = async(outputZip, funcName, options={}) => {
 // outputZip - the file name of the zip file
 //
 
-lambda.updateFunction = async (outputZip, funcName, options={}) => {
+lambda.updateFunction = async (outputZip, funcName, options) => {
   // destructure options
   console.log('Options....',options);
   const {bucket = AwsBucket, publish = true} = options;
@@ -175,6 +174,9 @@ lambda.updateFunction = async (outputZip, funcName, options={}) => {
     S3Bucket: bucket, 
     S3Key: path.basename(outputZip),
   };
+  
+  if (options.description) params.Description = options.description;
+
   // send the update function command
   console.log("Param are", params);
   const data = await lambdaClient.send(new UpdateFunctionCodeCommand(params))
