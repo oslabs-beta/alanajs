@@ -269,7 +269,7 @@ if (hasCredentials) {
     .argument('<funcName>')
     .argument('<fileArr...>')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
- 
+    .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr, options) => {
       const outputZip = `${fileArr}.zip`;

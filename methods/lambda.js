@@ -182,7 +182,7 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
   await lambdaClient.send(new UpdateFunctionCodeCommand(params))
 
     .then(data => {
-      console.log(data);
+      // console.log(data);
       return data;
     })
     .catch(err => {
