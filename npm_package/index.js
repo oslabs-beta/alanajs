@@ -5,6 +5,10 @@ import archiver from '../methods/zip.js';
 
 const alana = {}; 
 
+/**
+ * @FunctionName: getFuncList
+ * @Description: Displays table of lambda functions 
+ */
 alana.getFuncList = () => {
   console.log('alana.getFuncList invoked'); 
   const functionList = lambda.getFuncList();
@@ -12,6 +16,11 @@ alana.getFuncList = () => {
   console.log('Finished getting Lambda function list');
 };
 
+/**
+ * @FunctionName: getFuncVersions
+ * @Description: Displays table of function versions 
+ * @input: string that contains function name
+ */
 alana.getFuncVersions = (funcName) => {
   console.log('alana.getFuncVersions invoked'); 
   const versionList = lambda.getFuncVersions(funcName);
@@ -19,6 +28,11 @@ alana.getFuncVersions = (funcName) => {
   console.log('Finished getting Lambda function versions');
 };
 
+/**
+ * @FunctionName: createFunction
+ * @Description: creates AWS Lambda function 
+ * @input: params object which includes array of file names and name of function :options object 
+ */
 alana.createFunction = async (params, options = {}) => {
   const {fileArr, funcName} = params; 
   console.log('alana.createFunc invoked'); 
@@ -30,6 +44,11 @@ alana.createFunction = async (params, options = {}) => {
   console.log('Lambda function has been created');
 };
 
+/**
+ * @FunctionName: updateFunction
+ * @Description: updates AWS Lambda function 
+ * @input: params object which includes array of file names and name of function to be updated 
+ */
 alana.updateFunction = async (params) => {
   const {fileArr, funcName} = params; 
   console.log('alana.updateFunction invoked');
@@ -39,13 +58,23 @@ alana.updateFunction = async (params) => {
   console.log('Lambda function has been updated');
 };
 
+/** 
+ * @FunctionName: deleteFunction
+ * @Description: deletes AWS Lambda function
+ * @input: string which contains function name  
+*/
 alana.deleteFunction = async (funcName) => {
   console.log('alana.deleteFunction invoked'); 
   await lambda.deleteFunction(funcName);
   console.log('Lambda function has been deleted'); 
 }; 
 
-alana.createLambdaLayer = async (params) => {
+/**
+ * @FunctionName: createLambdaLayer
+ * @Description: creates AWS Lambda layer
+ * @input: params object that contains array of files and layer name, qualifier
+ */
+alana.createLambdaLayer = async (params, qualifier) => {
   const {fileArr, layerName} = params; 
   console.log('alana.deleteFunction invoked'); 
   const zipFile = await archiver.zipFiles(fileArr); 
@@ -54,6 +83,9 @@ alana.createLambdaLayer = async (params) => {
   console.log('Lambda layer has been created'); 
 }; 
 
+/**
+ * @Function
+ */
 alana.createAlias = async (params) => {
   const {funcName, version} = params; 
   console.log('alana.createAlias invoked');
