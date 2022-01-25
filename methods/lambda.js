@@ -216,8 +216,6 @@ lambda.deleteFunction = async (funcName, qualifier) => {
     });
 };
 
-<<<<<<< HEAD
-=======
 //TODO: HARDCODED S3 BUCKET FIX 
 lambda.createLambdaLayer = async (outputZip, layerName) => {
   console.log(' using lambdaController.addLambdaLayers'); 
@@ -236,5 +234,4 @@ lambda.createLambdaLayer = async (outputZip, layerName) => {
     }); 
 };
 
->>>>>>> 47960a3286ecdf1f2f12b4bbc97ec86d2f8f4e31
 export default lambda;
