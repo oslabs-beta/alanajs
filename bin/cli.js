@@ -362,7 +362,7 @@ if (hasCredentials) {
     .action(async(funcName, options) => {
 
       const layerArr = [{layerName: options.layerName, layerVersion: options.layerVersion}]; 
-      console.log(layerArr);
+      
       if(!funcName || !layerArr){
         console.log(error('funcName, layerName, and layerVersion are required fields')); 
         return; 
