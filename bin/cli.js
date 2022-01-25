@@ -396,7 +396,42 @@ if (hasCredentials) {
       await lambda.addLayerToFunc(funcName, layerArr); 
       console.log(finished('Request complete: Lambda layers added to function'));
 
-    });  
+    });
+    
+  program 
+    .command('createAlias')
+    .description('Create alias function for each Lamda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ca, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.createAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('updateAlias')
+    .description('Update alias function for each Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ua, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.updateAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('deleteAlias')
+    .description('Delete alias from Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .option('-da, --aliasName <aliasName>')
+    .action(async(funcName) => {
+
+      await lambda.deleteAlias(funcName); 
+
+    });
 }
 
 
