@@ -16,6 +16,7 @@ API.getGatewayInfo = async () => {
     .then(data => console.log(data))
     .catch(err => console.log(err));
 };
+
 API.putMethod = async () => {
 
   const params = {

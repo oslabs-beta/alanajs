@@ -61,5 +61,9 @@ router.get('/createLayer', zipController.zip, s3Controller.sendFile, lambdaContr
   res.status(200).json('Lambda layer created'); 
 }); 
 
+// router.get('/createAlias', lambdaController.updateFunction ,lambdaController.createAlias ,(req,res) => {
+//   res.status(200).json('Alias created');
+// });
+
 
 export default router;

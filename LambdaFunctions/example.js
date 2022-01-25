@@ -3,13 +3,13 @@
 import url from 'url';
 
 exports.handler = (event) => {
-   
+  //can we get verion fourteen????  
   const website = 'https://www.yahoo.com';
   const a = url.parse(website, true);
 
   // show that it can have node dependencies
   console.log(a.host);
-
+  
   //version2? 
 
   // show that we can get info from the input payload

@@ -13,7 +13,10 @@ import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+<<<<<<< HEAD
 import API from '../methods/gateway.js';
+=======
+>>>>>>> d896b7b7f9a32bdd3efeaaa93039fc2376c1db9e
 
 dotenv.config();
 
@@ -115,7 +118,7 @@ program
     const awsKey = `AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}\n`;
     const awsRegion = `AWS_REGION=${region}\n`;
     const bucket = `S3BUCKETNAME=${options.bucket}\n`;
-    const role = `ARNNAME=${options.role}\n`;
+    const role = `ROLENAME=${options.role}\n`;
 
     // check if .env exists
     if (!fs.existsSync(path.resolve('./.env'))) {
@@ -150,7 +153,7 @@ program
 
           // if there are options
           if (region !== 'us-east-1') delete data_array[textLine('AWS_REGION')];
-          if (options.role && options.role !== defaultRole) delete data_array[textLine('ARNNAME')];
+          if (options.role && options.role !== defaultRole) delete data_array[textLine('ROLENAME')];
           if (options.bucket && options.bucket !== defaultBucket) delete data_array[textLine('S3BUCKETNAME')];
 
           // turn back into string while ignoring whitespaces
@@ -173,9 +176,9 @@ program
           data += awsRegion;
           console.log('AWS Region Added');
         }
-        if (!data.includes('ARNNAME')) {
+        if (!data.includes('ROLENAME')) {
           data += role;
-          console.log('ARN Name Added');
+          console.log('Role Added');
         }
         if (!data.includes('S3BUCKETNAME')) {
           data += bucket;
@@ -188,12 +191,12 @@ program
             console.log(error(`Error in modifying ./.env : ${err.message}`));
             return;
           });
-
+       
         console.log('.env Modified');
       
       });
     }
-
+ //*********** */ below console.log is showing up before .env modified. should show after
     console.log(finished('AWS configuration finished!'));
   }
 
@@ -225,19 +228,29 @@ if (hasCredentials) {
     .option('-la, --layerArr [layer arrays]', 'add AWS lambda layer to function')
     .description('zip and create lambda function')
     .action(async (funcName, fileArr, options) => {
-    // console.log('in create');
-      if (funcName && fileArr.length === 0) {
-        console.log(error('File names are required if a function is to be created'));
-        return;
-      }
-      options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
-      options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
       
       // do not create a function if the options don't exist
-      if (!funcName && fileArr.length === 0) return;
+      if (Object.keys(options).length === 0){
+        if (funcName && fileArr.length === 0) {
+          console.log(error('File name(s) are required if a function is to be created'));
+          return;
+        }
+        if (!funcName && fileArr.length === 0) {
+          console.log(error('Function name and file name(s) are required if a function is to be created'));
+          return;
+        }
+      }
+
+      options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
+      options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
+
+      console.log('Compressing files...'); 
       const outputZip = await archiver.zipFiles(fileArr);
+      console.log('Sending files to s3...');
       const response = await s3.sendFile(outputZip, options.bucket);
+      console.log('Sending files to AWS Lambda...'); 
       if (response) lambda.createFunction(outputZip, funcName, options);
+      console.log(finished('Request completed: AWS Lambda function created'));
     });
 
   program
@@ -261,6 +274,7 @@ if (hasCredentials) {
     .description('delete lambda function')
     .action( (funcName, qualifier) => {
       lambda.deleteFunction(funcName, qualifier);
+      console.log(finished('Request complete: AWS Lambda function deleted')); 
     });
 
   program
@@ -268,12 +282,18 @@ if (hasCredentials) {
     .argument('<funcName>')
     .argument('<fileArr...>')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
+    .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr, options) => {
+      console.log('options obj',options)
       const outputZip = `${fileArr}.zip`;
+      console.log('Compressing updated files...'); 
       await archiver.zipFiles(fileArr);
+      console.log('Sending files to s3...');
       await s3.sendFile(outputZip);
+      console.log('Sending files to AWS Lambda...');
       lambda.updateFunction(outputZip, funcName, options);
+      console.log(finished('Request complete: AWS Lambda function updated')); 
     });
 
   program
@@ -334,6 +354,7 @@ if (hasCredentials) {
     .option('-v, --version <version number>', 'the version of the AWS Lambda function being invoked. Must exist')
     .action(async (funcName, params, options) => {
       lambda.invoke(funcName, params, options);
+      console.log(finished('Request complete: Lambda function invoked'));
     });
 
   program 
@@ -348,10 +369,16 @@ if (hasCredentials) {
         return; 
       }
       const outputZip = `${fileArr}.zip`;
-      await zip.zipFiles(fileArr);
+      console.log('Compressing layer files...'); 
+      await archiver.zipFiles(fileArr);
+      
+      console.log('Sending files to S3...');
       await s3.sendFile(outputZip);
+      
+      console.log('Sending files to AWS Lambda...');
       await lambda.createLambdaLayer(layerName, outputZip); 
-
+      
+      console.log(finished('Request complete: Lambda layers created'));
     }
     );  
 
@@ -369,8 +396,9 @@ if (hasCredentials) {
         console.log(error('funcName, layerName, and layerVersion are required fields')); 
         return; 
       }
-
+      console.log('Sending request to AWS Lambda...'); 
       await lambda.addLayerToFunc(funcName, layerArr); 
+      console.log(finished('Request complete: Lambda layers added to function'));
 
     });  
 
@@ -395,6 +423,41 @@ if (hasCredentials) {
       //putMethodResponse
       //addPermission
       //deployGateway
+    });
+    
+  program 
+    .command('createAlias')
+    .description('Create alias function for each Lamda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ca, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.createAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('updateAlias')
+    .description('Update alias function for each Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .argument('<version>', 'version of function to point')
+    .option('-ua, --aliasName <aliasName>')
+    .action(async(funcName,version) => {
+
+      await lambda.updateAlias(funcName,version); 
+
+    });
+
+  program 
+    .command('deleteAlias')
+    .description('Delete alias from Lambda function')
+    .argument('<funcName>', 'name of function to append')
+    .option('-da, --aliasName <aliasName>')
+    .action(async(funcName) => {
+
+      await lambda.deleteAlias(funcName); 
+
     });
 }
 
