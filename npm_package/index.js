@@ -69,7 +69,11 @@ alana.deleteFunction = async (funcName) => {
   console.log('Lambda function has been deleted'); 
 }; 
 
-
+/**
+ * @FunctionName: createLambdaLayer
+ * @Description: creates AWS Lambda layer
+ * @input: params object that contains array of files and layer name, qualifier
+ */
 alana.createLambdaLayer = async (params, qualifier) => {
   const {fileArr, layerName} = params; 
   console.log('alana.deleteFunction invoked'); 
@@ -79,6 +83,9 @@ alana.createLambdaLayer = async (params, qualifier) => {
   console.log('Lambda layer has been created'); 
 }; 
 
+/**
+ * @Function
+ */
 alana.invoke = async (funcName, params) => {
   console.log('alana.invoke invoked');
   await lambda.invoke(funcName);
