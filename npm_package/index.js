@@ -55,10 +55,24 @@ alana.createLambdaLayer = async (params) => {
 }; 
 
 alana.createAlias = async (params) => {
+  const {funcName, version} = params; 
+  console.log('alana.createAlias invoked');
+  await lambda.createAlias(funcName, version);
+  console.log('Lambda Alias function has been created');
+};
+
+alana.updateAlias = async (params) => {
+  const {funcName, version} = params; 
+  console.log('alana.createAlias invoked');
+  await lambda.updateAlias(funcName, version);
+  console.log('Lambda Alias function has been updated');
+};
+
+alana.deleteAlias = async (params) => {
   const {funcName} = params; 
-  console.log('alana.updateFunction invoked');
-  await lambda.funcName(funcName);
-  console.log('Alias has been updated');
+  console.log('alana.createAlias invoked');
+  await lambda.deleteAlias(funcName);
+  console.log('Lambda Alias function has been deleted');
 };
 
 alana.invoke = async (funcName, params) => {

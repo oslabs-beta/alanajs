@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateAliasCommand, DeleteAliasCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -178,8 +178,8 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
   if (options.description) params.Description = options.description;
 
   // send the update function command
-  console.log("Param are", params);
-  const data = await lambdaClient.send(new UpdateFunctionCodeCommand(params))
+  console.log('Param are', params);
+  await lambdaClient.send(new UpdateFunctionCodeCommand(params))
 
     .then(data => {
       console.log(data);
@@ -189,7 +189,6 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
       console.log(error('Error in lambda updateFunctionCode:', err.message)); 
       return err;
     });
-  return data;
 };
 
 // FuncName: deleteFunction
@@ -239,19 +238,61 @@ lambda.createLambdaLayer = async (outputZip, layerName) => {
 
 //FunctionVersion: Func Version that alias invoked
 //name: Name of the Alias
-lambda.createAlias = async(funcName) => {
-  console.log(' using lambdaController.addAlias');
-
-  console.log('funcName', funcName); 
+lambda.createAlias = async(funcName, version) => {
+  console.log(' using lambdaController.addAlias');  
+   
   // params for lambda command
   const params = {
     FunctionName: funcName,
-    FunctionVersion : response.version,
+    FunctionVersion : version,
     Name: 'aliasName'
   };
   console.log(params);
   // send the new alias 
   await lambdaClient.send(new CreateAliasCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log(error('Error in lambda updateFunctionCode:', err.message)); 
+      return err;
+    });
+};
+
+lambda.updateAlias = async(funcName, version) => {
+  console.log(' using lambdaController.addAlias');  
+   
+  // params for lambda command
+  const params = {
+    FunctionName: funcName,
+    FunctionVersion : version,
+    Name: 'aliasName'
+  };
+  console.log(params);
+  // send the new alias 
+  await lambdaClient.send(new UpdateAliasCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log(error('Error in lambda updateFunctionCode:', err.message)); 
+      return err;
+    });
+};
+
+lambda.deleteAlias = async(funcName) => {
+  console.log(' using lambdaController.addAlias');  
+   
+  // params for lambda command
+  const params = {
+    FunctionName: funcName,
+    Name: 'aliasName'
+  };
+  console.log(params);
+  // send the new alias 
+  await lambdaClient.send(new DeleteAliasCommand(params))
     .then(data => {
       console.log(data);
       return data;
