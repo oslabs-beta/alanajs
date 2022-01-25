@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, UpdateFunctionConfigurationCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -113,10 +113,14 @@ lambda.invoke = (funcName, params, options) => {
 
 lambda.createFunction = async(outputZip, funcName, options) => {
   // destructure and set defaults to options if not included;
+<<<<<<< HEAD
   const {bucket = AwsBucket, description = undefined, publish = false} = options;
+=======
+  const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
+>>>>>>> ed616f0e7451088ccd4d716baeb9860027106e13
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
-
+  
   // parameters for lambda command
   const params = { 
     Code: {S3Bucket: bucket, S3Key: outputZip },
@@ -124,9 +128,21 @@ lambda.createFunction = async(outputZip, funcName, options) => {
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
     Role: 'arn:aws:iam::122194345396:role/lambda-role',
-    Description: description,
-    Publish: publish
+    Description: description, 
+    Publish: publish,
+    Layers: layerArr
   };
+
+  const layerConfig = [];
+  if(layerArr){
+    
+    for (let i = 0; i < layerArr.length; i++){
+      const layerName = layerArr[i].layerName;
+      const layerVersion = layerArr[i].layerVersion;
+      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+    }
+    if(layerConfig.length > 0) params.Layers = layerConfig;
+  }
 
   //sends a command via lambdaClient to create a function
 
@@ -153,7 +169,7 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
   // destructure options
   const {bucket = AwsBucket, publish = false } = options;
 
-  console.log('    using lambdaController.updateFunction'); 
+  console.log('    using lambda.updateFunction'); 
   console.log('funcName', funcName); 
   // params for lambda command
   const params = {
@@ -206,5 +222,52 @@ lambda.deleteFunction = async (funcName, qualifier) => {
     });
 };
 
+
+lambda.createLambdaLayer = async (layerName, outputZip) => {
+  console.log(' using lambda.addLambdaLayers'); 
+
+  const params = { 
+    Content: {S3Bucket: AwsBucket, S3Key: outputZip},
+    LayerName: layerName
+  };
+  console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
+  await lambdaClient.send(new PublishLayerVersionCommand(params))
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda PublishLayerVersionCommand: ', err); 
+    }); 
+};
+
+lambda.addLayerToFunc = async (funcName, layerArr) => {
+  console.log('using lambda.addLayerToFunc'); 
+
+  console.log('the layerArr is ', layerArr); 
+
+  const params = {
+    FunctionName : funcName
+  };
+
+  const layerConfig = [];
+  if(layerArr){
+    
+    for (let i = 0; i < layerArr.length; i++){
+      const layerName = layerArr[i].layerName;
+      const layerVersion = layerArr[i].layerVersion;
+      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+    }
+    if(layerConfig.length > 0) params.Layers = layerConfig;
+    console.log(params.Layers)
+  }
+
+  await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 
+    .then(data => {
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda updateFunctionConfigurationCommand: ', err); 
+    }); 
+};
 
 export default lambda;

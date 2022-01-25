@@ -83,7 +83,8 @@ s3.createBucket = async (bucketName = AwsBucket) => {
 // outputZip - a string representing the zip file that needs to be sent to S3
 //
 s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
-  console.log(starting(`Sending the file "${outputZip}" to the AWS S3 Bucket "${bucketName}"`));
+ 
+  console.log(starting(`Sending the file "${outputZip} to the AWS S3 Bucket "${bucketName}"`));
   // creates a file stream of the zip file
   const fileStream = fs.createReadStream(outputZip);
   
@@ -96,7 +97,8 @@ s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
     Body: fileStream,
   };
   console.log(params);
-  await s3Client.send(new PutObjectCommand(params))
+
+  const data = await s3Client.send(new PutObjectCommand(params))
     .then(data => {
       // console.log(data);
       console.log(finished('  Finished sending file.\n'));
@@ -107,7 +109,9 @@ s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
       console.log(error(`Error sending file to the S3 bucket : ${err.message}`));
       return;
     });
+  return data; 
 };
+
 
 
 s3.deleteBucket = async (bucketName) => {
