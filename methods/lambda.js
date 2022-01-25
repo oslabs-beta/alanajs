@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, UpdateFunctionConfigurationCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, UpdateFunctionConfigurationCommand, GetFunctionConfigurationCommand, AddPermissionCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -254,7 +254,7 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
       layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
     }
     if(layerConfig.length > 0) params.Layers = layerConfig;
-    console.log(params.Layers)
+    console.log(params.Layers);
   }
 
   await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 
@@ -263,6 +263,40 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
     })
     .catch(err => {
       console.log('Error in lambda updateFunctionConfigurationCommand: ', err); 
+    }); 
+};
+
+lambda.getFuncConfig = async (funcName) => {
+  const params = {
+    FunctionName: funcName
+  };
+
+  await lambdaClient.send(new GetFunctionConfigurationCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda getFunctionConfigurationCommand: ', err.message); 
+    }); 
+};
+
+lambda.addPermission = async (funcName) => {
+  const params = {
+    Action: 'lambda:InvokeFunction',
+    FunctionName: funcName,
+    Principal: 'apigateway.amazonaws.com',
+    SourceArn: 'arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/*/',
+    StatementId: funcName + Date.now().toString()
+  };
+
+  await lambdaClient.send(new AddPermissionCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda addPermission: ', err.message); 
     }); 
 };
 

@@ -12,7 +12,7 @@ API.createGateway = async () => {
 };
 
 API.getGatewayInfo = async () => {
-  const data = await apiGateway.send(new GetRestApiCommand({restApiId: 'razmirg6cb'}))
+  const data = await apiGateway.send(new GetRestApiCommand({restApiId: 'f27d3ia9kj'}))
     .then(data => console.log(data))
     .catch(err => console.log(err));
 };
@@ -20,7 +20,7 @@ API.putMethod = async () => {
 
   const params = {
     authorizationType: 'none',
-    httpMethod: 'GET',
+    httpMethod: 'ANY',
     resourceId: 'cz8qpoa5sd', 
     restApiId: 'razmirg6cb'
   };
@@ -50,19 +50,19 @@ API.deployGateway = async () => {
 };
 
 API.getResources = async () => {
-  const data = await apiGateway.send(new GetResourcesCommand({restApiId: 'razmirg6cb'}))
+  const data = await apiGateway.send(new GetResourcesCommand({restApiId: 'rtxnzf25g4'}))
     .then(data => console.log(data))
     .catch(err => console.log(err));
 };
 
 API.putIntegration = async() => {
   const params = {
-    httpMethod: 'GET',
-    integrationHttpMethod: 'GET',
+    httpMethod: 'ANY',
+    integrationHttpMethod: 'ANY',
     resourceId: 'cz8qpoa5sd', 
     restApiId: 'razmirg6cb',
     type: 'AWS',
-    uri: 'arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:122194345396:function:hello1/invocations'
+    uri: 'arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:122194345396:function:testLambda/invocations'
   };
   const data = await apiGateway.send(new PutIntegrationCommand(params))
     .then(data => console.log(data))
@@ -72,8 +72,8 @@ API.putIntegration = async() => {
 API.getIntegration = async() => {
   const params = {
     httpMethod: 'ANY', 
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb'
+    resourceId: 'rj12bjsqol', 
+    restApiId: 'rtxnzf25g4'
   };
   const data = await apiGateway.send(new GetIntegrationCommand(params))
     .then(data => console.log(data))
@@ -82,8 +82,8 @@ API.getIntegration = async() => {
 
 API.putIntegrationResponse = async() => {
   const params = {
-    httpMethod: 'GET',
-    integrationHttpMethod: 'GET',
+    httpMethod: 'ANY',
+    integrationHttpMethod: 'ANY',
     resourceId: 'cz8qpoa5sd', 
     restApiId: 'razmirg6cb',
     responseTemplates: {},
@@ -108,8 +108,8 @@ API.getIntegrationResponse = async() => {
 
 API.putMethodResponse = async() => {
   const params = {
-    httpMethod: 'GET',
-    integrationHttpMethod: 'GET',
+    httpMethod: 'ANY',
+    integrationHttpMethod: 'ANY',
     resourceId: 'cz8qpoa5sd', 
     restApiId: 'razmirg6cb',
     responseModels: { 'application/json': 'Empty' },

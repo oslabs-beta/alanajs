@@ -13,7 +13,7 @@ import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
-import { verify } from 'crypto';
+import API from '../methods/gateway.js';
 
 dotenv.config();
 
@@ -373,6 +373,29 @@ if (hasCredentials) {
       await lambda.addLayerToFunc(funcName, layerArr); 
 
     });  
+
+  program
+    .command('API')
+    .action(async () => {
+      // API.putMethod();
+      // API.putIntegration();
+      // API.putIntegrationResponse();
+      // API.putMethodResponse();
+      // lambda.addPermission('testLambda');
+      // API.deployGateway();
+      
+
+
+      //createGateway - need gateway resource name
+      //create role with gateway permissions - need to copy from existing role
+      //getResources - to get default route resource name
+      //putMethod - to add to route resouce
+      //putIntegration
+      //putIntegrationResponse
+      //putMethodResponse
+      //addPermission
+      //deployGateway
+    });
 }
 
 
