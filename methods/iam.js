@@ -20,14 +20,12 @@ iam.getRoleList = async () => {
   return data.Roles;
 };
 
-// FuncName: verifyRole
-// Description: ASYNC. This will check to see if a role in aws exists
-// input:
-// roleName - a string containing the role name
-//
-// output:
-// boolean if the role exists
-//
+/**
+* @FuncName: verifyRole
+* @Description: ASYNC. This will check to see if a role in aws exists
+* @input:roleName - a string containing the role name
+* @output: boolean -if the role exists
+ */
 iam.verifyRole = async (roleName = AwsRole) => {
   console.log(starting(`Verifying the AWS Role named ${roleName}`));
 
@@ -43,11 +41,11 @@ iam.verifyRole = async (roleName = AwsRole) => {
   return false;
 };
 
-// FuncName: createRole
-// Description: ASYNC. This will create a role in aws for the user to invoke lambda functions
-// input:
-// roleName - a string containing the role name
-//
+/**  
+*  @FuncName: createRole
+*  @Description: ASYNC. This will create a role in aws for the user to invoke lambda functions
+*  @input: roleName - a string containing the role name
+*/
 iam.createRole = async (roleName = AwsRole) => {
   console.log(starting(`Creating a new AWS Role named ${roleName}`));
   
@@ -87,6 +85,12 @@ iam.createRole = async (roleName = AwsRole) => {
     });
 
 };
+
+/**  
+*  @FuncName: deleteRole
+*  @Description: ASYNC. This will delete a role in AWS
+*  @input: roleName - a string containing the role name
+*/
 
 iam.deleteRole = async (role) => {
   const params = {

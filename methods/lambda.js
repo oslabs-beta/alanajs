@@ -10,12 +10,12 @@ const lambdaClient = new LambdaClient(AwsParams);
 
 const lambda = {};
 
-// FuncName: getFuncList
-// Description: this will send a command to get all the function names
-//
-// output:
-// functionList - an array of function names as strings
-//
+/**
+* @FuncName: getFuncList
+* @Description: this will send a command to get all the function names
+* @output: functionList - an array of function names as strings
+*
+ */
 lambda.getFuncList = async () => {
   console.log(starting('Getting a list of Lambda functions'));
   // console.log('this is awsParams',awsParams);
@@ -54,17 +54,16 @@ lambda.getFuncVersionList = async (funcName) => {
       console.log(error('Error in getting the Lambda Function versions: ', err.message));
     });
   if (!data) return;
-  console.log(data);
+  console.log('this is funcversionlist data',data);
 };
-// FuncName: invoke
-// Description: this will invoke the function specified in the parameters
-// input:
-// uncName - the name of the function
-// params - the parameters for the function
-//
-// output:
-// the invocation response
-// 
+
+/** 
+* @FuncName: invoke
+* @Description: this will invoke the function specified in the parameters
+* @input:FuncName - the name of the function
+* @params - the parameters for the function
+* @output: the invocation response 
+*/
 lambda.invoke = (funcName, params, options) => {
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, publish = false} = options;
@@ -104,14 +103,14 @@ lambda.invoke = (funcName, params, options) => {
     });
 };
 
-// FuncName: createFunction
-// Description: this will create the function based on the file given in the S3 bucket
-// input:
-// funcName - the name of the function, user input 
-// outputZip - the file name of the zip file
-//
-
-lambda.createFunction = async(outputZip, funcName, options = {}) => {
+/**
+* @FuncName: createFunction
+* @Description: this will create the function based on the file given in the S3 bucket
+* @input:funcName - the name of the function, user input, :outputZip - the file name of the zip file
+*
+ */
+lambda.createFunction = async(outputZip, funcName, options={}) => {
+  console.log('createFunction outputZip',outputZip, 'funcName',funcName)
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
@@ -154,14 +153,13 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
 
 };
 
-// FuncName: updateFunction
-// Description: this will update the function FunctionName based on the file given in the S3 bucket
-// input:
-// funcName - the name of the function, user input 
-// outputZip - the file name of the zip file
-//
+/** 
+* @FuncName: updateFunction
+* @Description: this will update the function FunctionName based on the file given in the S3 bucket
+* @input:funcName - the name of the function, user input :outputZip - the file name of the zip file
+*/
 
-lambda.updateFunction = async (outputZip, funcName, options) => {
+lambda.updateFunction = async (outputZip, funcName, options={}) => {
   // destructure options
   const {bucket = AwsBucket, publish = false } = options;
 
@@ -175,8 +173,6 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
     S3Key: path.basename(outputZip)
   };
   
-  if (options.description) params.Description = options.description;
-
   // send the update function command
 
   await lambdaClient.send(new UpdateFunctionCodeCommand(params))
@@ -191,11 +187,11 @@ lambda.updateFunction = async (outputZip, funcName, options) => {
     });
 };
 
-// FuncName: deleteFunction
-// Description: this will delete the function FunctionName
-// input:
-// funcName - the name of the function, user input 
-//
+/** 
+* @FuncName: deleteFunction
+* @Description: this will delete the function with the specified name 
+* @input: funcName - the name of the function, user input 
+*/
 lambda.deleteFunction = async (funcName, qualifier) => {
   qualifier ? console.log(starting(`Deleting the function "${funcName}" with the Qualifier "${qualifier}"`)) : console.log(starting(`Deleting the function "${funcName}"`));
 
@@ -219,6 +215,12 @@ lambda.deleteFunction = async (funcName, qualifier) => {
 };
 
 
+
+/**
+ * @FuncName: createLambdaLayer
+ * @Description: this will create a lambda layer with the specified name and code 
+ * @Input: layername - string that contains layername, :outputZip - file name of the zip file
+ */
 lambda.createLambdaLayer = async (layerName, outputZip) => {
   console.log(' using lambda.addLambdaLayers'); 
 
@@ -236,10 +238,14 @@ lambda.createLambdaLayer = async (layerName, outputZip) => {
     }); 
 };
 
+/**
+ * @FuncName: addLayerToFunc
+ * @Description: this will add AWS lambda layers to specified function 
+ * @input: funcName - string that contains name of function, 
+ */
+
 lambda.addLayerToFunc = async (funcName, layerArr) => {
   console.log('using lambda.addLayerToFunc'); 
-
-  console.log('the layerArr is ', layerArr); 
 
   const params = {
     FunctionName : funcName
@@ -254,7 +260,6 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
       layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
     }
     if(layerConfig.length > 0) params.Layers = layerConfig;
-    console.log(params.Layers)
   }
 
   await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 

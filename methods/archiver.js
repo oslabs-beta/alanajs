@@ -16,7 +16,6 @@ archiveZip.zipFiles = async (fileArr, outputFileName) => {
 
   // if there's no specified output filename, set it to index
   if (!outputFileName) outputFileName = index;
-  console.log('this is outputFileName',outputFileName );
 
   console.log(starting(`Adding the following files/directories to the output zip file "${outputFileName}.zip" : `));
   console.log(code(`     ${index}`));
@@ -54,9 +53,9 @@ archiveZip.zipFiles = async (fileArr, outputFileName) => {
   
   const data = await finishedStreamWriting(output, {}, (err) => {
     if(err){
-      console.log(err);
+      console.log(error('Error while zipping up file: ', err));
     } else{
-      console.log('output finished writing');
+      console.log('Output finished writing');
     }
   });
 
