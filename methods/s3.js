@@ -60,17 +60,21 @@ s3.createBucket = async (bucketName = AwsBucket) => {
     Bucket: bucketName,
   };
   
-  console.log(params);
   // create the bucket
+  // Amazon S3 bucket names must be unique globally. If you get the "Bucket name already exists" or "BucketAlreadyExists" error, 
+  // then you must use a different bucket name to create the bucket. These error messages indicate that another AWS account owns a bucket with the same name.
   const response = await s3Client.send(new CreateBucketCommand(params))
     .then(data => {
       // do something with data
       console.log(finished('  Finished creating a new S3 bucket.\n'));
-      console.log(data);
+      // console.log(data);
       return data;
     })
     .catch(err => {
       console.log(error(`There's an error with creating an S3 bucket: ${err.message}`));
+      if (err.message === `BucketAlreadyExists`) {
+        console.log(error('Amazon S3 bucket names must be unique globally. If you get the "Bucket name already exists" or "BucketAlreadyExists" error, then you must use a different bucket name to create the bucket. These error messages indicate that another AWS account owns a bucket with the same name.'));
+      }
       return;
     });
 
@@ -96,7 +100,6 @@ s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
     // Add the required 'Body' parameter
     Body: fileStream,
   };
-  console.log(params);
 
   const data = await s3Client.send(new PutObjectCommand(params))
     .then(data => {

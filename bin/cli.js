@@ -18,7 +18,7 @@ dotenv.config();
 
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
 const defaultRole = 'defaultLambdaRole2';
-const defaultBucket = 'defaultbucketny30';
+const defaultBucket = 'defaultbucketny30'; //need random string alana+number or Date.now
 
 console.clear();
 
@@ -100,14 +100,15 @@ program
     const iamClient = new IAMClient(awsParams);
     
     console.log('Verifying AWS credentials...');
-    await iamClient.send(new GetPolicyCommand({PolicyArn:LambdaBasicARN}))
+    const response = await iamClient.send(new GetPolicyCommand({PolicyArn:LambdaBasicARN}))
       .catch(error => {
         // error handling.
         console.log(fail(error.message));
         return;
       });
+    if (!response) return;
     
-    console.log('AWS Credentials verified.');
+    console.log(finished('AWS Credentials verified.'));
     
     // create the aws credentials string
     const awsID = `AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}\n`;
@@ -125,12 +126,14 @@ program
           return;
         });
       console.log('.env Created');
+      console.log(finished('AWS configuration finished!'));
     }
     else {
 
       //if it does exist, check for check for aws credentials
       fs.readFile('./.env', 'utf8', async (err, data) => {
 
+        
         // if there is an option to update
         if (options.update) {
           // split up the data into an array
@@ -189,11 +192,12 @@ program
           });
        
         console.log('.env Modified');
+        console.log(finished('AWS configuration finished!'));
       
       });
     }
- //*********** */ below console.log is showing up before .env modified. should show after
-    console.log(finished('AWS configuration finished!'));
+    //*********** */ below console.log is showing up before .env modified. should show after
+    // console.log(finished('AWS configuration finished!'));
   }
 
   );
@@ -221,7 +225,7 @@ if (hasCredentials) {
     .option('-b, --bucket <bucket name>', 'specifying a different S3 bucket name than default')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
-    .option('-la, --layerArr [layer arrays]', 'add AWS lambda layer to function')
+    .option('-l, --layerName <layer name>', 'create AWS lambda layer')
     .description('zip and create lambda function')
     .action(async (funcName, fileArr, options) => {
       
@@ -239,13 +243,18 @@ if (hasCredentials) {
 
       options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
       options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
+      
+      if(options.layerName){
+        
+      }
 
-      console.log('Compressing files...'); 
+      // ami create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
+      console.log(starting('Compressing files...')); 
       const outputZip = await archiver.zipFiles(fileArr);
-      console.log('Sending files to s3...');
+      console.log(starting('Sending files to s3...'));
       const response = await s3.sendFile(outputZip, options.bucket);
-      console.log('Sending files to AWS Lambda...'); 
-      if (response) lambda.createFunction(outputZip, funcName, options);
+      console.log(starting('Sending files to AWS Lambda...')); 
+      if (response) await lambda.createFunction(outputZip, funcName, options);
       console.log(finished('Request completed: AWS Lambda function created'));
     });
 
@@ -262,11 +271,11 @@ if (hasCredentials) {
       console.table(list);
     });
 
-  //node cli delete <funcname>
   program
     .command('delete')
     .argument('<funcName>')
     .argument('[qualifier]')
+    .option('-n, --aliasName <aliasName>')
     .description('delete lambda function')
     .action( (funcName, qualifier) => {
       lambda.deleteFunction(funcName, qualifier);
@@ -281,13 +290,13 @@ if (hasCredentials) {
     .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr, options) => {
-      console.log('options obj',options)
+      // console.log('options obj',options)
       const outputZip = `${fileArr}.zip`;
-      console.log('Compressing updated files...'); 
+      console.log(starting('Compressing updated files...')); 
       await archiver.zipFiles(fileArr);
-      console.log('Sending files to s3...');
+      console.log(starting('Sending files to s3...'));
       await s3.sendFile(outputZip);
-      console.log('Sending files to AWS Lambda...');
+      console.log(starting('Sending files to AWS Lambda...'));
       lambda.updateFunction(outputZip, funcName, options);
       console.log(finished('Request complete: AWS Lambda function updated')); 
     });
@@ -297,7 +306,7 @@ if (hasCredentials) {
     .description('interact with AWS Roles')
     .argument('[awsRole]', 'the name of the AWS role', defaultRole)
     .option('-r, --role <role name>', 'the name of the AWS role')
-    .option('-c, --create', 'Create the role if it does not exist')
+    .option('-c, --create', 'Creates role if it does not exist')
     .option('-l, --list', 'List all the roles in AWS')
     .option('--delete', 'delete the specified role')
     .action(async (awsRole, options) => {
@@ -321,11 +330,20 @@ if (hasCredentials) {
     .command('buckets')
     .description('interact with AWS S3 buckets')
     .argument('[s3bucket]', 'the name of the AWS S3 bucket', defaultBucket)
+    //ami buckets amybucket -c
+
+    // Verifying the AWS S3 bucket named "amybucket"
+    // Bucket doesn't exist
+    // Creating an AWS S3 bucket named "amybucket"
+    // There's an error with creating an S3 bucket: BucketAlreadyExists
+
+    // ^^^ above error msg is confusing because it says it doesnt exist, then says bucket already exists
     .option('-b, --bucket <bucket name>', 'S3 bucket name')
     .option('-c, --create', 'Create the bucket if it does not exist')
     .option('-l, --list', 'List all the buckets in S3')
     .option('--delete', 'delete the specified bucket')
     .action(async (s3bucket, options) => {
+      // console.log(await s3.getBucketList());
       if (options.delete) {
         if (s3bucket === defaultBucket) {
           console.log(fail('Cannot delete default bucket. Change default bucket before deleting'));
@@ -365,13 +383,13 @@ if (hasCredentials) {
         return; 
       }
       const outputZip = `${fileArr}.zip`;
-      console.log('Compressing layer files...'); 
+      console.log(starting('Compressing layer files...')); 
       await archiver.zipFiles(fileArr);
       
-      console.log('Sending files to S3...');
+      console.log(starting('Sending files to S3...'));
       await s3.sendFile(outputZip);
       
-      console.log('Sending files to AWS Lambda...');
+      console.log(starting('Sending files to AWS Lambda...'));
       await lambda.createLambdaLayer(layerName, outputZip); 
       
       console.log(finished('Request complete: Lambda layers created'));
@@ -382,8 +400,8 @@ if (hasCredentials) {
     .command('addLayerToFunc')
     .description('adds AWS Lambda Layer to existant function')
     .argument('<funcName>', 'name of function to append')
-    .option('-la, --layerName <layerName>')
-    .option('-lv, --layerVersion <layerVersion>')
+    .option('-l, --layerName <layerName>')
+    .option('-v, --layerVersion <layerVersion>')
     .action(async(funcName, options) => {
 
       const layerArr = [{layerName: options.layerName, layerVersion: options.layerVersion}]; 
@@ -392,46 +410,51 @@ if (hasCredentials) {
         console.log(error('funcName, layerName, and layerVersion are required fields')); 
         return; 
       }
-      console.log('Sending request to AWS Lambda...'); 
+      console.log(starting('Sending request to AWS Lambda...')); 
       await lambda.addLayerToFunc(funcName, layerArr); 
       console.log(finished('Request complete: Lambda layers added to function'));
 
     });
-    
+
   program 
-    .command('createAlias')
+    .command('alias')
     .description('Create alias function for each Lamda function')
     .argument('<funcName>', 'name of function to append')
-    .argument('<version>', 'version of function to point')
-    .option('-ca, --aliasName <aliasName>')
-    .action(async(funcName,version) => {
+    .argument('[version]', 'version of function to point')
+    .option('-c, --create <aliasName>', 'Create the alias name if it does not exist')
+    .option('-u, --update <aliasName>', 'Update the alias name')
+    .option('-d, --delete <aliasName>', 'Delete the alias name')
+    .action(async(funcName,version, options) => {
 
-      await lambda.createAlias(funcName,version); 
+      if (Object.keys(options).length > 1) {
+        console.log(error('Error: Please select 1 option.',options));
+        return;
+      }
+
+      if (options.create){
+        const aliasName = options.create;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.createAlias(funcName,version, aliasName); 
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias created')); 
+      }
+
+      else if (options.update){
+        const aliasName = options.update;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.updateAlias(funcName,version, aliasName); 
+        // console.log(response.$metadata.httpStatusCode === 200)
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias updated')); 
+      }
+
+      else if (options.deleteAlias){
+        const aliasName = options.delete;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.deleteAlias(funcName, aliasName); 
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias deleted'));
+      }
 
     });
 
-  program 
-    .command('updateAlias')
-    .description('Update alias function for each Lambda function')
-    .argument('<funcName>', 'name of function to append')
-    .argument('<version>', 'version of function to point')
-    .option('-ua, --aliasName <aliasName>')
-    .action(async(funcName,version) => {
-
-      await lambda.updateAlias(funcName,version); 
-
-    });
-
-  program 
-    .command('deleteAlias')
-    .description('Delete alias from Lambda function')
-    .argument('<funcName>', 'name of function to append')
-    .option('-da, --aliasName <aliasName>')
-    .action(async(funcName) => {
-
-      await lambda.deleteAlias(funcName); 
-
-    });
 }
 
 
