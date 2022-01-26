@@ -13,6 +13,7 @@ import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import API from '../methods/gateway.js';
 
 dotenv.config();
 
@@ -414,8 +415,9 @@ if (hasCredentials) {
       await lambda.addLayerToFunc(funcName, layerArr); 
       console.log(finished('Request complete: Lambda layers added to function'));
 
-    });
+    });  
 
+    
   program 
     .command('alias')
     .description('Create alias function for each Lamda function')
@@ -430,32 +432,77 @@ if (hasCredentials) {
         console.log(error('Error: Please select 1 option.',options));
         return;
       }
+    if (options.create){
+      const aliasName = options.create;
+      console.log(starting('Sending request to AWS Lambda...'));
+      const response = await lambda.createAlias(funcName,version, aliasName); 
+      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias created')); 
+    }
 
-      if (options.create){
-        const aliasName = options.create;
-        console.log(starting('Sending request to AWS Lambda...'));
-        const response = await lambda.createAlias(funcName,version, aliasName); 
-        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias created')); 
-      }
+    else if (options.update){
+      const aliasName = options.update;
+      console.log(starting('Sending request to AWS Lambda...'));
+      const response = await lambda.updateAlias(funcName,version, aliasName); 
+      // console.log(response.$metadata.httpStatusCode === 200)
+      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias updated')); 
+    }
 
-      else if (options.update){
-        const aliasName = options.update;
-        console.log(starting('Sending request to AWS Lambda...'));
-        const response = await lambda.updateAlias(funcName,version, aliasName); 
-        // console.log(response.$metadata.httpStatusCode === 200)
-        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias updated')); 
-      }
+    else if (options.deleteAlias){
+      const aliasName = options.delete;
+      console.log(starting('Sending request to AWS Lambda...'));
+      const response = await lambda.deleteAlias(funcName, aliasName); 
+      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias deleted'));
+    }
 
-      else if (options.deleteAlias){
-        const aliasName = options.delete;
-        console.log(starting('Sending request to AWS Lambda...'));
-        const response = await lambda.deleteAlias(funcName, aliasName); 
-        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias deleted'));
-      }
+  });
 
-    });
+  program
+    .command('API')
+    .action(async () => {
+      // API.createGateway();
+      // API.putMethod();
+      // lambda.addPermission('testLambda');
+      // API.putIntegration();
+      // API.putIntegrationResponse();
+      // API.putMethodResponse();
+      // API.deployGateway();
+        
+      // lambda.getPolicy('testLambda');
+  
+  
+      //createGateway - need gateway resource id from the return. this is ID in gateway.js
+      //create role with gateway permissions - need to copy from existing role in IAM. I've only done this in the AWS console.
+      //getResources - to get default route resource id. this is resource in gateway.js
+      //putMethod - to add the Method handler from the client
+      //putIntegration - to add the method to integration request. This adds the lambda invocation
+      //putIntegrationResponse - to add the aws integration response from the lambda function
+      //putMethodResponse - connects the integration response to the http method response
+      //addPermission - adds the permission to the lambda function so it can be invoked by the api
+      //deployGateway - not 100% sure but this updates everything in gateway so it can be called from the internet
 
-}
 
-
+});
+  
+  
 program.parse();
+
+// {
+//   "Version": "2012-10-17",
+//   "Id": "default",
+//   "Statement": [
+//     {
+//       "Sid": "testLambda1643158953896",
+//       "Effect": "Allow",
+//       "Principal": {
+//         "Service": "apigateway.amazonaws.com"
+//       },
+//       "Action": "lambda:InvokeFunction",
+//       "Resource": "arn:aws:lambda:us-east-1:122194345396:function:testLambda",
+//       "Condition": {
+//         "ArnLike": {
+//           "AWS:SourceArn": "arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/GET/"
+//         }
+//       }
+//     }
+//   ]
+// }
