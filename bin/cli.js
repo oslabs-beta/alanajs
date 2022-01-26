@@ -244,9 +244,9 @@ if (hasCredentials) {
       options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
       options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
       
-      if(options.layerName){
+      // if(options.layerName){
         
-      }
+      // }
 
       // ami create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
       console.log(starting('Compressing files...')); 
