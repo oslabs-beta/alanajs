@@ -84,35 +84,58 @@ alana.createLambdaLayer = async (params, qualifier) => {
 }; 
 
 /**
- * @Function
+ * @FunctionName: createAlias
+ * @Description: creates Alias for Lambda functions 
+ * @input: params object which includes function name and version 
  */
-alana.createAlias = async (params) => {
+alana.createAlias = async (params, aliasName) => {
   const {funcName, version} = params; 
   console.log('alana.createAlias invoked');
-  await lambda.createAlias(funcName, version);
+  await lambda.createAlias(funcName, version, aliasName);
   console.log('Lambda Alias function has been created');
 };
 
-alana.updateAlias = async (params) => {
+/**
+ * @FunctionName: updateAlias 
+ * @Description: updates Alias for Lambda functions 
+ * @input: params object which includes function name and version 
+ */
+alana.updateAlias = async (params, aliasName) => {
   const {funcName, version} = params; 
   console.log('alana.createAlias invoked');
-  await lambda.updateAlias(funcName, version);
+  await lambda.updateAlias(funcName, version, aliasName);
   console.log('Lambda Alias function has been updated');
 };
 
-alana.deleteAlias = async (params) => {
+/**
+ * @FunctionName: deleteAlias
+ * @Description: deletes Alias for Lambda functions 
+ * @input: params object which includes function name 
+ */
+alana.deleteAlias = async (params, aliasName) => {
   const {funcName} = params; 
   console.log('alana.createAlias invoked');
-  await lambda.deleteAlias(funcName);
+  await lambda.deleteAlias(funcName, aliasName);
   console.log('Lambda Alias function has been deleted');
 };
 
+/**
+ * @FunctionName: invoke 
+ * @Description: invokes Lambda function 
+ * @input: funcName - string that includes name of function : params - object 
+ * @output: result of invoked function 
+ */
 alana.invoke = async (funcName, params) => {
   console.log('alana.invoke invoked');
   await lambda.invoke(funcName);
   console.log('Lambda function has been invoked');
 };
 
+/**
+ * @FunctionName: addLayerToFunc
+ * @Description: adds Lambda layer to Lambda function 
+ * @input: funcName - string that includes name of function: layerArr - array of objects which include name of files and name of layer 
+ */
 alana.addLayerToFunc = async (funcName, layerArr) => {
   console.log('alana.addLayerToFunc invoked'); 
   await lambda.addLayerToFunc(funcName, layerArr); 
