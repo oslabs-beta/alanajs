@@ -298,10 +298,6 @@ lambda.createAlias = async(funcName, version, aliasName = 'aliasName') => {
     });
 };
 
-//does update alias update the version with an existing aliasName?
-//currently ami alias testest3 8 -u AliasTest does not work when Alias5 was created (but does not throw error)
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-kms/interfaces/updatealiascommandinput.html
-//looks like update takes AliasName and TargetkeyId (same for createAlias)
 lambda.updateAlias = async(funcName, version, aliasName) => {
    
   // params for lambda command

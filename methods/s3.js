@@ -72,6 +72,9 @@ s3.createBucket = async (bucketName = AwsBucket) => {
     })
     .catch(err => {
       console.log(error(`There's an error with creating an S3 bucket: ${err.message}`));
+      if (err.message === `BucketAlreadyExists`) {
+        console.log(error('Amazon S3 bucket names must be unique globally. If you get the "Bucket name already exists" or "BucketAlreadyExists" error, then you must use a different bucket name to create the bucket. These error messages indicate that another AWS account owns a bucket with the same name.'));
+      }
       return;
     });
 

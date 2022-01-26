@@ -18,7 +18,7 @@ dotenv.config();
 
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
 const defaultRole = 'defaultLambdaRole2';
-const defaultBucket = 'defaultbucketny30';
+const defaultBucket = 'defaultbucketny30'; //need random string alana+number or Date.now
 
 console.clear();
 
@@ -225,7 +225,7 @@ if (hasCredentials) {
     .option('-b, --bucket <bucket name>', 'specifying a different S3 bucket name than default')
     .option('-d, --description <description text>', 'a description of what the function is supposed to do')
     .option('-p, --publish', 'publish a new version of the Lambda function')
-    .option('-la, --layerArr [layer arrays]', 'add AWS lambda layer to function')
+    .option('-l, --layerName <layer name>', 'create AWS lambda layer')
     .description('zip and create lambda function')
     .action(async (funcName, fileArr, options) => {
       
@@ -243,7 +243,12 @@ if (hasCredentials) {
 
       options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
       options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
+      
+      if(options.layerName){
+        
+      }
 
+      // ami create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
       console.log(starting('Compressing files...')); 
       const outputZip = await archiver.zipFiles(fileArr);
       console.log(starting('Sending files to s3...'));
@@ -270,7 +275,7 @@ if (hasCredentials) {
     .command('delete')
     .argument('<funcName>')
     .argument('[qualifier]')
-    .option('-an, --aliasName <aliasName>')
+    .option('-n, --aliasName <aliasName>')
     .description('delete lambda function')
     .action( (funcName, qualifier) => {
       lambda.deleteFunction(funcName, qualifier);
@@ -326,17 +331,18 @@ if (hasCredentials) {
     .description('interact with AWS S3 buckets')
     .argument('[s3bucket]', 'the name of the AWS S3 bucket', defaultBucket)
     //ami buckets amybucket -c
+
     // Verifying the AWS S3 bucket named "amybucket"
     // Bucket doesn't exist
-  
     // Creating an AWS S3 bucket named "amybucket"
     // There's an error with creating an S3 bucket: BucketAlreadyExists
+
     // ^^^ above error msg is confusing because it says it doesnt exist, then says bucket already exists
     .option('-b, --bucket <bucket name>', 'S3 bucket name')
     .option('-c, --create', 'Create the bucket if it does not exist')
     .option('-l, --list', 'List all the buckets in S3')
     .option('--delete', 'delete the specified bucket')
-    .action(async (s3bucket, options, command) => {
+    .action(async (s3bucket, options) => {
       // console.log(await s3.getBucketList());
       if (options.delete) {
         if (s3bucket === defaultBucket) {
@@ -394,8 +400,8 @@ if (hasCredentials) {
     .command('addLayerToFunc')
     .description('adds AWS Lambda Layer to existant function')
     .argument('<funcName>', 'name of function to append')
-    .option('-la, --layerName <layerName>')
-    .option('-lv, --layerVersion <layerVersion>')
+    .option('-l, --layerName <layerName>')
+    .option('-v, --layerVersion <layerVersion>')
     .action(async(funcName, options) => {
 
       const layerArr = [{layerName: options.layerName, layerVersion: options.layerVersion}]; 
@@ -420,7 +426,6 @@ if (hasCredentials) {
     .option('-d, --delete <aliasName>', 'Delete the alias name')
     .action(async(funcName,version, options) => {
 
-      // console.log(Object.keys(options))
       if (Object.keys(options).length > 1) {
         console.log(error('Error: Please select 1 option.',options));
         return;
