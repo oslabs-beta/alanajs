@@ -1,6 +1,9 @@
 import { APIGateway, APIGatewayClient, CreateRestApiCommand, GetRestApiCommand, CreateDeploymentCommand, GetMethodCommand, PutMethodCommand, GetResourcesCommand, PutIntegrationCommand, GetIntegrationCommand, PutIntegrationResponseCommand, GetIntegrationResponseCommand, PutMethodResponseCommand, GetMethodResponseCommand } from '@aws-sdk/client-api-gateway';
 import { AwsParams } from './util/aws.js';
 
+const id = 'rq92lpnomi';
+const resource = 'nne3795590';
+
 const apiGateway = new APIGatewayClient(AwsParams);
 
 const API = {};
@@ -12,7 +15,7 @@ API.createGateway = async () => {
 };
 
 API.getGatewayInfo = async () => {
-  const data = await apiGateway.send(new GetRestApiCommand({restApiId: 'razmirg6cb'}))
+  const data = await apiGateway.send(new GetRestApiCommand({restApiId: id}))
     .then(data => console.log(data))
     .catch(err => console.log(err));
 };
@@ -22,8 +25,8 @@ API.putMethod = async () => {
   const params = {
     authorizationType: 'none',
     httpMethod: 'GET',
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb'
+    resourceId: resource, 
+    restApiId: id
   };
 
   const data = await apiGateway.send(new PutMethodCommand(params))
@@ -34,9 +37,9 @@ API.putMethod = async () => {
 API.getMethod = async () => {
 
   const params = {
-    httpMethod: 'ANY',
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb'
+    httpMethod: 'GET',
+    resourceId: resource, 
+    restApiId: id
   };
   
   const data = await apiGateway.send(new GetMethodCommand(params))
@@ -51,7 +54,7 @@ API.deployGateway = async () => {
 };
 
 API.getResources = async () => {
-  const data = await apiGateway.send(new GetResourcesCommand({restApiId: 'razmirg6cb'}))
+  const data = await apiGateway.send(new GetResourcesCommand({restApiId: id}))
     .then(data => console.log(data))
     .catch(err => console.log(err));
 };
@@ -60,10 +63,10 @@ API.putIntegration = async() => {
   const params = {
     httpMethod: 'GET',
     integrationHttpMethod: 'GET',
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb',
+    resourceId: resource, 
+    restApiId: id,
     type: 'AWS',
-    uri: 'arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:122194345396:function:hello1/invocations'
+    uri: 'arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:122194345396:function:testLambda/invocations'
   };
   const data = await apiGateway.send(new PutIntegrationCommand(params))
     .then(data => console.log(data))
@@ -72,9 +75,9 @@ API.putIntegration = async() => {
 
 API.getIntegration = async() => {
   const params = {
-    httpMethod: 'ANY', 
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb'
+    httpMethod: 'GET', 
+    resourceId: resource, 
+    restApiId: id
   };
   const data = await apiGateway.send(new GetIntegrationCommand(params))
     .then(data => console.log(data))
@@ -85,8 +88,8 @@ API.putIntegrationResponse = async() => {
   const params = {
     httpMethod: 'GET',
     integrationHttpMethod: 'GET',
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb',
+    resourceId: resource, 
+    restApiId: id,
     responseTemplates: {},
     statusCode: '200'
   };
@@ -97,9 +100,9 @@ API.putIntegrationResponse = async() => {
 
 API.getIntegrationResponse = async() => {
   const params = {
-    httpMethod: 'ANY',
-    resourceId: 'fdudjs', 
-    restApiId: 'razmirg6cb',
+    httpMethod: 'GET',
+    resourceId: resource, 
+    restApiId: id,
     statusCode: '200'
   };
   const data = await apiGateway.send(new GetIntegrationResponseCommand(params))
@@ -111,8 +114,8 @@ API.putMethodResponse = async() => {
   const params = {
     httpMethod: 'GET',
     integrationHttpMethod: 'GET',
-    resourceId: 'cz8qpoa5sd', 
-    restApiId: 'razmirg6cb',
+    resourceId: resource, 
+    restApiId: id,
     responseModels: { 'application/json': 'Empty' },
     statusCode: '200'
   };
@@ -123,9 +126,9 @@ API.putMethodResponse = async() => {
   
 API.getMethodResponse = async() => {
   const params = {
-    httpMethod: 'ANY',
-    resourceId: 'fdudjs', 
-    restApiId: 'razmirg6cb',
+    httpMethod: 'GET',
+    resourceId: resource, 
+    restApiId: id,
     statusCode: '200'
   };
   const data = await apiGateway.send(new GetMethodResponseCommand(params))

@@ -1,4 +1,4 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateFunctionConfigurationCommand, UpdateAliasCommand, DeleteAliasCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateFunctionConfigurationCommand, UpdateAliasCommand, DeleteAliasCommand, GetFunctionConfigurationCommand, AddPermissionCommand, GetPolicyCommand } from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -8,7 +8,6 @@ import { AwsParams, AwsBucket } from './util/aws.js';
 
 // create the lambda client
 const lambdaClient = new LambdaClient(AwsParams);
-
 
 const lambda = {};
 
@@ -161,7 +160,6 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
 */
 
 lambda.updateFunction = async (outputZip, funcName, options = {}) => {
-
   // destructure options
   const {bucket = AwsBucket, publish = true} = options;
   
@@ -339,6 +337,56 @@ lambda.deleteAlias = async(funcName, aliasName = 'aliasName') => {
       console.log(error('Error in lambda updateAliasCommand:', err.message)); 
       return err;
     });
+};
+
+lambda.getFuncConfig = async (funcName) => {
+  const params = {
+    FunctionName: funcName
+  };
+
+  await lambdaClient.send(new GetFunctionConfigurationCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda getFunctionConfigurationCommand: ', err.message); 
+    }); 
+};
+
+lambda.addPermission = async (funcName) => {
+  const params = {
+    Action: 'lambda:InvokeFunction',
+    FunctionName: funcName,
+    Principal: 'apigateway.amazonaws.com',
+    SourceArn: 'arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/GET/',
+    StatementId: funcName + Date.now().toString()
+  };
+
+  await lambdaClient.send(new AddPermissionCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda addPermission: ', err.message); 
+    }); 
+};
+
+lambda.getPolicy = async (funcName, qualifier = undefined) => {
+  const params = {
+    FunctionName: funcName,
+    Qualifier: qualifier
+  };
+
+  await lambdaClient.send(new GetPolicyCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda getPolicy: ', err.message); 
+    }); 
 };
 
 export default lambda;

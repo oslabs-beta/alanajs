@@ -100,7 +100,6 @@ s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
     // Add the required 'Body' parameter
     Body: fileStream,
   };
-
   const data = await s3Client.send(new PutObjectCommand(params))
     .then(data => {
       // console.log(data);
