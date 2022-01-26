@@ -103,6 +103,6 @@ iam.deleteRole = async (role) => {
       return;
     });
   return data;
-}
+};
 
 export default iam;
