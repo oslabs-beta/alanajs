@@ -1,4 +1,5 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateAliasCommand, DeleteAliasCommand, UpdateFunctionConfigurationCommand, GetFunctionConfigurationCommand, AddPermissionCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateAliasCommand, DeleteAliasCommand, UpdateFunctionConfigurationCommand, GetFunctionConfigurationCommand, AddPermissionCommand, GetPolicyCommand } from '@aws-sdk/client-lambda';
+import * as Lambda from '@aws-sdk/client-lambda';
 import path from 'path';
 
 import {starting, error} from './util/chalkColors.js';
@@ -7,8 +8,7 @@ import { version } from 'os';
 import { response } from 'express';
 
 // create the lambda client
-const lambdaClient = new LambdaClient(AwsParams);
-
+const lambdaClient = new Lambda.LambdaClient(AwsParams);
 
 const lambda = {};
 
@@ -108,8 +108,8 @@ lambda.invoke = (funcName, params, options) => {
 * @input:funcName - the name of the function, user input, :outputZip - the file name of the zip file
 *
  */
-lambda.createFunction = async(outputZip, funcName, options={}) => {
-  console.log('createFunction outputZip',outputZip, 'funcName',funcName)
+lambda.createFunction = async(outputZip, funcName, options = {}) => {
+  console.log('createFunction outputZip',outputZip, 'funcName',funcName);
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
@@ -158,7 +158,7 @@ lambda.createFunction = async(outputZip, funcName, options={}) => {
 * @input:funcName - the name of the function, user input :outputZip - the file name of the zip file
 */
 
-lambda.updateFunction = async (outputZip, funcName, options={}) => {
+lambda.updateFunction = async (outputZip, funcName, options = {}) => {
   // destructure options
   console.log('Options....',options);
   const {bucket = AwsBucket, publish = true} = options;
@@ -363,7 +363,7 @@ lambda.addPermission = async (funcName) => {
     Action: 'lambda:InvokeFunction',
     FunctionName: funcName,
     Principal: 'apigateway.amazonaws.com',
-    SourceArn: 'arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/*/',
+    SourceArn: 'arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/GET/',
     StatementId: funcName + Date.now().toString()
   };
 
@@ -374,6 +374,22 @@ lambda.addPermission = async (funcName) => {
     })
     .catch(err => {
       console.log('Error in lambda addPermission: ', err.message); 
+    }); 
+};
+
+lambda.getPolicy = async (funcName, qualifier = undefined) => {
+  const params = {
+    FunctionName: funcName,
+    Qualifier: qualifier
+  };
+
+  await lambdaClient.send(new GetPolicyCommand(params))
+    .then(data => {
+      console.log(data);
+      return data;
+    })
+    .catch(err => {
+      console.log('Error in lambda getPolicy: ', err.message); 
     }); 
 };
 

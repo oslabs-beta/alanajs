@@ -13,10 +13,7 @@ import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
-<<<<<<< HEAD
 import API from '../methods/gateway.js';
-=======
->>>>>>> d896b7b7f9a32bdd3efeaaa93039fc2376c1db9e
 
 dotenv.config();
 
@@ -196,7 +193,7 @@ program
       
       });
     }
- //*********** */ below console.log is showing up before .env modified. should show after
+    //*********** */ below console.log is showing up before .env modified. should show after
     console.log(finished('AWS configuration finished!'));
   }
 
@@ -285,7 +282,7 @@ if (hasCredentials) {
     .option('-p, --publish', 'publish a new version of the Lambda function')
     .description('zip and update lambda function')
     .action(async (funcName, fileArr, options) => {
-      console.log('options obj',options)
+      console.log('options obj',options);
       const outputZip = `${fileArr}.zip`;
       console.log('Compressing updated files...'); 
       await archiver.zipFiles(fileArr);
@@ -402,28 +399,6 @@ if (hasCredentials) {
 
     });  
 
-  program
-    .command('API')
-    .action(async () => {
-      // API.putMethod();
-      // API.putIntegration();
-      // API.putIntegrationResponse();
-      // API.putMethodResponse();
-      // lambda.addPermission('testLambda');
-      // API.deployGateway();
-      
-
-
-      //createGateway - need gateway resource name
-      //create role with gateway permissions - need to copy from existing role
-      //getResources - to get default route resource name
-      //putMethod - to add to route resouce
-      //putIntegration
-      //putIntegrationResponse
-      //putMethodResponse
-      //addPermission
-      //deployGateway
-    });
     
   program 
     .command('createAlias')
@@ -436,7 +411,7 @@ if (hasCredentials) {
       await lambda.createAlias(funcName,version); 
 
     });
-
+    
   program 
     .command('updateAlias')
     .description('Update alias function for each Lambda function')
@@ -444,22 +419,68 @@ if (hasCredentials) {
     .argument('<version>', 'version of function to point')
     .option('-ua, --aliasName <aliasName>')
     .action(async(funcName,version) => {
-
+      
       await lambda.updateAlias(funcName,version); 
-
+      
     });
-
+    
   program 
     .command('deleteAlias')
     .description('Delete alias from Lambda function')
     .argument('<funcName>', 'name of function to append')
     .option('-da, --aliasName <aliasName>')
     .action(async(funcName) => {
-
+      
       await lambda.deleteAlias(funcName); 
+      
+    });
 
+  program
+    .command('API')
+    .action(async () => {
+      // API.createGateway();
+      // API.putMethod();
+      // lambda.addPermission('testLambda');
+      // API.putIntegration();
+      // API.putIntegrationResponse();
+      // API.putMethodResponse();
+      // API.deployGateway();
+        
+      // lambda.getPolicy('testLambda');
+  
+  
+      //createGateway - need gateway resource id from the return. this is ID in gateway.js
+      //create role with gateway permissions - need to copy from existing role in IAM. I've only done this in the AWS console.
+      //getResources - to get default route resource id. this is resource in gateway.js
+      //putMethod - to add the Method handler from the client
+      //putIntegration - to add the method to integration request. This adds the lambda invocation
+      //putIntegrationResponse - to add the aws integration response from the lambda function
+      //putMethodResponse - connects the integration response to the http method response
+      //addPermission - adds the permission to the lambda function so it can be invoked by the api
+      //deployGateway - not 100% sure but this updates everything in gateway so it can be called from the internet
     });
 }
-
-
+  
+  
 program.parse();
+
+// {
+//   "Version": "2012-10-17",
+//   "Id": "default",
+//   "Statement": [
+//     {
+//       "Sid": "testLambda1643158953896",
+//       "Effect": "Allow",
+//       "Principal": {
+//         "Service": "apigateway.amazonaws.com"
+//       },
+//       "Action": "lambda:InvokeFunction",
+//       "Resource": "arn:aws:lambda:us-east-1:122194345396:function:testLambda",
+//       "Condition": {
+//         "ArnLike": {
+//           "AWS:SourceArn": "arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/GET/"
+//         }
+//       }
+//     }
+//   ]
+// }
