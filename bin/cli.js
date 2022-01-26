@@ -14,6 +14,9 @@ import zip from '../methods/zip.js';
 import archiver from '../methods/archiver.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
 import API from '../methods/gateway.js';
+import HTTPApi from '../methods/gatewayv2.js';
+import getHTTPApi from '../methods/getGatewayv2.js';
+
 
 dotenv.config();
 
@@ -244,10 +247,6 @@ if (hasCredentials) {
 
       options.role ? await verifyRole((options.role || funcName || AwsRole), true) : await verifyRole(AwsRole, true);
       options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
-      
-      if(options.layerName){
-        
-      }
 
       // ami create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
       console.log(starting('Compressing files...')); 
@@ -333,10 +332,10 @@ if (hasCredentials) {
     .argument('[s3bucket]', 'the name of the AWS S3 bucket', defaultBucket)
     //ami buckets amybucket -c
 
-    // Verifying the AWS S3 bucket named "amybucket"
-    // Bucket doesn't exist
-    // Creating an AWS S3 bucket named "amybucket"
-    // There's an error with creating an S3 bucket: BucketAlreadyExists
+  // Verifying the AWS S3 bucket named "amybucket"
+  // Bucket doesn't exist
+  // Creating an AWS S3 bucket named "amybucket"
+  // There's an error with creating an S3 bucket: BucketAlreadyExists
 
     // ^^^ above error msg is confusing because it says it doesnt exist, then says bucket already exists
     .option('-b, --bucket <bucket name>', 'S3 bucket name')
@@ -432,56 +431,80 @@ if (hasCredentials) {
         console.log(error('Error: Please select 1 option.',options));
         return;
       }
-    if (options.create){
-      const aliasName = options.create;
-      console.log(starting('Sending request to AWS Lambda...'));
-      const response = await lambda.createAlias(funcName,version, aliasName); 
-      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias created')); 
-    }
+      if (options.create){
+        const aliasName = options.create;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.createAlias(funcName,version, aliasName); 
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias created')); 
+      }
 
-    else if (options.update){
-      const aliasName = options.update;
-      console.log(starting('Sending request to AWS Lambda...'));
-      const response = await lambda.updateAlias(funcName,version, aliasName); 
-      // console.log(response.$metadata.httpStatusCode === 200)
-      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias updated')); 
-    }
+      else if (options.update){
+        const aliasName = options.update;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.updateAlias(funcName,version, aliasName); 
+        // console.log(response.$metadata.httpStatusCode === 200)
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias updated')); 
+      }
 
-    else if (options.deleteAlias){
-      const aliasName = options.delete;
-      console.log(starting('Sending request to AWS Lambda...'));
-      const response = await lambda.deleteAlias(funcName, aliasName); 
-      if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias deleted'));
-    }
+      else if (options.deleteAlias){
+        const aliasName = options.delete;
+        console.log(starting('Sending request to AWS Lambda...'));
+        const response = await lambda.deleteAlias(funcName, aliasName); 
+        if (response.$metadata.httpStatusCode === 200) console.log(finished('Request complete: Alias deleted'));
+      }
 
-  });
+    });
 
+  // under development
   program
     .command('API')
     .action(async () => {
-      // API.createGateway();
-      // API.putMethod();
-      // lambda.addPermission('testLambda');
-      // API.putIntegration();
-      // API.putIntegrationResponse();
-      // API.putMethodResponse();
-      // API.deployGateway();
-        
-      // lambda.getPolicy('testLambda');
-  
-  
-      //createGateway - need gateway resource id from the return. this is ID in gateway.js
-      //create role with gateway permissions - need to copy from existing role in IAM. I've only done this in the AWS console.
-      //getResources - to get default route resource id. this is resource in gateway.js
-      //putMethod - to add the Method handler from the client
-      //putIntegration - to add the method to integration request. This adds the lambda invocation
-      //putIntegrationResponse - to add the aws integration response from the lambda function
-      //putMethodResponse - connects the integration response to the http method response
-      //addPermission - adds the permission to the lambda function so it can be invoked by the api
-      //deployGateway - not 100% sure but this updates everything in gateway so it can be called from the internet
+      const getParams = {
+        apiId: '92bwj2pi0c',
+        routeId: 'pw3cvvf',
+        integrationId: '79m6t9f',
+        integrationResponseId: '',
+      };
+
+      const route = '/';
+      const integrationid = 'j6zyc8u';
+
+      const params = {
+        apiId: '590kmb6j21',
+        name: 'testsdkapi2',
+        description: 'this is a test api using sdk',
+        routeKey: 'GET ' + route,
+        integrationUri: 'arn:aws:lambda:us-east-1:122194345396:function:Eser',
+        integrationId: integrationid,
+        target:'integrations/' + integrationid,
+        deploymentId: 'kp44ul'
+      };
+
+      // getHTTPApi.getApi(getParams);
+      // getHTTPApi.getIntegrations(getParams);
+      // getHTTPApi.getRoute(getParams);
+
+      // HTTPApi.createApi(params);
+      // HTTPApi.createIntegration(params);
+      // HTTPApi.createRoute(params);
+      // lambda.addPermission('Eser', params.apiId, '/*/GET' + route);
+      // HTTPApi.createDeployment(params);
+      // HTTPApi.createStage(params);
+
+      // order of operations to linking lambda to api
+      // creat the api. Get the apiId from the data returned
+      // create an integration for lambda to be called. get the integrationId from the data returned
+      // create the route for teh api and attach the integration
+      // create a deployment. get the deploymentId
+      // create a stage.
+      // look at it online
+
+      
 
 
-});
+    });
+
+}
   
   
 program.parse();
