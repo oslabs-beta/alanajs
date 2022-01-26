@@ -9,11 +9,11 @@ const alana = {};
  * @FunctionName: getFuncList
  * @Description: Displays table of lambda functions 
  */
-alana.getFuncList = () => {
+alana.getFuncList = async () => {
   console.log('alana.getFuncList invoked'); 
-  const functionList = lambda.getFuncList();
-  console.table(functionList);
+  const functionList = await lambda.getFuncList();
   console.log('Finished getting Lambda function list');
+  return functionList;
 };
 
 /**
@@ -21,11 +21,12 @@ alana.getFuncList = () => {
  * @Description: Displays table of function versions 
  * @input: string that contains function name
  */
-alana.getFuncVersions = (funcName) => {
+alana.getFuncVersions = async (funcName) => {
   console.log('alana.getFuncVersions invoked'); 
-  const versionList = lambda.getFuncVersions(funcName);
+  const versionList = await lambda.getFuncVersionList(funcName);
   console.table(versionList);
   console.log('Finished getting Lambda function versions');
+  return versionList;
 };
 
 /**

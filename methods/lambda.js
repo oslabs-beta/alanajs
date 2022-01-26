@@ -56,6 +56,8 @@ lambda.getFuncVersionList = async (funcName) => {
     });
   if (!data) return;
   console.log('this is funcversionlist data',data);
+  // NOT FORMATTED TO A TABLE YET
+  return data;
 };
 
 /** 
