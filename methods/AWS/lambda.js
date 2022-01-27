@@ -1,8 +1,23 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateFunctionConfigurationCommand, UpdateAliasCommand, DeleteAliasCommand, GetFunctionConfigurationCommand, AddPermissionCommand, GetPolicyCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, 
+  ListFunctionsCommand, 
+  CreateFunctionCommand, 
+  InvokeCommand, 
+  UpdateFunctionCodeCommand, 
+  DeleteFunctionCommand, 
+  ListVersionsByFunctionCommand, 
+  PublishLayerVersionCommand, 
+  CreateAliasCommand, 
+  UpdateFunctionConfigurationCommand, 
+  UpdateAliasCommand, 
+  DeleteAliasCommand, 
+  GetFunctionConfigurationCommand, 
+  AddPermissionCommand, 
+  GetPolicyCommand } from '@aws-sdk/client-lambda';
+
 import path from 'path';
 
-import {starting, error} from './util/chalkColors.js';
-import { AwsParams, AwsBucket } from './util/aws.js';
+import {starting, error} from '../util/chalkColors.js';
+import { AwsParams, AwsBucket } from '../util/aws.js';
 // import { version } from 'os';
 // import { response } from 'express';
 

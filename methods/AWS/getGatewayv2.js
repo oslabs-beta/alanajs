@@ -1,5 +1,5 @@
 import { ApiGatewayV2Client, GetApiCommand, GetRouteCommand, GetIntegrationsCommand, GetIntegrationResponsesCommand} from '@aws-sdk/client-apigatewayv2';
-import { AwsParams } from './util/aws.js';
+import { AwsParams } from '../util/aws.js';
 
 
 const apiGateway = new ApiGatewayV2Client(AwsParams);

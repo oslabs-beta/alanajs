@@ -1,7 +1,7 @@
-import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, GetRoleCommand, ListRolesCommand, DeleteRoleCommand } from '@aws-sdk/client-iam';
-import { AwsParams, AwsRole, BasicPolicy, LambdaBasicARN } from './util/aws.js';
+import { IAMClient, CreateRoleCommand, AttachRolePolicyCommand, ListRolesCommand, DeleteRoleCommand } from '@aws-sdk/client-iam';
+import { AwsParams, AwsRole, BasicPolicy, LambdaBasicARN } from '../util/aws.js';
 
-import { starting, code, error, finished } from './util/chalkColors.js';
+import { starting, code, error, finished } from '../util/chalkColors.js';
 
 // create the lambda client
 const iamClient = new IAMClient(AwsParams);

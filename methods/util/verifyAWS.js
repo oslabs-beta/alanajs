@@ -1,7 +1,7 @@
 import { IAMClient, GetPolicyCommand } from '@aws-sdk/client-iam';
 
-import iam from '../iam.js';
-import s3 from '../s3.js';
+import iam from '../AWS/iam.js';
+import s3 from '../AWS/s3.js';
 import { LambdaBasicARN } from './aws.js';
 import {starting, finished, fail} from './chalkColors.js';
 
