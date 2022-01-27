@@ -83,7 +83,7 @@ iam.createRole = async (roleName = AwsRole) => {
       console.log(error(`Error while assigning policy to the new AWS role: ${err.message}`));
       return;
     });
-
+    
 };
 
 /**  

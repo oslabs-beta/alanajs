@@ -5,10 +5,10 @@ import {writeFile, appendFile} from 'fs/promises';
 import {AwsBucket, AwsParams, AwsRole } from './aws.js';
 import { intro, starting, error, fail, finished, code } from './chalkColors.js';
 import {checkConnection} from './verifyAWS.js';
-import {defaultRegion, defaultRole, defaultBucket} from './default.js';
+import {startingBucket, startingRegion, startingRole} from './default.js';
 
 
-async function init (id, key, region = defaultRegion, role = defaultRole, bucket = defaultBucket, update) {
+async function init (id, key, region = startingRegion, role = startingRole, bucket = startingBucket, update) {
   // check if .gitignore exists
   if (!fs.existsSync(path.resolve('./.gitignore'))) {
 
@@ -45,7 +45,7 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
   const awsKey = `AWS_SECRET_ACCESS_KEY=${key}\n`;
   const awsRegion = `AWS_REGION=${region}\n`;
   const s3Bucket = `S3BUCKETNAME=${bucket}\n`;
-  const awsRole = `ARNNAME=${role}\n`;
+  const awsRole = `ROLENAME=${role}\n`;
 
   // check if .env exists
   if (!fs.existsSync(path.resolve('./.env'))) {
@@ -80,9 +80,9 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
         delete data_array[textLine('AWS_SECRET_ACCESS_KEY')];
 
         // if there are options
-        if (region !== defaultRegion) delete data_array[textLine('AWS_REGION')];
-        if (role && role !== defaultRole) delete data_array[textLine('ARNNAME')];
-        if (bucket && bucket !== defaultBucket) delete data_array[textLine('S3BUCKETNAME')];
+        if (region !== startingRegion) delete data_array[textLine('AWS_REGION')];
+        if (role && role !== startingRole) delete data_array[textLine('ROLENAME')];
+        if (bucket && bucket !== startingBucket) delete data_array[textLine('S3BUCKETNAME')];
 
         // turn back into string while ignoring whitespaces
         data = '';
@@ -104,9 +104,9 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
         data += awsRegion;
         console.log('AWS Region Added');
       }
-      if (!data.includes('ARNNAME')) {
+      if (!data.includes('ROLENAME')) {
         data += awsRole;
-        console.log('ARN Name Added');
+        console.log('Role Name Added');
       }
       if (!data.includes('S3BUCKETNAME')) {
         data += s3Bucket;
@@ -120,7 +120,7 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
           return;
         });
 
-      console.log('.env Modified');
+      console.log('.env finished!');
       console.log(finished('AWS configuration finished!'));
     });
   }

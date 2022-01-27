@@ -147,7 +147,7 @@ alana.getGatewayRestInfo = async() => {
   console.log('alana.getGatewayRestInfo'); 
   await API.getGatewayInfo(); 
 
-}
+};
 
 
 export default alana;

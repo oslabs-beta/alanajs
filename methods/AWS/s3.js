@@ -87,7 +87,7 @@ s3.createBucket = async (bucketName = AwsBucket) => {
 // outputZip - a string representing the zip file that needs to be sent to S3
 //
 s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
- 
+  console.log('s3 this is the bucketName that should be same as process.env', bucketName);
   console.log(starting(`Sending the file "${outputZip}" to the AWS S3 Bucket "${bucketName}"`));
   // creates a file stream of the zip file
   const fileStream = fs.createReadStream(outputZip);
