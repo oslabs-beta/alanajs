@@ -479,10 +479,11 @@ if (hasCredentials) {
       //putMethodResponse - connects the integration response to the http method response
       //addPermission - adds the permission to the lambda function so it can be invoked by the api
       //deployGateway - not 100% sure but this updates everything in gateway so it can be called from the internet
-
+      
 
 });
   
+
   
 program.parse();
 
