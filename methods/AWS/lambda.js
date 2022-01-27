@@ -16,8 +16,8 @@ import { LambdaClient,
 
 import path from 'path';
 
-import {starting, error} from '../util/chalkColors.js';
 import { AwsParams, AwsBucket } from '../util/aws.js';
+import { intro, starting, error, fail, finished, code } from '../util/chalkColors.js';
 // import { version } from 'os';
 // import { response } from 'express';
 
@@ -156,7 +156,7 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
 
   //sends a command via lambdaClient to create a function
 
-  await lambdaClient.send(new CreateFunctionCommand(params))
+  return await lambdaClient.send(new CreateFunctionCommand(params))
     .then(data => {
       console.log('  Finished creating the function in Lambda.\n');   
       return data;
@@ -165,7 +165,6 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
       console.log(error('\n  Error in lambda CreateFunctionCommand: ', err.message));
       return err;
     });
-
 };
 
 /** 
@@ -189,8 +188,7 @@ lambda.updateFunction = async (outputZip, funcName, options = {}) => {
   };
   
   // send the update function command
-  await lambdaClient.send(new UpdateFunctionCodeCommand(params))
-
+  const data = await lambdaClient.send(new UpdateFunctionCodeCommand(params))
     .then(data => {
       // console.log(data);
       return data;
@@ -199,6 +197,7 @@ lambda.updateFunction = async (outputZip, funcName, options = {}) => {
       console.log(error('Error in lambda updateFunctionCode:', err.message)); 
       return err;
     });
+  return data;
 };
 
 /** 
@@ -217,7 +216,7 @@ lambda.deleteFunction = async (funcName, qualifier) => {
   //qualifier: optional version to delete
   if(qualifier) params.Qualifier = qualifier;
   
-  await lambdaClient.send(new DeleteFunctionCommand(params))
+  return await lambdaClient.send(new DeleteFunctionCommand(params))
     .then(data => {
       // console.log(data);   
       return data;
@@ -239,11 +238,11 @@ lambda.createLambdaLayer = async (layerName, outputZip) => {
   console.log(' using lambda.addLambdaLayers'); 
 
   const params = { 
-    Content: {S3Bucket: 'testbucketny30', S3Key: outputZip},
+    Content: {S3Bucket: AwsBucket, S3Key: outputZip},
     LayerName: layerName
   };
-  console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
-  await lambdaClient.send(new PublishLayerVersionCommand(params))
+  // console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
+  return await lambdaClient.send(new PublishLayerVersionCommand(params))
     .then(data => {
       return data;
     })
@@ -278,7 +277,7 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
     console.log(params.Layers);
   }
 
-  await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 
+  return await lambdaClient.send(new UpdateFunctionConfigurationCommand(params)) 
     .then(data => {
       return data;
     })
@@ -286,9 +285,6 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
       console.log('Error in lambda updateFunctionConfigurationCommand: ', err); 
     }); 
 };
-// *********************8
-
-
 
 //FunctionVersion: Func Version that alias invoked
 //name: Name of the Alias
@@ -378,7 +374,7 @@ lambda.addPermission = async (funcName, apiId, route) => {
     SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}${route}`
   };
 
-  await lambdaClient.send(new AddPermissionCommand(params))
+  return await lambdaClient.send(new AddPermissionCommand(params))
     .then(data => {
       console.log(data);
       return data;

@@ -163,7 +163,7 @@ if (hasCredentials) {
     .command('createLayer')
     .description('creates an AWS Lambda layer')
     .argument('<layerName>', 'name of the created layer')
-    .argument('<fileArr>', 'files to be converted into a Lambda layer')
+    .argument('<fileArr...>', 'files to be converted into a Lambda layer')
     .action(async(layerName, fileArr) => {
       await layers.create(layerName, fileArr);
     });  
@@ -193,6 +193,7 @@ if (hasCredentials) {
         console.log(error('Error: Please select 1 option.',options));
         return;
       }
+    
       await aliases(funcName, version, options);
 
     });

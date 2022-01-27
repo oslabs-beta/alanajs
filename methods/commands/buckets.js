@@ -1,7 +1,7 @@
 import s3 from '../AWS/s3.js';
-import { AwsBucket } from '../methods/util/aws.js';
-import { verifyBucket } from '../util/verifyAWS';
-import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import { AwsBucket } from '../util/aws.js';
+import { verifyBucket } from '../util/verifyAWS.js';
+import { intro, starting, error, fail, finished, code } from '../util/chalkColors.js';
 
 const buckets = async (s3bucket, options) => {
   // console.log(await s3.getBucketList());

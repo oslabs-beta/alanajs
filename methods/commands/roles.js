@@ -1,7 +1,7 @@
-import iam from '../methods/AWS/iam.js';
-import { AwsRole } from '../methods/util/aws.js';
-import { verifyRole } from '../util/verifyAWS';
-import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import iam from '../AWS/iam.js';
+import { AwsRole } from '../util/aws.js';
+import { verifyRole } from '../util/verifyAWS.js';
+import { intro, starting, error, fail, finished, code } from '..//util/chalkColors.js';
 
 const roles = async (role, options) => {
   if (options.delete) {
