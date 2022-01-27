@@ -2,6 +2,7 @@ import lambda from '../methods/lambda.js';
 import s3 from '../methods/s3.js';
 import zip from '../methods/zip.js';
 import archiver from '../methods/zip.js';
+import API from '../methods/gateway.js';
 
 const alana = {}; 
 
@@ -142,4 +143,12 @@ alana.addLayerToFunc = async (funcName, layerArr) => {
   await lambda.addLayerToFunc(funcName, layerArr); 
   console.log('Lambda layer added to function'); 
 };
+
+alana.getGatewayRestInfo = async() => {
+  console.log('alana.getGatewayRestInfo'); 
+  await API.getGatewayInfo(); 
+
+}
+
+
 export default alana;

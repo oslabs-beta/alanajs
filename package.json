@@ -1,6 +1,11 @@
 {
   "name": "alanajs",
-  "keywords": ["AWS", "lambda", "sdk", "cli"],
+  "keywords": [
+    "AWS",
+    "lambda",
+    "sdk",
+    "cli"
+  ],
   "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
   "version": "0.0.1",
   "description": "",
