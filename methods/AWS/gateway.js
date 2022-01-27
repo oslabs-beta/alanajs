@@ -24,7 +24,7 @@
 
 
 import { APIGateway, APIGatewayClient, CreateRestApiCommand, GetRestApiCommand, CreateDeploymentCommand, GetMethodCommand, PutMethodCommand, GetResourcesCommand, PutIntegrationCommand, GetIntegrationCommand, PutIntegrationResponseCommand, GetIntegrationResponseCommand, PutMethodResponseCommand, GetMethodResponseCommand } from '@aws-sdk/client-api-gateway';
-import { AwsParams } from './util/aws.js';
+import { AwsParams } from '../util/aws.js';
 
 const id = 'rq92lpnomi';
 const resource = 'nne3795590';

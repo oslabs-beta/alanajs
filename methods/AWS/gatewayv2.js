@@ -1,13 +1,13 @@
 
 import { ApiGatewayV2Client, CreateApiCommand, CreateRouteCommand, CreateIntegrationCommand, CreateStageCommand, CreateDeploymentCommand } from '@aws-sdk/client-apigatewayv2';
-import { AwsParams } from './util/aws.js';
+import { AwsParams } from '../util/aws.js';
 
 
 const apiGateway = new ApiGatewayV2Client(AwsParams);
 
-const HTTPApi = {};
+const api = {};
 
-HTTPApi.createApi = async (params) => {
+api.createApi = async (params) => {
   const awsParams = {
     Name: params.name,
     ProtocolType: 'HTTP',
@@ -20,7 +20,7 @@ HTTPApi.createApi = async (params) => {
   return data;
 };
 
-HTTPApi.createRoute = async (params) => {
+api.createRoute = async (params) => {
   const awsParams = {
     ApiId: params.apiId,
     RouteKey: params.routeKey,
@@ -33,7 +33,7 @@ HTTPApi.createRoute = async (params) => {
   return data;
 };
 
-HTTPApi.createIntegration = async (params) => {
+api.createIntegration = async (params) => {
   const awsParams = {
     ApiId: params.apiId,
     IntegrationMethod: 'POST',
@@ -50,7 +50,7 @@ HTTPApi.createIntegration = async (params) => {
   return data;
 };
 
-HTTPApi.createDeployment = async (params) => {
+api.createDeployment = async (params) => {
   const awsParams = {
     ApiId: params.apiId,
   };
@@ -62,7 +62,7 @@ HTTPApi.createDeployment = async (params) => {
   return data;
 };
 
-HTTPApi.createStage = async (params) => {
+api.createStage = async (params) => {
   const awsParams = {
     ApiId: params.apiId,
     StageName: '1',
@@ -77,4 +77,4 @@ HTTPApi.createStage = async (params) => {
   return data;
 };
 
-export default HTTPApi;
+export default api;

@@ -2,8 +2,8 @@ import { S3Client, PutObjectCommand, CreateBucketCommand, GetBucketAclCommand, L
 import path from 'path';
 import fs from 'fs';
 
-import {AwsParams, AwsBucket} from './util/aws.js';
-import { starting, code, error, finished } from './util/chalkColors.js';
+import {AwsParams, AwsBucket} from '../util/aws.js';
+import { starting, code, error, finished } from '../util/chalkColors.js';
 
 // create the s3 client
 const s3Client = new S3Client(AwsParams);

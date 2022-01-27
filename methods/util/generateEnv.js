@@ -9,7 +9,7 @@ import {defaultRegion, defaultRole, defaultBucket} from './default.js';
 
 
 async function init (id, key, region = defaultRegion, role = defaultRole, bucket = defaultBucket, update) {
-// check if .gitignore exists
+  // check if .gitignore exists
   if (!fs.existsSync(path.resolve('./.gitignore'))) {
 
     // if it doesn't exist, create it with .env
@@ -56,6 +56,7 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
         return;
       });
     console.log('.env Created');
+    console.log(finished('AWS configuration finished!'));
   }
   else {
 
@@ -120,11 +121,9 @@ async function init (id, key, region = defaultRegion, role = defaultRole, bucket
         });
 
       console.log('.env Modified');
-    
+      console.log(finished('AWS configuration finished!'));
     });
   }
-
-  console.log(finished('AWS configuration finished!'));
 }
 
 export default init;
