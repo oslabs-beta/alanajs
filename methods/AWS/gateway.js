@@ -1,5 +1,30 @@
+// ORDER OF OPERATIONS FOR REST API
+//   API.createGateway();
+//   API.putMethod();
+//   lambda.addPermission('testLambda'); // there's currently a permissions issue we can't resolve. Generating through SDK or lambda console don't work but when creating through api console it does.
+//   API.putIntegration();
+//   API.putIntegrationResponse();
+//   API.putMethodResponse();
+//   API.deployGateway();
+        
+//   lambda.getPolicy('testLambda');
+  
+  
+//   createGateway - need gateway resource id from the return. this is ID in gateway.js
+//   create role with gateway permissions - need to copy from existing role in IAM. I've only done this in the AWS console.
+//   getResources - to get default route resource id. this is resource in gateway.js
+//   putMethod - to add the Method handler from the client
+//   putIntegration - to add the method to integration request. This adds the lambda invocation
+//   putIntegrationResponse - to add the aws integration response from the lambda function
+//   putMethodResponse - connects the integration response to the http method response
+//   addPermission - adds the permission to the lambda function so it can be invoked by the api
+//   deployGateway - not 100% sure but this updates everything in gateway so it can be called from the internet
+
+
+
+
 import { APIGateway, APIGatewayClient, CreateRestApiCommand, GetRestApiCommand, CreateDeploymentCommand, GetMethodCommand, PutMethodCommand, GetResourcesCommand, PutIntegrationCommand, GetIntegrationCommand, PutIntegrationResponseCommand, GetIntegrationResponseCommand, PutMethodResponseCommand, GetMethodResponseCommand } from '@aws-sdk/client-api-gateway';
-import { AwsParams } from './util/aws.js';
+import { AwsParams } from '../util/aws.js';
 
 const id = 'rq92lpnomi';
 const resource = 'nne3795590';

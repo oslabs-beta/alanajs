@@ -1,8 +1,23 @@
-import { LambdaClient, ListFunctionsCommand, CreateFunctionCommand, InvokeCommand, UpdateFunctionCodeCommand, DeleteFunctionCommand, ListVersionsByFunctionCommand, PublishLayerVersionCommand, CreateAliasCommand, FunctionVersion, UpdateFunctionConfigurationCommand, UpdateAliasCommand, DeleteAliasCommand, GetFunctionConfigurationCommand, AddPermissionCommand, GetPolicyCommand } from '@aws-sdk/client-lambda';
+import { LambdaClient, 
+  ListFunctionsCommand, 
+  CreateFunctionCommand, 
+  InvokeCommand, 
+  UpdateFunctionCodeCommand, 
+  DeleteFunctionCommand, 
+  ListVersionsByFunctionCommand, 
+  PublishLayerVersionCommand, 
+  CreateAliasCommand, 
+  UpdateFunctionConfigurationCommand, 
+  UpdateAliasCommand, 
+  DeleteAliasCommand, 
+  GetFunctionConfigurationCommand, 
+  AddPermissionCommand, 
+  GetPolicyCommand } from '@aws-sdk/client-lambda';
+
 import path from 'path';
 
-import {starting, error} from './util/chalkColors.js';
-import { AwsParams, AwsBucket } from './util/aws.js';
+import {starting, error} from '../util/chalkColors.js';
+import { AwsParams, AwsBucket } from '../util/aws.js';
 // import { version } from 'os';
 // import { response } from 'express';
 
@@ -354,13 +369,13 @@ lambda.getFuncConfig = async (funcName) => {
     }); 
 };
 
-lambda.addPermission = async (funcName) => {
+lambda.addPermission = async (funcName, apiId, route) => {
   const params = {
+    StatementId: funcName + Date.now().toString(),
     Action: 'lambda:InvokeFunction',
-    FunctionName: funcName,
+    FunctionName: `arn:aws:lambda:us-east-1:122194345396:function:${funcName}`,
     Principal: 'apigateway.amazonaws.com',
-    SourceArn: 'arn:aws:execute-api:us-east-1:122194345396:razmirg6cb/*/GET/',
-    StatementId: funcName + Date.now().toString()
+    SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}${route}`
   };
 
   await lambdaClient.send(new AddPermissionCommand(params))

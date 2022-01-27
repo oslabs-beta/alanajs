@@ -9,10 +9,10 @@ const credentials = {
 };
 
 // set up AWS region
-const region = process.env.AWS_REGION;
+const AwsRegion = process.env.AWS_REGION;
 
 const AwsParams = {
-  'region': region,
+  'region': AwsRegion,
   'credentials': credentials,
 };
 
@@ -29,13 +29,15 @@ const BasicPolicy = {
     }
   ]
 };
+
+// default ARNs
 const LambdaBasicARN = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole';
 
 //gets the .env bucket name and awsRole
 const AwsBucket = process.env.S3BUCKETNAME;
-const AwsRole = process.env.ARNNAME;
+const AwsRole = process.env.ROLENAME;
 
 
 
 
-export {AwsParams, AwsBucket, AwsRole, BasicPolicy, LambdaBasicARN};
+export {AwsParams, AwsBucket, AwsRegion, AwsRole, BasicPolicy, LambdaBasicARN};

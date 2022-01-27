@@ -3,9 +3,8 @@ import fs, { ReadStream } from 'fs';
 import {writeFile} from 'fs/promises';
 import JSZip from 'jszip';
 // import archiver from 'archiver';
-import {finished as finishedStreamWriting} from 'stream/promises';
 
-import { starting, code, error } from './util/chalkColors.js';
+import { starting, code, error } from './chalkColors.js';
 const zip = {};
 
 
