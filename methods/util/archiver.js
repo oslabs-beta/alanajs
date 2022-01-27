@@ -1,9 +1,9 @@
 import path, {dirname} from 'path';
 import fs, { ReadStream } from 'fs';
 import archiver from 'archiver';
-
-import { starting, code, error, finished } from './util/chalkColors.js';
 import {finished as finishedStreamWriting} from 'stream/promises';
+
+import { starting, code, error, finished } from './chalkColors.js';
 
 const archiveZip = {};
 

@@ -2,8 +2,8 @@ import { S3Client, PutObjectCommand, CreateBucketCommand, GetBucketAclCommand, L
 import path from 'path';
 import fs from 'fs';
 
-import {AwsParams, AwsBucket} from './util/aws.js';
-import { starting, code, error, finished } from './util/chalkColors.js';
+import {AwsParams, AwsBucket} from '../util/aws.js';
+import { starting, code, error, finished } from '../util/chalkColors.js';
 
 // create the s3 client
 const s3Client = new S3Client(AwsParams);
@@ -72,7 +72,7 @@ s3.createBucket = async (bucketName = AwsBucket) => {
     })
     .catch(err => {
       console.log(error(`There's an error with creating an S3 bucket: ${err.message}`));
-      if (err.message === `BucketAlreadyExists`) {
+      if (err.message === 'BucketAlreadyExists') {
         console.log(error('Amazon S3 bucket names must be unique globally. If you get the "Bucket name already exists" or "BucketAlreadyExists" error, then you must use a different bucket name to create the bucket. These error messages indicate that another AWS account owns a bucket with the same name.'));
       }
       return;
