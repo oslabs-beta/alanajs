@@ -81,7 +81,7 @@ lambda.getFuncVersionList = async (funcName) => {
 * @params - the parameters for the function
 * @output: the invocation response 
 */
-lambda.invoke = (funcName, params, options) => {
+lambda.invoke = (funcName, params, options = {}) => {
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, publish = false} = options;
   options.version ? console.log(starting(`Invoking the function "${funcName}" with the Qualifier "${options.version}"`)) : console.log(starting(`Invoking the function "${funcName}"`));

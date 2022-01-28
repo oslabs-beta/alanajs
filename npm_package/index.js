@@ -2,6 +2,8 @@ import lambda from '../methods/AWS/lambda.js';
 import s3 from '../methods/AWS/s3.js';
 import zip from '../methods/util/zip.js';
 import archiveZip from '../methods/util/archiver.js';
+import lambdaFunctions from '../methods/commands/functions.js';
+import layers from '../methods/commands/layers.js';
 
 const alana = {}; 
 
@@ -36,12 +38,8 @@ alana.getFuncVersions = async (funcName) => {
  */
 alana.createFunction = async (params, options = {}) => {
   const {fileArr, funcName} = params; 
-  console.log('alana.createFunc invoked'); 
-  
-  const zipFile = await zip.zipFiles(fileArr); 
-  console.log('zipfile after zipcontroller', zipFile);
-  await s3.sendFile(zipFile); 
-  await lambda.createFunction(zipFile, funcName, options); 
+  console.log('alana.createFunction invoked'); 
+  await lambdaFunctions.create(params.funcName, params.fileArr, options);
   console.log('Lambda function has been created');
 };
 
@@ -77,11 +75,7 @@ alana.deleteFunction = async (funcName) => {
  */
 alana.createLambdaLayer = async (params, qualifier) => {
   const {fileArr, layerName} = params; 
-  console.log('alana.deleteFunction invoked'); 
-  const zipFile = await archiveZip.zipFiles(fileArr); 
-  await s3.sendFile(zipFile); 
-  await lambda.createLambdaLayer(zipFile, layerName); 
-  console.log('Lambda layer has been created'); 
+  await layers.create(layerName, fileArr);
 }; 
 
 /**
@@ -137,9 +131,10 @@ alana.invoke = async (funcName, params) => {
  * @Description: adds Lambda layer to Lambda function 
  * @input: funcName - string that includes name of function: layerArr - array of objects which include name of files and name of layer 
  */
-alana.addLayerToFunc = async (funcName, layerArr) => {
+alana.addLayerToFunction = async (funcName, layer) => {
   console.log('alana.addLayerToFunc invoked'); 
-  await lambda.addLayerToFunc(funcName, layerArr); 
+  await layers.addLayersToFunc(funcName, layer)
+  // await lambda.addLayerToFunc(funcName, layerArr); 
   console.log('Lambda layer added to function'); 
 };
 export default alana;
