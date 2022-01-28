@@ -13,10 +13,9 @@ layers.create = async (layerName, fileArr) => {
   //   console.log(error('both fileArr and layerName are required fields')); 
   //   return; 
   // }
-  const outputZip = `${fileArr}.zip`;
   console.log(starting('Compressing layer files...')); 
-  await archiver.zipFiles(fileArr);
-    
+  const outputZip = await archiver.zipFiles(fileArr);
+
   console.log(starting('Sending files to S3...'));
   await s3.sendFile(outputZip);
     
