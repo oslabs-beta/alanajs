@@ -365,23 +365,31 @@ lambda.getFuncConfig = async (funcName) => {
     }); 
 };
 
-lambda.addPermission = async (funcName, apiId, route) => {
+lambda.addPermission = async (funcName, apiId, method, route) => {
+  console.log(starting(`Adding API permissions to "${funcName}"`));
+  if (method === 'ANY') method = '*';
   const params = {
     StatementId: funcName + Date.now().toString(),
     Action: 'lambda:InvokeFunction',
     FunctionName: `arn:aws:lambda:us-east-1:122194345396:function:${funcName}`,
     Principal: 'apigateway.amazonaws.com',
-    SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}${route}`
+    SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}/*/${method}/`
   };
 
-  return await lambdaClient.send(new AddPermissionCommand(params))
+  if (route) params.SourceArn = params.SourceArn + `${route}`;
+
+  const data = await lambdaClient.send(new AddPermissionCommand(params))
     .then(data => {
-      console.log(data);
+      // console.log(data);
+      console.log(finished('  Finished adding permissions\n'));
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda addPermission: ', err.message); 
-    }); 
+      console.log(error('Error in adding permissions: ', err.message));
+      return;
+    });
+
+  return data;
 };
 
 lambda.getPolicy = async (funcName, qualifier = undefined) => {

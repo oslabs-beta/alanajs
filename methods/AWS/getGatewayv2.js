@@ -42,15 +42,4 @@ getHTTPApi.getIntegrations = async (params) => {
   return data;
 };
 
-getHTTPApi.getIntegrationResponses = async (params) => {
-  const awsParams = {
-    ApiId: params.apiId,
-    IntegrationId: params.integrationId    
-  };
-  const data = await apiGateway.send(new GetIntegrationResponsesCommand(awsParams))
-    .then(data => console.log(data))
-    .catch(err => console.log(err));
-    
-  return data;
-};
 export default getHTTPApi;

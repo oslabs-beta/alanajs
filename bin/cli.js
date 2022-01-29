@@ -200,9 +200,14 @@ if (hasCredentials) {
 
   // under development
   program
-    .command('API')
-    .action(async () => {
-      await apis();
+    .command('api')
+    .argument('<apiName>', 'name of the api')
+    .argument('<method>', 'type of HTTP request used to invoke')
+    .argument('<route>', 'route to establish (use "." for root')
+    .argument('<funcName>', 'the lambdaFunction to invoke from the request')
+    .option('-d, --description <description>', 'the description of the API')
+    .action(async (apiName, method, route, funcName, options) => {
+      await apis(apiName, method, route, funcName, options);
     });
 
 }
