@@ -1,5 +1,4 @@
-
-import { ApiGatewayV2Client, CreateApiCommand, CreateRouteCommand, CreateIntegrationCommand, CreateStageCommand, CreateDeploymentCommand } from '@aws-sdk/client-apigatewayv2';
+import { ApiGatewayV2Client, CreateApiCommand, CreateRouteCommand, CreateIntegrationCommand, CreateStageCommand, CreateDeploymentCommand, UpdateApiCommand, DeleteApiCommand } from '@aws-sdk/client-apigatewayv2';
 import { AwsAccount, AwsParams, AwsRegion } from '../util/aws.js';
 
 
@@ -16,9 +15,10 @@ api.createApi = async (params) => {
   const awsParams = {
     Name: params.Name,
     ProtocolType: 'HTTP',
-    Description: params.Description,
   };
-
+  if (params.Description) awsParams.Description = params.Description;
+  if (params.Version) awsParams.Version = params.Verion;
+  
   const data = await apiGateway.send(new CreateApiCommand(awsParams))
     .then(data => {
       // console.log(data);
@@ -103,13 +103,16 @@ api.createDeployment = async (params) => {
 };
 
 api.createStage = async (params) => {
+
   console.log(starting(`Creating a staged deployment of "${params.Name}"`));
   const awsParams = {
     ApiId: params.ApiId,
-    StageName: '1',
     DeploymentId: params.DeploymentId,
     AutoDeployed: true
   };
+
+  // it will be the user defined stage name or a random 6 character hex string
+  params.StageName ? awsParams.StageName = params.StageName : awsParams.StageName = Math.random().toString(16).slice(2, 6);
 
   const data = await apiGateway.send(new CreateStageCommand(awsParams))
     .then(data => {
@@ -119,6 +122,49 @@ api.createStage = async (params) => {
     })
     .catch(err => {
       console.log(error('Error in creating staged deployment: ', err.message));
+      return;
+    });
+
+  return data;
+};
+
+api.updateApi = async (params) => {
+
+  console.log(starting(`Updating the API "${params.Name}"`));
+  const awsParams = {
+    ApiId: params.ApiId,
+    Name: params.Name,
+    Description: params.Description,
+    Version: params.Version
+  };
+  const data = await apiGateway.send(new UpdateApiCommand(params))
+    .then(data => {
+      // console.log(data);
+      console.log(finished('  Finished updating API\n'));
+      return data;
+    })
+    .catch(err => {
+      console.log(error('Error in updating API: ', err.message));
+      return;
+    });
+
+  return data;
+};
+
+api.deleteApi = async (params) => {
+
+  console.log(starting(`Deleting the API "${params.Name}"`));
+  const awsParams = {
+    ApiId: params.ApiId
+  };
+  const data = await apiGateway.send(new DeleteApiCommand(params))
+    .then(data => {
+      // console.log(data);
+      console.log(finished('  Finished deleting API\n'));
+      return data;
+    })
+    .catch(err => {
+      console.log(error('Error in deleting API: ', err.message));
       return;
     });
 

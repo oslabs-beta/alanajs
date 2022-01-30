@@ -11,8 +11,6 @@ import roles from '../methods/commands/roles.js';
 import buckets from '../methods/commands/buckets.js';
 import apis from '../methods/commands/apis.js';
 
-import getHTTPApi from '../methods/AWS/getGatewayv2.js';
-
 // init
 import init from '../methods/util/generateEnv.js';
 
@@ -99,10 +97,11 @@ if (hasCredentials) {
 
   program
     .command('list')
-    .description('list the lambda function names')
+    .description('list the various items')
+    .option('-F, --functions', 'list all the Lambda functions')
     .option('-f, --function <function name>', 'list a specific function versions')
     .action(async (options) => {
-      await lambdaFunctions.list(options);
+      if (options.functions) await lambdaFunctions.list(options);
     });
 
   program
@@ -188,7 +187,7 @@ if (hasCredentials) {
     .argument('[version]', 'version of function to point')
     .option('-c, --create <aliasName>', 'Create the alias name if it does not exist')
     .option('-u, --update <aliasName>', 'Update the alias name')
-    .option('-d, --delete <aliasName>', 'Delete the alias name')
+    .option('--delete <aliasName>', 'Delete the alias name')
     .action(async(funcName,version, options) => {
 
       if (Object.keys(options).length > 1) {
@@ -200,34 +199,38 @@ if (hasCredentials) {
 
     });
 
-  // under development
   program
     .command('api')
-    .argument('<apiName>', 'name of the api')
-    .argument('<method>', 'type of HTTP request used to invoke')
-    .argument('<route>', 'route to establish (use "." for root')
-    .argument('<funcName>', 'the lambdaFunction to invoke from the request')
+    .description('interact with the APIs')
+    .argument('[apiName]', 'name of the api to get information on. Blank for all')
+    .option('-c, --create', 'create the API named if it doesn\'t exist')
+    .option('-u, --update', 'updates the API')
+    .option('-v, --version <version>', 'specify the version of the api')
     .option('-d, --description <description>', 'the description of the api')
+    .option('--delete', 'delete the api')
     .action(async (apiName, method, route, funcName, options) => {
-      await apis(apiName, method, route, funcName, options);
+      await apis.api(apiName, method, route, funcName, options);
     });
-
+    
+  // under development
   program
-    .command('routes', 'interact with a route on the API of choice.')
+    .command('routes')
+    .description('interact with a route on the API of choice.')
     .argument('<apiName>', 'name of the api')
-    .argument('<method>', 'type of HTTP request used to invoke')
-    .argument('<route>', 'route to establish (use "." for root')
+    .argument('[method]', 'type of HTTP request used to invoke')
+    .argument('[route]', 'route to establish (use "." for root')
     .argument('[funcName]', 'the Lambda function that is invoked on the route')
     .option('-c, --create', 'create the route specified')
     .option('-u, --update', 'update the route specified')
     .option('-d, --description <description>', 'the description of the api')
     .option('--delete', 'delete the specified route')
     .action(async (apiName, method, route, funcName, options) => {
-      
+      await apis.getRoutes(apiName, options);
     });
 
   program
-    .command('deploy', 'deploy the api to a staged name')
+    .command('deploy')
+    .description('deploy the api to a staged name')
     .argument('<apiName>', 'name of the api')
     .argument('<stageName>', 'the name of the stage being deployed')
     .option('-u, --update', )
@@ -238,25 +241,8 @@ if (hasCredentials) {
 
   program
     .command('test')
-    .action(async () => {
-      const output = {};
-      const params = {
-        ApiId: '92bwj2pi0c',
-        IntegrationId: 'gv4bzw0'
-      };
-      const getRoutesResponse = await getHTTPApi.getRoutes(params);
-      const items = getRoutesResponse.Items;
-      for (const item of items) {
-        const integrationParams = {
-          ApiId: params.ApiId,
-          IntegrationId: item.Target.slice(13)
-        };
-        const getIntegrationResponse = await getHTTPApi.getIntegration(integrationParams);
-
-        output[item.RouteKey] = getIntegrationResponse.IntegrationUri.slice(47);
-      }
+    .action(() => {
       
-      console.log(output);
     });
 }
   
