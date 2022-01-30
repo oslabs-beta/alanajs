@@ -80,7 +80,7 @@ const apis = async (apiName, method, route, funcName, options) => {
     outputParams.StageName = createStageResponse.StageName;
   }
 
-  route? console.log(`A ${method} request to ${route}" has been created. See \n`) : console.log(`A ${method} request to root has been created. See \n`);
+  route ? console.log(`A ${method} request to ${route}" has been created. See \n`) : console.log(`A ${method} request to root has been created. See \n`);
   console.log(code(`      ${outputParams.ApiEndpoint}/${outputParams.StageName}/${route}\n`));
 };
 

@@ -11,6 +11,8 @@ import roles from '../methods/commands/roles.js';
 import buckets from '../methods/commands/buckets.js';
 import apis from '../methods/commands/apis.js';
 
+import getHTTPApi from '../methods/AWS/getGatewayv2.js';
+
 // init
 import init from '../methods/util/generateEnv.js';
 
@@ -205,11 +207,57 @@ if (hasCredentials) {
     .argument('<method>', 'type of HTTP request used to invoke')
     .argument('<route>', 'route to establish (use "." for root')
     .argument('<funcName>', 'the lambdaFunction to invoke from the request')
-    .option('-d, --description <description>', 'the description of the API')
+    .option('-d, --description <description>', 'the description of the api')
     .action(async (apiName, method, route, funcName, options) => {
       await apis(apiName, method, route, funcName, options);
     });
 
+  program
+    .command('routes', 'interact with a route on the API of choice.')
+    .argument('<apiName>', 'name of the api')
+    .argument('<method>', 'type of HTTP request used to invoke')
+    .argument('<route>', 'route to establish (use "." for root')
+    .argument('[funcName]', 'the Lambda function that is invoked on the route')
+    .option('-c, --create', 'create the route specified')
+    .option('-u, --update', 'update the route specified')
+    .option('-d, --description <description>', 'the description of the api')
+    .option('--delete', 'delete the specified route')
+    .action(async (apiName, method, route, funcName, options) => {
+      
+    });
+
+  program
+    .command('deploy', 'deploy the api to a staged name')
+    .argument('<apiName>', 'name of the api')
+    .argument('<stageName>', 'the name of the stage being deployed')
+    .option('-u, --update', )
+    .option('-d, --description <description>', 'the description of the stage being deployed')
+    .action(async (apiName, stageName, options) => {
+
+    });
+
+  program
+    .command('test')
+    .action(async () => {
+      const output = {};
+      const params = {
+        ApiId: '92bwj2pi0c',
+        IntegrationId: 'gv4bzw0'
+      };
+      const getRoutesResponse = await getHTTPApi.getRoutes(params);
+      const items = getRoutesResponse.Items;
+      for (const item of items) {
+        const integrationParams = {
+          ApiId: params.ApiId,
+          IntegrationId: item.Target.slice(13)
+        };
+        const getIntegrationResponse = await getHTTPApi.getIntegration(integrationParams);
+
+        output[item.RouteKey] = getIntegrationResponse.IntegrationUri.slice(47);
+      }
+      
+      console.log(output);
+    });
 }
   
 program.parse();
