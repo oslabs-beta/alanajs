@@ -371,9 +371,9 @@ lambda.addPermission = async (funcName, apiId, route) => {
   const params = {
     StatementId: funcName + Date.now().toString(),
     Action: 'lambda:InvokeFunction',
-    FunctionName: `arn:aws:lambda:us-east-1:122194345396:function:${funcName}`,
+    FunctionName: `arn:aws:lambda:${AwsRegion}:${AwsAccount}:function:${funcName}`,
     Principal: 'apigateway.amazonaws.com',
-    SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}/*/*/`
+    SourceArn: `arn:aws:execute-api:${AwsRegion}:${AwsAccount}:${apiId}/*/*/`
   };
 
   if (route) params.SourceArn = params.SourceArn + `${route}`;

@@ -232,17 +232,10 @@ if (hasCredentials) {
     .command('deploy')
     .description('deploy the api to a staged name')
     .argument('<apiName>', 'name of the api')
-    .argument('<stageName>', 'the name of the stage being deployed', 'default')
+    .argument('<stageName>', 'the name of the stage being deployed')
     .option('-d, --description <description>', 'the description of the stage being deployed')
     .action(async (apiName, stageName, options) => {
       await apis.deploy(apiName, stageName, options);
-    });
-
-  program
-    .command('test')
-    .argument('<apiName>')
-    .action((apiName) => {
-
     });
 }
   
