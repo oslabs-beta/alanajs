@@ -11,7 +11,7 @@ import { starting, code, error, finished } from '../util/chalkColors.js';
 
 const methods = ['ANY', 'GET', 'POST', 'PUT', 'PATCH', 'HEAD', 'DELETE', 'OPTIONS'];
 
-const verifyMethods = (method) => {
+const verifyMethod = (method) => {
   method = method.toUpperCase();
   if (!methods.includes(method)) {
     console.log(error('The request method specified is an invalid HTTP request. The only valid requests are: '));
@@ -94,7 +94,7 @@ apis.api = async (apiName, options) => {
 };
 apis.create = async (apiName, method, route, funcName, options) => {
   // verify that method type is accurate
-  method = verifyMethods(method);
+  method = verifyMethod(method);
   if (!method) return;
 
   // verify route. Set route to main route if it's '.'
@@ -168,7 +168,8 @@ apis.getRoutes = async (apiName) => {
 
   // get all the routes
   const getRoutesResponse = await getApi.getRoutes(params);
-  
+
+  console.log(getRoutesResponse);
   // iterate over the routes
   for (const item of getRoutesResponse.Items) {
     // get the itegration IDs
@@ -194,4 +195,46 @@ apis.getRoutes = async (apiName) => {
   // output the routes 
   console.table(output);
 };
+
+
+apis.test = async (apiName, method, route, funcName, options) => {
+  // verify that method type is accurate
+  method = verifyMethod(method);
+  if (!method) return;
+
+  // get api id
+  const apiId = await getApiId(apiName);
+  if (!apiId) return;
+  
+  const params = {
+    ApiId: apiId
+  };
+
+  // get methods and then the specific integration
+  const routeKey = method.toUpperCase() + ' /' + route;
+  console.log(routeKey);
+  const routes = await getApi.getRoutes(params);
+  
+  for (const item of routes.Items) {
+    console.log(item);
+    if (item.RouteKey === routeKey) {
+      params.IntegrationId = item.Target.slice(13);
+      break;
+    }
+  }
+
+  // get the information from the integration
+  const integration = await getApi.getIntegration(params);
+  const functinBreak = integration.IntegrationUri.indexOf('function:') + 9;
+  const functionName = integration.IntegrationUri.slice(functinBreak); 
+
+  // remove the permissions from the function
+
+  //add the permission to the new function
+
+  // update the integration with the new function
+
+  return;
+};
+
 export default apis;

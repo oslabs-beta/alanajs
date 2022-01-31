@@ -18,6 +18,7 @@ import init from '../methods/util/generateEnv.js';
 import {AwsBucket, AwsRegion, AwsRole } from '../methods/util/aws.js';
 import {startingBucket, startingRegion, startingRole} from '../methods/util/default.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import api from '../methods/AWS/gatewayv2.js';
 
 // local variables
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
@@ -241,8 +242,9 @@ if (hasCredentials) {
 
   program
     .command('test')
-    .action(() => {
-      
+    .argument('<apiName>')
+    .action((apiName) => {
+      apis.test(apiName, 'get', 'hello');
     });
 }
   

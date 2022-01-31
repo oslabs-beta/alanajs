@@ -78,8 +78,10 @@ getHTTPApi.getIntegration = async (params) => {
   const awsParams = {
     ApiId: params.ApiId,
     IntegrationId: params.IntegrationId,
-    IntegrationResponseId: params.IntegrationResponseId
   };
+
+  console.log(awsParams);
+  
   const data = await apiGateway.send(new GetIntegrationCommand(awsParams))
     .then(data => {
       // console.log(data);
