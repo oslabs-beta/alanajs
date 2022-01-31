@@ -17,7 +17,7 @@ import { LambdaClient,
 
 import path from 'path';
 
-import { AwsParams, AwsBucket, AwsAccount, AwsRegion } from '../util/aws.js';
+import { AwsRole, AwsParams, AwsBucket, AwsAccount, AwsRegion } from '../util/aws.js';
 import { intro, starting, error, fail, finished, code } from '../util/chalkColors.js';
 // import { version } from 'os';
 // import { response } from 'express';
@@ -128,7 +128,7 @@ lambda.invoke = (funcName, params, options = {}) => {
 lambda.createFunction = async(outputZip, funcName, options = {}) => {
   
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
+  const {role = AwsRole, bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
   
@@ -138,7 +138,7 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
     FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
-    Role: `arn:aws:iam::${AwsAccount}:role/lambda-role`,
+    Role: `arn:aws:iam::${AwsAccount}:role/${role}`,
     Description: description, 
     Publish: publish,
     Layers: layerArr
