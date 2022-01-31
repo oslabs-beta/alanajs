@@ -213,7 +213,6 @@ if (hasCredentials) {
       await apis.api(apiName, method, route, funcName, options);
     });
     
-  // under development
   program
     .command('routes')
     .description('interact with a route on the API of choice.')
@@ -226,25 +225,24 @@ if (hasCredentials) {
     .option('-d, --description <description>', 'the description of the api')
     .option('--delete', 'delete the specified route')
     .action(async (apiName, method, route, funcName, options) => {
-      await apis.getRoutes(apiName, options);
+      await apis.routes(apiName, method, route, funcName, options);
     });
 
   program
     .command('deploy')
     .description('deploy the api to a staged name')
     .argument('<apiName>', 'name of the api')
-    .argument('<stageName>', 'the name of the stage being deployed')
-    .option('-u, --update', )
+    .argument('<stageName>', 'the name of the stage being deployed', 'default')
     .option('-d, --description <description>', 'the description of the stage being deployed')
     .action(async (apiName, stageName, options) => {
-
+      await apis.deploy(apiName, stageName, options);
     });
 
   program
     .command('test')
     .argument('<apiName>')
     .action((apiName) => {
-      apis.test(apiName, 'get', 'hello');
+
     });
 }
   

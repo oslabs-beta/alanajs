@@ -35,9 +35,21 @@ const getApiId = async (apiName) => {
 };
 const apis = {};
 
-apis.routes = async(apiName, options) => {
+apis.routes = async(apiName, method, route, funcName, options) => {
   if (!options) await apis.getRoutes(apiName);
-  
+  if (options.create) {
+    await apis.createRoute(apiName, method, route, funcName, options);
+    return;
+  }
+  else if (options.update) {
+    await apis.deleteRoute(apiName, method, route);
+    await apis.createRoute(apiName, method, route, funcName, options);
+    return;
+  }
+  else if (options.delete) {
+    await apis.deleteRoute(apiName, method, route);
+    return;
+  }
 };
 
 apis.createApi = async (apiName, options) => {
@@ -84,7 +96,7 @@ apis.api = async (apiName, options) => {
     return;
   }
   if (options.delete) {
-    api.deleteApi(params);
+    await deleteApi.deleteApi(params);
     return;
   }
   else {
@@ -92,7 +104,7 @@ apis.api = async (apiName, options) => {
     console.log(apiInformation);
   }
 };
-apis.create = async (apiName, method, route, funcName, options) => {
+apis.createRoute = async (apiName, method, route, funcName, options) => {
   // verify that method type is accurate
   method = verifyMethod(method);
   if (!method) return;
@@ -111,17 +123,8 @@ apis.create = async (apiName, method, route, funcName, options) => {
     funcName: funcName
   };
 
-  // create the API
-  const createApiResponse = await apis.createApi(apiName, options);
-  
-  if (!createApiResponse) return;
-  else {
-    // store stuff for output
-    outputParams.ApiEndpoint = createApiResponse.ApiEndpoint;
-
-    // store stuff for usage
-    params.ApiId = createApiResponse.ApiId;
-  }
+  params.ApiId = await getApiId(apiName);
+  if (!params.ApiId) return;
 
   // create the integration
   const createIntegrationResponse = await awsApi.createIntegration(params);
@@ -136,26 +139,11 @@ apis.create = async (apiName, method, route, funcName, options) => {
   if (!createRouteResponse) return;
 
   // adds the permission
-  const addPermissionResponse = await lambda.addPermission(funcName, params.ApiId, method, route);
+  const addPermissionResponse = await lambda.addPermission(funcName, params.ApiId, route);
   if (!addPermissionResponse) return;
 
-  // add a deployment
-  const createDeploymentResponse = await awsApi.createDeployment(params);
-  if (!createDeploymentResponse) return;
-  else {
-    params.DeploymentId = createDeploymentResponse.DeploymentId;
-  }
-
-  // create a stage
-  const createStageResponse = await awsApi.createStage(params);
-  if (!createStageResponse) return;
-  else {
-    outputParams.StageName = createStageResponse.StageName;
-  }
-
   // 
-  route ? console.log(`A ${method} request to ${route}" has been created. See \n`) : console.log(`A ${method} request to root has been created. See \n`);
-  console.log(code(`      ${outputParams.ApiEndpoint}/${outputParams.StageName}/${route}\n`));
+  route ? console.log(`A ${method} request to ${route}" has been created. See \n`) : console.log(`A ${method} request to root has been created.`);
 };
 
 
@@ -197,7 +185,7 @@ apis.getRoutes = async (apiName) => {
 };
 
 
-apis.test = async (apiName, method, route, funcName, options) => {
+apis.deleteRoute = async (apiName, method, route) => {
   // verify that method type is accurate
   method = verifyMethod(method);
   if (!method) return;
@@ -212,13 +200,13 @@ apis.test = async (apiName, method, route, funcName, options) => {
 
   // get methods and then the specific integration
   const routeKey = method.toUpperCase() + ' /' + route;
-  console.log(routeKey);
   const routes = await getApi.getRoutes(params);
   
   for (const item of routes.Items) {
-    console.log(item);
     if (item.RouteKey === routeKey) {
+      console.log('  Found matching integration\n');
       params.IntegrationId = item.Target.slice(13);
+      params.RouteId = item.RouteId;
       break;
     }
   }
@@ -227,14 +215,63 @@ apis.test = async (apiName, method, route, funcName, options) => {
   const integration = await getApi.getIntegration(params);
   const functinBreak = integration.IntegrationUri.indexOf('function:') + 9;
   const functionName = integration.IntegrationUri.slice(functinBreak); 
+  
+  // delete the route and integration
+  await deleteApi.deleteRoute(params);
+  await deleteApi.deleteIntegration(params);
 
+  // form the comparison permission
+  if (route === '.') route = '';
+  let sourceArn = `arn:aws:execute-api:${AwsRegion}:${AwsAccount}:${apiId}/*/*/`;
+  if (route) sourceArn = sourceArn + `${route}`;
+  
   // remove the permissions from the function
+  let {Policy} = await lambda.getPolicy(functionName);
+  Policy = JSON.parse(Policy);
 
-  //add the permission to the new function
-
-  // update the integration with the new function
-
+  let statementId = '';
+  for (const statement of Policy.Statement) {
+    if(sourceArn === statement.Condition.ArnLike['AWS:SourceArn']) {
+      statementId = statement.Sid;
+      break;
+    }
+  }
+  await lambda.removePermission(functionName, statementId);
   return;
+};
+
+apis.deploy = async (apiName, stageName, options) => {
+  const outputParams = {};
+
+  const params = {
+    Name: apiName,
+    StageName: stageName
+  };
+
+  if (options.description) params.Description = options.description;
+
+  // get api id
+  const apiId = await getApiId(apiName);
+  if (!apiId) return;
+
+
+  // add a deployment
+  const createDeploymentResponse = await awsApi.createDeployment(params);
+  if (!createDeploymentResponse) return;
+  else {
+    params.DeploymentId = createDeploymentResponse.DeploymentId;
+  }
+
+  // create a stage
+  const createStageResponse = await awsApi.createStage(params);
+  if (!createStageResponse) return;
+  else {
+    outputParams.StageName = createStageResponse.StageName;
+  }
+
+  console.log(finished(`The API "${apiName}" has been deloyed. See: \n `));
+  console.log(code(`      ${outputParams.ApiEndpoint}/${outputParams.StageName}/\n`));
+
 };
 
 export default apis;

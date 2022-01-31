@@ -151,24 +151,4 @@ api.updateApi = async (params) => {
   return data;
 };
 
-api.deleteApi = async (params) => {
-
-  console.log(starting(`Deleting the API "${params.Name}"`));
-  const awsParams = {
-    ApiId: params.ApiId
-  };
-  const data = await apiGateway.send(new DeleteApiCommand(params))
-    .then(data => {
-      // console.log(data);
-      console.log(finished('  Finished deleting API\n'));
-      return data;
-    })
-    .catch(err => {
-      console.log(error('Error in deleting API: ', err.message));
-      return;
-    });
-
-  return data;
-};
-
 export default api;
