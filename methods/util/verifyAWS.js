@@ -1,8 +1,7 @@
-import { IAMClient, GetPolicyCommand } from '@aws-sdk/client-iam';
+import { STSClient, GetAccessKeyInfoCommand } from "@aws-sdk/client-sts";
 
 import iam from '../AWS/iam.js';
 import s3 from '../AWS/s3.js';
-import { LambdaBasicARN } from './aws.js';
 import {starting, finished, fail} from './chalkColors.js';
 
 // verifies that the role exists and create if create is true
@@ -20,7 +19,6 @@ async function verifyBucket(bucket, create = false) {
 }
 
 async function checkConnection(id, key, region) {
-  // test to see if the credentials are good
   const credentials = {
     accessKeyId: id,
     secretAccessKey: key
@@ -31,11 +29,11 @@ async function checkConnection(id, key, region) {
     'credentials': credentials,
   };
 
-  const iamClient = new IAMClient(awsParams);
+  const stsClient = new STSClient(awsParams);
 
   console.log(starting('Verifying AWS credentials...'));
 
-  const data = await iamClient.send(new GetPolicyCommand({PolicyArn:LambdaBasicARN}))
+  const data = await stsClient.send(new GetAccessKeyInfoCommand({AccessKeyId: id}))
     .catch(error => {
       // error handling.
       console.log(fail(`  Error in verifying AWS credentials : ${error.message}`));
@@ -43,7 +41,7 @@ async function checkConnection(id, key, region) {
     });
   if (!data) return false;
   console.log(finished('  AWS Credentials verified.'));
-  return true;
+  return data.Account;
 }
 
 export {verifyRole, verifyBucket, checkConnection};

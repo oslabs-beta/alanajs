@@ -1,5 +1,5 @@
 const random = (length = 6) => {
-  return Math.random().toString(16).substr(2, length);
+  return Math.random().toString(16).slice(2, length);
 };
 
 const startingRegion = 'us-east-1';
