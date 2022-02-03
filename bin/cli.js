@@ -34,7 +34,7 @@ if (!hasCredentials) {
   program
     . addHelpText('before', intro('Welcome to AWS as Nice as JavaScript (ALANA.js).')
   + '\nNo AWS credentials were found, so start by issuing the following command:\n\n     '
-  + code('alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>')
+  + code('alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>')
   + '\n\nThere are additional options as well. Once the AWS credentials are entered, more options are available to you.'
   + '\nCheck out help by attaching the -h or --help flag to the command line'
   + '\n see below for the command line usage\n');
@@ -59,12 +59,12 @@ if (hasCredentials) {
   program
     . addHelpText('before', intro('AWS as Nice as JavaScript (ALANA.js)')
     + '\nUsage Examples:\n\n     '
-    + code('alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>     ') + '- enters a new AWS ID and Key\n     '
-    + code('alana list                                                 ') + '- gets a table of all current AWS Lambda funcsions\n     '
-    + code('alana create hello hello.js file1.js file2.js              ') + '- creates a Lambda function named hello where the definition is located in hello.js\n'
+    + code('alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY>     ') + '- enters a new AWS ID and Key\n     '
+    + code('alanajs list                                                 ') + '- gets a table of all current AWS Lambda funcsions\n     '
+    + code('alanajs create hello hello.js file1.js file2.js              ') + '- creates a Lambda function named hello where the definition is located in hello.js\n'
     + '                                                                with dependencies in file1.js and file2.js\n     '
-    + code('alana update foo codeV2.js                                 ') + '- updates the Lambda function named foo with the code located in codeV2.js\n     '
-    + code('alana delete foo 2                                         ') + '- delete the Lambda function foo if it has a version 2\n     '
+    + code('alanajs update foo codeV2.js                                 ') + '- updates the Lambda function named foo with the code located in codeV2.js\n     '
+    + code('alanajs delete foo 2                                         ') + '- delete the Lambda function foo if it has a version 2\n     '
     + '\n\n see below for the command line usage\n');
   
   program

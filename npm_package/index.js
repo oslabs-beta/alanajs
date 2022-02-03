@@ -14,6 +14,7 @@ const alana = {};
 alana.getFuncList = async () => {
   console.log('alana.getFuncList invoked'); 
   const functionList = await lambda.getFuncList();
+  console.table(functionList);
   console.log('Finished getting Lambda function list');
   return functionList;
 };
@@ -60,20 +61,20 @@ alana.updateFunction = async (params) => {
 /** 
  * @FunctionName: deleteFunction
  * @Description: deletes AWS Lambda function
- * @input: string which contains function name  
+ * @input: string which contains function name, optional qualifier  
 */
-alana.deleteFunction = async (funcName) => {
+alana.deleteFunction = async (funcName, qualifier) => {
   console.log('alana.deleteFunction invoked'); 
-  await lambda.deleteFunction(funcName);
+  await lambda.deleteFunction(funcName, qualifier);
   console.log('Lambda function has been deleted'); 
 }; 
 
 /**
  * @FunctionName: createLambdaLayer
  * @Description: creates AWS Lambda layer
- * @input: params object that contains array of files and layer name, qualifier
+ * @input: params object that contains array of files and layer name
  */
-alana.createLambdaLayer = async (params, qualifier) => {
+alana.createLambdaLayer = async (params) => {
   const {fileArr, layerName} = params; 
   await layers.create(layerName, fileArr);
 }; 
@@ -133,16 +134,11 @@ alana.invoke = async (funcName, params) => {
  */
 alana.addLayerToFunction = async (funcName, layer) => {
   console.log('alana.addLayerToFunc invoked'); 
-  await layers.addLayersToFunc(funcName, layer)
+  await layers.addLayersToFunc(funcName, layer);
   // await lambda.addLayerToFunc(funcName, layerArr); 
   console.log('Lambda layer added to function'); 
 };
 
-alana.getGatewayRestInfo = async() => {
-  console.log('alana.getGatewayRestInfo'); 
-  await API.getGatewayInfo(); 
-
-};
 
 
 export default alana;
