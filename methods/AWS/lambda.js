@@ -12,11 +12,12 @@ import { LambdaClient,
   DeleteAliasCommand, 
   GetFunctionConfigurationCommand, 
   AddPermissionCommand, 
+  RemovePermissionCommand,
   GetPolicyCommand } from '@aws-sdk/client-lambda';
 
 import path from 'path';
 
-import { AwsParams, AwsBucket } from '../util/aws.js';
+import { AwsRole, AwsParams, AwsBucket, AwsAccount, AwsRegion } from '../util/aws.js';
 import { intro, starting, error, fail, finished, code } from '../util/chalkColors.js';
 // import { version } from 'os';
 // import { response } from 'express';
@@ -81,7 +82,7 @@ lambda.getFuncVersionList = async (funcName) => {
 * @params - the parameters for the function
 * @output: the invocation response 
 */
-lambda.invoke = (funcName, params, options) => {
+lambda.invoke = (funcName, params, options = {}) => {
   // destructure and set defaults to options if not included;
   const {bucket = AwsBucket, description = undefined, publish = false} = options;
   options.version ? console.log(starting(`Invoking the function "${funcName}" with the Qualifier "${options.version}"`)) : console.log(starting(`Invoking the function "${funcName}"`));
@@ -127,7 +128,7 @@ lambda.invoke = (funcName, params, options) => {
 lambda.createFunction = async(outputZip, funcName, options = {}) => {
   
   // destructure and set defaults to options if not included;
-  const {bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
+  const {role = AwsRole, bucket = AwsBucket, description = undefined, layerArr = null, publish = false} = options;
 
   console.log(starting(`Creating the function "${funcName}" from the output file "${outputZip}" found in the S3 Bucket "${bucket}"`));
   
@@ -137,7 +138,7 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
     FunctionName: funcName,
     Runtime: 'nodejs14.x',
     Handler: 'index.handler',
-    Role: 'arn:aws:iam::122194345396:role/lambda-role',
+    Role: `arn:aws:iam::${AwsAccount}:role/${role}`,
     Description: description, 
     Publish: publish,
     Layers: layerArr
@@ -149,7 +150,7 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
     for (let i = 0; i < layerArr.length; i++){
       const layerName = layerArr[i].layerName;
       const layerVersion = layerArr[i].layerVersion;
-      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+      layerConfig.push(`arn:aws:lambda:${AwsRegion}:${AwsAccount}:layer:${layerName}:${layerVersion}`);
     }
     if(layerConfig.length > 0) params.Layers = layerConfig;
   }
@@ -271,7 +272,7 @@ lambda.addLayerToFunc = async (funcName, layerArr) => {
     for (let i = 0; i < layerArr.length; i++){
       const layerName = layerArr[i].layerName;
       const layerVersion = layerArr[i].layerVersion;
-      layerConfig.push(`arn:aws:lambda:us-east-1:122194345396:layer:${layerName}:${layerVersion}`);
+      layerConfig.push(`arn:aws:lambda:${AwsRegion}:${AwsAccount}:layer:${layerName}:${layerVersion}`);
     }
     if(layerConfig.length > 0) params.Layers = layerConfig;
     console.log(params.Layers);
@@ -366,38 +367,71 @@ lambda.getFuncConfig = async (funcName) => {
 };
 
 lambda.addPermission = async (funcName, apiId, route) => {
+  console.log(starting(`Adding API permissions to "${funcName}"`));
   const params = {
     StatementId: funcName + Date.now().toString(),
     Action: 'lambda:InvokeFunction',
-    FunctionName: `arn:aws:lambda:us-east-1:122194345396:function:${funcName}`,
+    FunctionName: `arn:aws:lambda:${AwsRegion}:${AwsAccount}:function:${funcName}`,
     Principal: 'apigateway.amazonaws.com',
-    SourceArn: `arn:aws:execute-api:us-east-1:122194345396:${apiId}${route}`
+    SourceArn: `arn:aws:execute-api:${AwsRegion}:${AwsAccount}:${apiId}/*/*/`
   };
 
-  return await lambdaClient.send(new AddPermissionCommand(params))
+  if (route) params.SourceArn = params.SourceArn + `${route}`;
+
+  const data = await lambdaClient.send(new AddPermissionCommand(params))
     .then(data => {
-      console.log(data);
+      // console.log(data);
+      console.log(finished('  Finished adding permissions\n'));
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda addPermission: ', err.message); 
-    }); 
+      console.log(error('Error in adding permissions: ', err.message));
+      return;
+    });
+
+  return data;
+};
+
+lambda.removePermission = async (funcName, statementId) => {
+  console.log(starting(`Removing API permissions to "${funcName}"`));
+  const params = {
+    StatementId: statementId,
+    FunctionName: `arn:aws:lambda:${AwsRegion}:${AwsAccount}:function:${funcName}`,
+  };
+
+  const data = await lambdaClient.send(new RemovePermissionCommand(params))
+    .then(data => {
+      // console.log(data);
+      console.log(finished('  Finished removing permissions\n'));
+      return data;
+    })
+    .catch(err => {
+      console.log(error('Error in removing permissions: ', err.message));
+      return;
+    });
+
+  return data;
 };
 
 lambda.getPolicy = async (funcName, qualifier = undefined) => {
+  console.log(starting(`Getting permission policy of "${funcName}"`));
   const params = {
     FunctionName: funcName,
     Qualifier: qualifier
   };
 
-  await lambdaClient.send(new GetPolicyCommand(params))
+  const data = await lambdaClient.send(new GetPolicyCommand(params))
     .then(data => {
-      console.log(data);
+      // console.log(data);
+      console.log(finished('  Finished getting permission policy\n'));
       return data;
     })
     .catch(err => {
-      console.log('Error in lambda getPolicy: ', err.message); 
-    }); 
+      console.log(error('Error in getting permission policy: ', err.message));
+      return;
+    });
+
+  return data;
 };
 
 export default lambda;

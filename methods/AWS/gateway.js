@@ -24,7 +24,7 @@
 
 
 import { APIGateway, APIGatewayClient, CreateRestApiCommand, GetRestApiCommand, CreateDeploymentCommand, GetMethodCommand, PutMethodCommand, GetResourcesCommand, PutIntegrationCommand, GetIntegrationCommand, PutIntegrationResponseCommand, GetIntegrationResponseCommand, PutMethodResponseCommand, GetMethodResponseCommand } from '@aws-sdk/client-api-gateway';
-import { AwsParams } from '../util/aws.js';
+import { AwsParams, AwsRegion, AwsAccount } from '../util/aws.js';
 
 const id = 'rq92lpnomi';
 const resource = 'nne3795590';
@@ -91,7 +91,7 @@ API.putIntegration = async() => {
     resourceId: resource, 
     restApiId: id,
     type: 'AWS',
-    uri: 'arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:122194345396:function:testLambda/invocations'
+    uri: `arn:aws:apigateway:${AwsRegion}:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:${AwsAccount}:function:testLambda/invocations`
   };
   const data = await apiGateway.send(new PutIntegrationCommand(params))
     .then(data => console.log(data))

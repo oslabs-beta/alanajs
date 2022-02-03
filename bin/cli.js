@@ -18,6 +18,7 @@ import init from '../methods/util/generateEnv.js';
 import {AwsBucket, AwsRegion, AwsRole } from '../methods/util/aws.js';
 import {startingBucket, startingRegion, startingRole} from '../methods/util/default.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
+import api from '../methods/AWS/gatewayv2.js';
 
 // local variables
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
@@ -97,10 +98,11 @@ if (hasCredentials) {
 
   program
     .command('list')
-    .description('list the lambda function names')
+    .description('list the various items')
+    .option('-F, --functions', 'list all the Lambda functions')
     .option('-f, --function <function name>', 'list a specific function versions')
     .action(async (options) => {
-      await lambdaFunctions.list(options);
+      if (options.functions) await lambdaFunctions.list(options);
     });
 
   program
@@ -186,7 +188,7 @@ if (hasCredentials) {
     .argument('[version]', 'version of function to point')
     .option('-c, --create <aliasName>', 'Create the alias name if it does not exist')
     .option('-u, --update <aliasName>', 'Update the alias name')
-    .option('-d, --delete <aliasName>', 'Delete the alias name')
+    .option('--delete <aliasName>', 'Delete the alias name')
     .action(async(funcName,version, options) => {
 
       if (Object.keys(options).length > 1) {
@@ -198,13 +200,43 @@ if (hasCredentials) {
 
     });
 
-  // under development
   program
-    .command('API')
-    .action(async () => {
-      await apis();
+    .command('api')
+    .description('interact with the APIs')
+    .argument('[apiName]', 'name of the api to get information on. Blank for all')
+    .option('-c, --create', 'create the API named if it doesn\'t exist')
+    .option('-u, --update', 'updates the API')
+    .option('-v, --version <version>', 'specify the version of the api')
+    .option('-d, --description <description>', 'the description of the api')
+    .option('--delete', 'delete the api')
+    .action(async (apiName, method, route, funcName, options) => {
+      await apis.api(apiName, method, route, funcName, options);
+    });
+    
+  program
+    .command('routes')
+    .description('interact with a route on the API of choice.')
+    .argument('<apiName>', 'name of the api')
+    .argument('[method]', 'type of HTTP request used to invoke')
+    .argument('[route]', 'route to establish (use "." for root')
+    .argument('[funcName]', 'the Lambda function that is invoked on the route')
+    .option('-c, --create', 'create the route specified')
+    .option('-u, --update', 'update the route specified')
+    .option('-d, --description <description>', 'the description of the api')
+    .option('--delete', 'delete the specified route')
+    .action(async (apiName, method, route, funcName, options) => {
+      await apis.routes(apiName, method, route, funcName, options);
     });
 
+  program
+    .command('deploy')
+    .description('deploy the api to a staged name')
+    .argument('<apiName>', 'name of the api')
+    .argument('<stageName>', 'the name of the stage being deployed')
+    .option('-d, --description <description>', 'the description of the stage being deployed')
+    .action(async (apiName, stageName, options) => {
+      await apis.deploy(apiName, stageName, options);
+    });
 }
   
 program.parse();

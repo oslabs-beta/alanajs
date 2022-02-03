@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import {writeFile, appendFile} from 'fs/promises';
 
-import {AwsBucket, AwsParams, AwsRole } from './aws.js';
 import { intro, starting, error, fail, finished, code } from './chalkColors.js';
 import {checkConnection} from './verifyAWS.js';
 import {startingBucket, startingRegion, startingRole} from './default.js';
@@ -37,12 +36,14 @@ async function init (id, key, region = startingRegion, role = startingRole, buck
       }
     });
   }
-    
-  if (!checkConnection(id, key, region)) return; 
-    
+  
+  const accountId = await checkConnection(id, key, region);
+  if (!accountId) return; 
+  
   // create the aws credentials string
   const awsID = `AWS_ACCESS_KEY_ID=${id}\n`;
   const awsKey = `AWS_SECRET_ACCESS_KEY=${key}\n`;
+  const awsAccount = `AWS_ACCOUNT=${accountId}\n`;
   const awsRegion = `AWS_REGION=${region}\n`;
   const s3Bucket = `S3BUCKETNAME=${bucket}\n`;
   const awsRole = `ROLENAME=${role}\n`;
@@ -50,7 +51,7 @@ async function init (id, key, region = startingRegion, role = startingRole, buck
   // check if .env exists
   if (!fs.existsSync(path.resolve('./.env'))) {
     //if it doesn't exist, create it with .env
-    await writeFile('./.env', awsID + awsKey + awsRegion + s3Bucket + awsRole)
+    await writeFile('./.env', awsID + awsKey + awsAccount + awsRegion + s3Bucket + awsRole)
       .catch(err => {
         console.log(error(`Error writing to the file ./.env : ${err.message}`));
         return;
@@ -75,10 +76,10 @@ async function init (id, key, region = startingRegion, role = startingRole, buck
             }
           }
         };
-        // delete the two main arguments
+        // delete the three main arguments
         delete data_array[textLine('AWS_ACCESS_KEY_ID')];
         delete data_array[textLine('AWS_SECRET_ACCESS_KEY')];
-
+        delete data_array[textLine('AWS_ACCOUNT')];
         // if there are options
         if (region !== startingRegion) delete data_array[textLine('AWS_REGION')];
         if (role && role !== startingRole) delete data_array[textLine('ROLENAME')];
@@ -99,6 +100,10 @@ async function init (id, key, region = startingRegion, role = startingRole, buck
       if (!data.includes('AWS_SECRET_ACCESS_KEY')) {
         data += awsKey;
         console.log('AWS Secret Access Key Added');
+      }
+      if (!data.includes('AWS_ACCOUNT')) {
+        data += awsAccount;
+        console.log('AWS Account Added');
       }
       if (!data.includes('AWS_REGION')) {
         data += awsRegion;

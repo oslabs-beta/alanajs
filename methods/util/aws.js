@@ -36,8 +36,8 @@ const LambdaBasicARN = 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecu
 //gets the .env bucket name and awsRole
 const AwsBucket = process.env.S3BUCKETNAME;
 const AwsRole = process.env.ROLENAME;
+const AwsAccount = process.env.AWS_ACCOUNT;
 
 
 
-
-export {AwsParams, AwsBucket, AwsRegion, AwsRole, BasicPolicy, LambdaBasicARN};
+export {AwsAccount, AwsParams, AwsBucket, AwsRegion, AwsRole, BasicPolicy, LambdaBasicARN};
