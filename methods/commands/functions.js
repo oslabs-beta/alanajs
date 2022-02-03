@@ -15,7 +15,7 @@ lambdaFunctions.create = async (funcName, fileArr, options = {}) => {
   options.bucket ? await verifyBucket(options.bucket, true) : await verifyBucket(AwsBucket, true);
 
   let created;
-  // ami create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
+  // alana create function1 functionfile1 -l layer1 -f layerfile1 layerfile2
   console.log(starting('Compressing files...')); 
   const outputZip = await archiver.zipFiles(fileArr);
   console.log(starting('Sending files to s3...'));

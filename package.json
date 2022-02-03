@@ -11,7 +11,7 @@
   "description": "",
   "main": "npm_package/index.js",
   "bin": {
-    "ami": "./bin/cli.js"
+    "alana": "./bin/cli.js"
   },
   "type": "module",
   "dependencies": {
