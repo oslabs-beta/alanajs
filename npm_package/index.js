@@ -134,16 +134,11 @@ alana.invoke = async (funcName, params) => {
  */
 alana.addLayerToFunction = async (funcName, layer) => {
   console.log('alana.addLayerToFunc invoked'); 
-  await layers.addLayersToFunc(funcName, layer)
+  await layers.addLayersToFunc(funcName, layer);
   // await lambda.addLayerToFunc(funcName, layerArr); 
   console.log('Lambda layer added to function'); 
 };
 
-alana.getGatewayRestInfo = async() => {
-  console.log('alana.getGatewayRestInfo'); 
-  await API.getGatewayInfo(); 
-
-};
 
 
 export default alana;
