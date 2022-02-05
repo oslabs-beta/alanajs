@@ -8,6 +8,7 @@
   ],
   "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
   "version": "0.0.1",
+  "license": "MIT",
   "description": "",
   "main": "npm_package/index.js",
   "bin": {
