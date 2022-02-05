@@ -13,11 +13,12 @@
   "bin": {
     "alana": "./bin/cli.js"
   },
+  "scripts": {
+    "test": "jest"
+  },
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-api-gateway": "^3.48.0",
     "@aws-sdk/client-apigatewayv2": "^3.48.0",
-    "@aws-sdk/client-cloudwatch": "^3.46.0",
     "@aws-sdk/client-iam": "^3.47.0",
     "@aws-sdk/client-lambda": "^3.46.0",
     "@aws-sdk/client-s3": "^3.46.0",
@@ -27,13 +28,13 @@
     "commander": "^8.3.0",
     "dotenv": "^11.0.0",
     "fs": "^0.0.1-security",
-    "jszip": "^3.7.1",
-    "path": "^0.12.7",
-    "url": "^0.11.0"
+    "path": "^0.12.7"
   },
   "devDependencies": {
+    "aws-sdk-client-mock": "^0.5.6",
     "eslint": "^8.6.0",
     "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0"
+    "eslint-plugin-react-hooks": "^4.3.0",
+    "jest": "^27.5.0"
   }
 }
