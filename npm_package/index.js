@@ -1,10 +1,10 @@
 import lambda from '../methods/AWS/lambda.js';
 import s3 from '../methods/AWS/s3.js';
-import zip from '../methods/util/zip.js';
-import archiveZip from '../methods/util/archiver.js';
+import zip from '../methods/util/archiver.js';
 import lambdaFunctions from '../methods/commands/functions.js';
 import layers from '../methods/commands/layers.js';
 import API from '../methods/AWS/gatewayv2';
+
 const alana = {}; 
 
 /**
@@ -52,7 +52,7 @@ alana.createFunction = async (params, options = {}) => {
 alana.updateFunction = async (params) => {
   const {fileArr, funcName} = params; 
   console.log('alana.updateFunction invoked');
-  const zipFile = await archiveZip.zipFiles(fileArr); 
+  const zipFile = await zip.zipFiles(fileArr); 
   await s3.sendFile(zipFile); 
   await lambda.updateFunction(zipFile, funcName);
   console.log('Lambda function has been updated');
@@ -138,7 +138,5 @@ alana.addLayerToFunction = async (funcName, layer) => {
   // await lambda.addLayerToFunc(funcName, layerArr); 
   console.log('Lambda layer added to function'); 
 };
-
-
 
 export default alana;
