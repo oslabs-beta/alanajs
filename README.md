@@ -20,7 +20,7 @@ AWS Lambda and API Gateway, simplified for JavaScript
 
 ## About Alana.js
 
-Alana.js is an all-in-one tool that simplifies AWS SDK from development to production  Make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind Alanajs.
+Alana.js is an all-in-one tool that simplifies AWS SDK to make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind Alana.js.
 You can also visit us [here]**insert demo link**.
 
 ## Table of Contents
@@ -28,7 +28,7 @@ You can also visit us [here]**insert demo link**.
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-      <li><a href="#motivation-for-project">About Alanajs</a></li>
+      <li><a href="#motivation-for-project">About Alana.js</a></li>
       <li><a href="#getting-started">Getting Started</a></li>
         <ul>
             <li><a href="#installation-and-setup">Installation and Setup</a></li>  
