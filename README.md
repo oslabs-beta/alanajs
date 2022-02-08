@@ -6,8 +6,9 @@
 
 <!-- PROJECT LOGO -->
 <div align="center">
-<img src="./public/alanajs-logo.png" width="500px"  align="center"/>
-AWS Lambda and API Gateway, simplified for JavaScript
+<img src="./public/logo-nobackground-500.png" align="center"/>
+
+  <h1>AWS Lambda and API Gateway, simplified for JavaScript</H1>
 
 <!-- PROJECT SHIELDS -->
 
@@ -64,23 +65,22 @@ This section describes the instructions for end users who would like to download
    ROLENAME=
    S3BUCKETNAME=
    AWS_ACCOUNT=
+   FOLDER=
    ```
 
-3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details.
+3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
 
    ```sh
-   alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
+   alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME] -d [DIRECTORY]
    ```
 
-4. Create a LambdaFunctions directory to store directories and files to add as Lambda functions.
-
-5. Import the package to start using alana methods.
+4. Import the package to start using alana methods.
 
    ```sh
    import 'alana' from 'alanajs';
    ```
 
-6. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
+5. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
 
 
 ## Enhancement and Improvements
@@ -89,7 +89,7 @@ This section describes the instructions for developers who would like to contrib
 
 ### Built With
 
-The Alanajs application was built using the following:
+The alanajs application was built using the following:
 
 - [Node](https://nodejs.org/en/)
 - [Commander](https://tj.github.io/commander.js/)
@@ -117,10 +117,11 @@ The Alanajs application was built using the following:
    ROLENAME=
    S3BUCKETNAME=
    AWS_ACCOUNT=
+   FOLDER=
    ```
 
    ```sh
-   alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
+   alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME] -d [DIRECTORY]
    ```
 
 5. Add and commit your changes.
@@ -135,7 +136,7 @@ The Alanajs application was built using the following:
    git push origin feature/featureName
    ```
 
-7. Open a Pull Request [here](https://github.com/oslabs-beta/Alana.js/pulls)
+7. Open a Pull Request [here](https://github.com/oslabs-beta/alanajs/pulls)
 
 <!-- Reporting Issues -->
 
