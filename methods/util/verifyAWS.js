@@ -13,12 +13,16 @@ async function verifyRole(roleName, create = false) {
 
 // verifies  that the bucket exists and create if otherwise
 async function verifyBucket(bucket, create = false) {
+  if (bucket !== bucket.toLowerCase()) {
+    console.log(fail('  AWS S3 buckets must be in lower case only'));
+    return;
+  }
   const verifyResult = await s3.verifyBucket(bucket);
   verifyResult ? console.log(finished('  Bucket exists\n')) : console.log(fail('  Bucket doesn\'t exist\n'));
   if (create && !verifyResult) await s3.createBucket(bucket);
 }
 
-async function checkConnection(id, key, region) {
+async function checkConnection(id, key, account, region) {
   const credentials = {
     accessKeyId: id,
     secretAccessKey: key
@@ -36,10 +40,17 @@ async function checkConnection(id, key, region) {
   const data = await stsClient.send(new GetAccessKeyInfoCommand({AccessKeyId: id}))
     .catch(error => {
       // error handling.
-      console.log(fail(`  Error in verifying AWS credentials : ${error.message}`));
+      console.log(fail(`\nError in verifying AWS credentials`));
+      console.log(error.message);
+      console.log(fail('Please ensure that the ID/Key from this specific user has admin rights.'));
+      console.log(fail('These priviledges are required to properly create and execute commands in AWS.'));
       return;
     });
   if (!data) return false;
+  if (data.Account !== account) {
+    console.log(fail('\nError in matching account read from AWS and the account entered. Please verify if the account number is correct.'));
+    return;
+  }
   console.log(finished('  AWS Credentials verified.'));
   return data.Account;
 }

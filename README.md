@@ -2,7 +2,7 @@
 *** This document was insipred by the ReadMe template from
 *** https://github.com/othneildrew/Best-README-Template
 -->
-# Alanajs
+# alanajs
 
 <!-- PROJECT LOGO -->
 <div align="center">
@@ -18,9 +18,11 @@ AWS Lambda and API Gateway, simplified for JavaScript
 
 </div>
 
-## About Alana.js
+## About alanajs
 
-Alana.js is an all-in-one tool that simplifies AWS SDK to make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind Alana.js.
+
+alanajs is an all-in-one tool that simplifies AWS SDK from development to production  Make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind alanajs.
+
 You can also visit us [here]**insert demo link**.
 
 ## Table of Contents
@@ -28,7 +30,8 @@ You can also visit us [here]**insert demo link**.
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-      <li><a href="#motivation-for-project">About Alana.js</a></li>
+      <li><a href="#motivation-for-project">About alanajs</a></li>
+
       <li><a href="#getting-started">Getting Started</a></li>
         <ul>
             <li><a href="#installation-and-setup">Installation and Setup</a></li>  
@@ -69,7 +72,7 @@ This section describes the instructions for end users who would like to download
 3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details.
 
    ```sh
-   alanajs init [AWS_ACCESS_KEY_ID] [AWS_SECRET_ACCESS_KEY] [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
+   alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
    ```
 
 4. Create a LambdaFunctions directory to store directories and files to add as Lambda functions.
@@ -120,7 +123,7 @@ The Alanajs application was built using the following:
    ```
 
    ```sh
-   alanajs init [AWS_ACCESS_KEY_ID] [AWS_SECRET_ACCESS_KEY] [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
+   alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
    ```
 
 5. Add and commit your changes.
