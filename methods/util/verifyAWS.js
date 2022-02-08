@@ -2,7 +2,7 @@ import { STSClient, GetAccessKeyInfoCommand } from "@aws-sdk/client-sts";
 
 import iam from '../AWS/iam.js';
 import s3 from '../AWS/s3.js';
-import {starting, finished, fail} from './chalkColors.js';
+import {starting, finished, warning, fail} from './chalkColors.js';
 
 // verifies that the role exists and create if create is true
 async function verifyRole(roleName, create = false) {
@@ -40,13 +40,25 @@ async function checkConnection(id, key, account, region) {
   const data = await stsClient.send(new GetAccessKeyInfoCommand({AccessKeyId: id}))
     .catch(error => {
       // error handling.
-      console.log(fail(`\nError in verifying AWS credentials`));
+      console.log(fail('\nError in verifying AWS credentials'));
       console.log(error.message);
       console.log(fail('Please ensure that the ID/Key from this specific user has admin rights.'));
-      console.log(fail('These priviledges are required to properly create and execute commands in AWS.'));
+      console.log('These privileges are required to properly create and execute commands in AWS.');
+      console.log('If you do not wish to give this specific user admin privileges, please ensure the user has S3 and Lambda read/write permissions.');
       return;
     });
-  if (!data) return false;
+  if (!data) {
+    if (!account) {
+      console.log(fail('No account number was given'));
+      console.log('Re-run initialization or see alanajs documentation on how to properly create the .ENV file.');
+      return false;
+    }
+    else {
+      console.log(warning('The .ENV file will be created with the account number provided.'));
+      console.log(warning('The account number could not be verified, and problems may occur if account number is incorrect'));
+      return account;
+    }
+  }
   if (data.Account !== account) {
     console.log(fail('\nError in matching account read from AWS and the account entered. Please verify if the account number is correct.'));
     return;
