@@ -20,7 +20,9 @@ AWS Lambda and API Gateway, simplified for JavaScript
 
 ## About alanajs
 
-alanajs is an all-in-one tool that simplifies AWS SDK from development to production  Make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind alanajs.
+ Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code.
+
+Here is a [medium]**insert link** article describing the story behind alanajs.
 You can also visit us [here]**insert demo link**.
 
 ## Table of Contents
@@ -64,6 +66,7 @@ This section describes the instructions for end users who would like to download
    ROLENAME=
    S3BUCKETNAME=
    AWS_ACCOUNT=
+   FOLDER=
    ```
 
 3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details.
@@ -72,13 +75,16 @@ This section describes the instructions for end users who would like to download
    alanajs init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME]
    ```
 
-4. Create a LambdaFunctions directory to store directories and files to add as Lambda functions.
+4. Create a folder to store directories and files to add as Lambda functions, and input this folder directory as the value of FOLDER in your .env file. 
 
 5. Import the package to start using alana methods.
 
    ```sh
    import 'alana' from 'alanajs';
    ```
+
+<div align="center">
+<img src="./public/npmdemo2.png" width="500px"  align="center"/>
 
 6. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
 
