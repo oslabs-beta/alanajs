@@ -19,8 +19,6 @@ import path from 'path';
 
 import { AwsRole, AwsParams, AwsBucket, AwsAccount, AwsRegion } from '../util/aws.js';
 import { intro, starting, error, fail, finished, code } from '../util/chalkColors.js';
-// import { version } from 'os';
-// import { response } from 'express';
 
 // create the lambda client
 const lambdaClient = new LambdaClient(AwsParams);
@@ -35,7 +33,6 @@ const lambda = {};
  */
 lambda.getFuncList = async () => {
   console.log(starting('Getting a list of Lambda functions'));
-  // console.log('this is awsParams',awsParams);
   //parameters for lambda command
   const params = { FunctionVersion: 'ALL' };
   //sends a command via lambdaClient to list all functions
@@ -159,7 +156,7 @@ lambda.createFunction = async(outputZip, funcName, options = {}) => {
 
   return await lambdaClient.send(new CreateFunctionCommand(params))
     .then(data => {
-      console.log('  Finished creating the function in Lambda.\n');   
+      console.log(finished('  Finished creating the function in Lambda.\n'));   
       return data;
     })
     .catch(err => {
@@ -179,7 +176,7 @@ lambda.updateFunction = async (outputZip, funcName, options = {}) => {
   const {bucket = AwsBucket, publish = true} = options;
   
   console.log('    using lambdaController.updateFunction'); 
-  console.log('funcName', funcName);
+
   // params for lambda command
   const params = {
     FunctionName: funcName, 
@@ -242,7 +239,7 @@ lambda.createLambdaLayer = async (layerName, outputZip) => {
     Content: {S3Bucket: AwsBucket, S3Key: outputZip},
     LayerName: layerName
   };
-  // console.log('lambda layers func output zip', outputZip, 'layerName', layerName);
+
   return await lambdaClient.send(new PublishLayerVersionCommand(params))
     .then(data => {
       return data;
@@ -297,7 +294,7 @@ lambda.createAlias = async(funcName, version, aliasName = 'aliasName') => {
     FunctionVersion : version,
     Name: aliasName
   };
-  // console.log(params);
+
   // send the new alias 
   return await lambdaClient.send(new CreateAliasCommand(params))
     .then(data => {
@@ -318,7 +315,7 @@ lambda.updateAlias = async(funcName, version, aliasName) => {
     FunctionVersion : version,
     Name: aliasName
   };
-  // console.log(params);
+
   // send the new alias 
   return await lambdaClient.send(new UpdateAliasCommand(params))
     .then(data => {
@@ -338,7 +335,7 @@ lambda.deleteAlias = async(funcName, aliasName = 'aliasName') => {
     FunctionName: funcName,
     Name: aliasName
   };
-  // console.log(params);
+
   // send the new alias 
   return await lambdaClient.send(new DeleteAliasCommand(params))
     .then(data => {
