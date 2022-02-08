@@ -9,16 +9,20 @@ const archiveZip = {};
 
 
 //should zip files and folders
-archiveZip.zipFiles = async (fileArr, outputFileName) => {
+archiveZip.zipFiles = async (fileArr, outputFileName, layer = false) => {
 
   // breaks up fileArr into the first file and the rest
-  const [index, ...args] = fileArr;
+  let [index, ...args] = fileArr;
+  // if lambda layer 
+  if (layer) args = fileArr;
+
+  console.log(args);
 
   // if there's no specified output filename, set it to index
   if (!outputFileName) outputFileName = index;
 
   console.log(starting(`Adding the following files/directories to the output zip file "${outputFileName}.zip" : `));
-  console.log(code(`     ${index}`));
+  if (!layer) console.log(code(`     ${index}`));
 
   // create a file to stream archive data to.
   const output = fs.createWriteStream(`${outputFileName}.zip`);
@@ -34,16 +38,23 @@ archiveZip.zipFiles = async (fileArr, outputFileName) => {
     }
   });
 
-  // adds the first file as index.js
+  // if zipping a lambda function, adds the first file as index.js
   const stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + index);
-  archive.file(path.join('LambdaFunctions/') + '/' + index, {name: 'index.js'});
+  if (!layer) {
+    const stats = fs.statSync(path.join('LambdaFunctions/') + '/' + index);
+    if (stats.isDirectory()) archive.directory(`LambdaFunctions/${index}/`, index);
+    else archive.file(path.join('LambdaFunctions/') + '/' + index, {name: 'index.js'});
+  }
 
   //iterate over the remaining file names in fileArr and add them as their original names
   for (const file of args) {
     console.log(code(`     ${file}`));
     const stats = fs.statSync(path.join('LambdaFunctions/') + '/' + file);
     if (stats.isDirectory()) archive.directory(`LambdaFunctions/${file}/`, file);
-    else archive.file(`${file}`, {name: `${file}`});
+    else {
+      if (layer) archive.file(path.join('LambdaFunctions/') + '/' + file, {name: `nodejs/node_modules/${file}`});
+      else archive.file(path.join('LambdaFunctions/') + '/' + file, {name: `${file}`});
+    }
   }
   // pipe archive data to the file
   archive.pipe(output);
