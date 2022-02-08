@@ -14,7 +14,7 @@ layers.create = async (layerName, fileArr) => {
   //   return; 
   // }
   console.log(starting('Compressing layer files...')); 
-  const outputZip = await archiver.zipFiles(fileArr);
+  const outputZip = await archiver.zipFiles(fileArr, layerName, true);
 
   console.log(starting('Sending files to S3...'));
   await s3.sendFile(outputZip);
