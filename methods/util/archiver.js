@@ -5,6 +5,11 @@ import {finished as finishedStreamWriting} from 'stream/promises';
 
 import { starting, code, error, finished } from './chalkColors.js';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
+const FOLDER = process.env.FOLDER;
+
 const archiveZip = {};
 
 
@@ -39,21 +44,21 @@ archiveZip.zipFiles = async (fileArr, outputFileName, layer = false) => {
   });
 
   // if zipping a lambda function, adds the first file as index.js
-  const stream = fs.createReadStream(path.join('LambdaFunctions/') + '/' + index);
+  const stream = fs.createReadStream(path.join(`${FOLDER}`) + '/' + index);
   if (!layer) {
-    const stats = fs.statSync(path.join('LambdaFunctions/') + '/' + index);
-    if (stats.isDirectory()) archive.directory(`LambdaFunctions/${index}/`, index);
-    else archive.file(path.join('LambdaFunctions/') + '/' + index, {name: 'index.js'});
+    const stats = fs.statSync(path.join(`${FOLDER}`) + '/' + index);
+    if (stats.isDirectory()) archive.directory(`${FOLDER}/${index}/`, index);
+    else archive.file(path.join(`${FOLDER}`) + '/' + index, {name: 'index.js'});
   }
 
   //iterate over the remaining file names in fileArr and add them as their original names
   for (const file of args) {
     console.log(code(`     ${file}`));
-    const stats = fs.statSync(path.join('LambdaFunctions/') + '/' + file);
-    if (stats.isDirectory()) archive.directory(`LambdaFunctions/${file}/`, file);
+    const stats = fs.statSync(path.join(`${FOLDER}`) + '/' + file);
+    if (stats.isDirectory()) archive.directory(`${FOLDER}/${file}/`, file);
     else {
-      if (layer) archive.file(path.join('LambdaFunctions/') + '/' + file, {name: `nodejs/node_modules/${file}`});
-      else archive.file(path.join('LambdaFunctions/') + '/' + file, {name: `${file}`});
+      if (layer) archive.file(path.join(`${FOLDER}`) + '/' + file, {name: `nodejs/node_modules/${file}`});
+      else archive.file(path.join(`${FOLDER}`) + '/' + file, {name: `${file}`});
     }
   }
   // pipe archive data to the file

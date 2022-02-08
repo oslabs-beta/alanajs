@@ -4,10 +4,10 @@ import {writeFile, appendFile} from 'fs/promises';
 
 import { intro, starting, error, fail, finished, code } from './chalkColors.js';
 import {checkConnection} from './verifyAWS.js';
-import {startingBucket, startingRegion, startingRole} from './default.js';
+import {startingBucket, startingRegion, startingRole, startingFolder} from './default.js';
 
 
-async function init (id, key, account, region = startingRegion, role = startingRole, bucket = startingBucket, update) {
+async function init (id, key, account, region = startingRegion, role = startingRole, bucket = startingBucket, directory = startingFolder, update) {
   // check if .gitignore exists
   if (!fs.existsSync(path.resolve('./.gitignore'))) {
 
@@ -40,6 +40,9 @@ async function init (id, key, account, region = startingRegion, role = startingR
   const accountId = await checkConnection(id, key, account, region);
   if (!accountId) return; 
   
+  // remove slash if folder contains a slash as last char
+  if (directory[directory.length - 1] === '/') directory = directory.slice(0, directory.length - 1);
+
   // create the aws credentials string
   const awsID = `AWS_ACCESS_KEY_ID=${id}\n`;
   const awsKey = `AWS_SECRET_ACCESS_KEY=${key}\n`;
@@ -47,11 +50,12 @@ async function init (id, key, account, region = startingRegion, role = startingR
   const awsRegion = `AWS_REGION=${region}\n`;
   const s3Bucket = `S3BUCKETNAME=${bucket}\n`;
   const awsRole = `ROLENAME=${role}\n`;
+  const folder = `FOLDER=${directory}\n`;
 
   // check if .env exists
   if (!fs.existsSync(path.resolve('./.env'))) {
     //if it doesn't exist, create it with .env
-    await writeFile('./.env', awsID + awsKey + awsAccount + awsRegion + s3Bucket + awsRole)
+    await writeFile('./.env', awsID + awsKey + awsAccount + awsRegion + s3Bucket + awsRole + folder)
       .catch(err => {
         console.log(error(`Error writing to the file ./.env : ${err.message}`));
         return;
@@ -116,6 +120,10 @@ async function init (id, key, account, region = startingRegion, role = startingR
       if (!data.includes('S3BUCKETNAME')) {
         data += s3Bucket;
         console.log('S3 Bucket Name Added');
+      }
+      if (!data.includes('FOLDER')) {
+        data += folder;
+        console.log('Folder Name Added');
       }
 
       //write it back to the .env file
