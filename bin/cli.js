@@ -16,17 +16,20 @@ import init from '../methods/util/generateEnv.js';
 
 // consts
 import {AwsBucket, AwsRegion, AwsRole } from '../methods/util/aws.js';
-import {startingBucket, startingRegion, startingRole} from '../methods/util/default.js';
+import {startingBucket, startingRegion, startingRole, startingFolder} from '../methods/util/default.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
 import api from '../methods/AWS/gatewayv2.js';
+
+dotenv.config();
+
+const envFolder = process.env.FOLDER;
 
 // local variables
 const hasCredentials = !!(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY && process.env.AWS_REGION);
 const defaultBucket = AwsBucket || startingBucket;
 const defaultRegion = AwsRegion || startingRegion;
 const defaultRole = AwsRole || startingRole;
-
-dotenv.config();
+const defaultFolder = envFolder || startingFolder;
 
 console.clear();
 
@@ -48,10 +51,11 @@ program
   .argument('[AWS_ACCOUNT]', 'this is your AWS account number')
   .argument('[region]', 'this is your preferred AWS region', defaultRegion)
   .option('-r, --role <Role Name>', 'the AWS Role to be used', defaultRole)
-  .option('-b, --bucket <S3 Bucket Name>', `the name of the S3 bucket to be used`, defaultBucket)
+  .option('-b, --bucket <S3 Bucket Name>', 'the name of the S3 bucket to be used', defaultBucket)
   .option('-u, --update', 'set this flag to override and update AWS credentials')
+  .option('-d, --directory <directory>', 'the directory that files to upload are located in', defaultFolder)
   .action(async (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT, region, options) => {
-    await init(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT, region, options.role, options.bucket, options.update);
+    await init(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT, region, options.role, options.bucket, options.directory, options.update);
   });
 
 
