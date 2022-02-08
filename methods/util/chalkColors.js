@@ -6,3 +6,4 @@ export const starting = chalk.bold;
 export const error = chalk.bold.red; 
 export const fail = chalk.bold.red;
 export const finished = chalk.green;
+export const warning = chalk.bold.yellowBright;
