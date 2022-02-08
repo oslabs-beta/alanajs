@@ -5,6 +5,6 @@ const random = (length = 6) => {
 const startingRegion = 'us-east-1';
 const startingRole = 'defaultLambdaRole';
 const startingBucket = 'defaultbucket-' + random();
-// const startingBucket = 'defaultbucketny30';
+const startingFolder = '';
 
-export { startingRegion, startingRole, startingBucket};
+export { startingRegion, startingRole, startingBucket, startingFolder};

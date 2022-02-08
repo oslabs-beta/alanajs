@@ -59,7 +59,7 @@ async function checkConnection(id, key, account, region) {
       return account;
     }
   }
-  if (data.Account !== account) {
+  if (account && data.Account !== account) {
     console.log(fail('\nError in matching account read from AWS and the account entered. Please verify if the account number is correct.'));
     return;
   }
