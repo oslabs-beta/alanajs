@@ -7,7 +7,7 @@ import {checkConnection} from './verifyAWS.js';
 import {startingBucket, startingRegion, startingRole} from './default.js';
 
 
-async function init (id, key, region = startingRegion, role = startingRole, bucket = startingBucket, update) {
+async function init (id, key, account, region = startingRegion, role = startingRole, bucket = startingBucket, update) {
   // check if .gitignore exists
   if (!fs.existsSync(path.resolve('./.gitignore'))) {
 
@@ -37,7 +37,7 @@ async function init (id, key, region = startingRegion, role = startingRole, buck
     });
   }
   
-  const accountId = await checkConnection(id, key, region);
+  const accountId = await checkConnection(id, key, account, region);
   if (!accountId) return; 
   
   // create the aws credentials string

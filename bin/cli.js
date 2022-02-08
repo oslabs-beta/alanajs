@@ -45,12 +45,13 @@ program
   .description('run this to configure access to AWS')
   .argument('<AWS_ACCESS_KEY_ID>', 'this is your AWS access key ID')
   .argument('<AWS_SECRET_ACCESS_KEY>', 'this is your AWS secret access key')
+  .argument('[AWS_ACCOUNT]', 'this is your AWS account number')
   .argument('[region]', 'this is your preferred AWS region', defaultRegion)
   .option('-r, --role <Role Name>', 'the AWS Role to be used', defaultRole)
-  .option('-b, --bucket <S3 Bucket Name>', 'the name of the S3 bucket to be used', defaultBucket)
+  .option('-b, --bucket <S3 Bucket Name>', `the name of the S3 bucket to be used`, defaultBucket)
   .option('-u, --update', 'set this flag to override and update AWS credentials')
-  .action(async (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, region, options) => {
-    await init(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, region, options.role, options.bucket, options.update);
+  .action(async (AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT, region, options) => {
+    await init(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_ACCOUNT, region, options.role, options.bucket, options.update);
   });
 
 

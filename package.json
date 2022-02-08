@@ -12,7 +12,7 @@
   "description": "",
   "main": "npm_package/index.js",
   "bin": {
-    "alanajs": "./bin/cli.js"
+    "alana": "./bin/cli.js"
   },
   "scripts": {
     "test": "jest"
