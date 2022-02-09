@@ -21,7 +21,6 @@ api.createApi = async (params) => {
   
   const data = await apiGateway.send(new CreateApiCommand(awsParams))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished creating API\n'));
       return data;
     })
@@ -47,7 +46,6 @@ api.createIntegration = async (params) => {
   };
   const data = await apiGateway.send(new CreateIntegrationCommand(awsParams))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished creating integration\n'));
       return data;
     })
@@ -69,7 +67,6 @@ api.createRoute = async (method, route, params) => {
   };
   const data = await apiGateway.send(new CreateRouteCommand(awsParams))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished creating route\n'));
       return data;
     })
@@ -90,7 +87,6 @@ api.createDeployment = async (params) => {
 
   const data = await apiGateway.send(new CreateDeploymentCommand(awsParams))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished creating deployment\n'));
       return data;
     })
@@ -116,7 +112,6 @@ api.createStage = async (params) => {
 
   const data = await apiGateway.send(new CreateStageCommand(awsParams))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished creating staged deployment\n'));
       return data;
     })
@@ -139,7 +134,6 @@ api.updateApi = async (params) => {
   };
   const data = await apiGateway.send(new UpdateApiCommand(params))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished updating API\n'));
       return data;
     })
