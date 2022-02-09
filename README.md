@@ -19,11 +19,11 @@
 ## About alanajs
 
 
-Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code. 
+Make setting up Lambda microservices easier than ever. alanajs is a free, open-source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and build on AWS API Gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and AWS CLI, automating your deployment and configuration tasks so that you can focus on writing code. 
 
 Here is a [medium]**insert link** article describing the story behind alanajs.
 
-You can also visit us [here]**insert demo link**.
+You can also visit us [here](https://alanajs.com/).
 
 ## Table of Contents
 <!-- TABLE OF CONTENTS -->
@@ -69,7 +69,7 @@ This section describes the instructions for end users who would like to download
    FOLDER=
    ```
 
-3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
+3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to [documentation](https://alanajs.com/documentation) for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
 
    ```sh
    alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME] -d [DIRECTORY]
@@ -176,11 +176,11 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 
 - Tin Khin  - [Github](https://github.com/Khin92) | [Linkedin](https://www.linkedin.com/in/tin-khin/)
 - Eugene Lee -[Github](github.com/scc135/) | [Linkedin](https://www.linkedin.com/in/eugleenyc/)
-- Amy Liang - [Github](https://github.com/connor-gillis) | [Linkedin](https://www.linkedin.com/in/connor-gillis/)
+- Amy Liang - [Github](https://github.com/amyliangny) | [Linkedin](https://www.linkedin.com/in/amyliang18/)
 - Jae Hyun Ha - [Github](https://github.com/msmintyfresh) | [Linkedin](https://www.linkedin.com/in/jae-hyun-ha/
 )
 
-Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us]**Insert demo Link here**
+Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us](https://alanajs.com/)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- LICENSE -->
