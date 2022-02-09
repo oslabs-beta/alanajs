@@ -18,7 +18,6 @@ import init from '../methods/util/generateEnv.js';
 import {AwsBucket, AwsRegion, AwsRole } from '../methods/util/aws.js';
 import {startingBucket, startingRegion, startingRole, startingFolder} from '../methods/util/default.js';
 import { intro, starting, error, fail, finished, code } from '../methods/util/chalkColors.js';
-import api from '../methods/AWS/gatewayv2.js';
 
 dotenv.config();
 
@@ -237,7 +236,7 @@ if (hasCredentials) {
     .command('deploy')
     .description('deploy the api to a staged name')
     .argument('<apiName>', 'name of the api')
-    .argument('<stageName>', 'the name of the stage being deployed')
+    .argument('[stageName]', 'the name of the stage being deployed')
     .option('-d, --description <description>', 'the description of the stage being deployed')
     .action(async (apiName, stageName, options) => {
       await apis.deploy(apiName, stageName, options);
