@@ -87,6 +87,13 @@ This section describes the instructions for end users who would like to download
    ```
 
 5. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
+<<<<<<< HEAD
+=======
+
+<div align="center">
+<img src="./public/npmdemo2.png" width="500px"  align="center"/>
+
+>>>>>>> 60fdba4e6ad180ab9692ee7834eb9995f09b3d4b
 
 <div align="center">
    <img src="./public/cli_demo1.gif" width="700rem" height="300rem"/>
