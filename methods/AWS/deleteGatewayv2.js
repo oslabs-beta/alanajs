@@ -26,7 +26,6 @@ api.deleteApi = async (params) => {
 api.deleteIntegration = async (params) => {
   const data = await apiGateway.send(new DeleteIntegrationCommand(params))
     .then(data => {
-    // console.log(data);
       console.log(finished('  Finished deleting integration\n'));
       return data;
     })
@@ -41,7 +40,6 @@ api.deleteIntegration = async (params) => {
 api.deleteRoute = async (params) => {
   const data = await apiGateway.send(new DeleteRouteCommand(params))
     .then(data => {
-      // console.log(data);
       console.log(finished('  Finished deleting route\n'));
       return data;
     })

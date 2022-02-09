@@ -113,7 +113,6 @@ if (hasCredentials) {
     .command('delete')
     .argument('<funcName>')
     .argument('[qualifier]')
-    // .option('-a, --aliasName <aliasName>')
     .description('delete lambda function')
     .action( (funcName, qualifier) => {
       lambdaFunctions.delete(funcName, qualifier);
