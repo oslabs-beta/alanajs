@@ -17,7 +17,9 @@
 
 ## About alanajs
 
-alanajs is an all-in-one tool that simplifies AWS SDK from development to production  Make setting up Lambda microservices easier than ever. Designed specifically for the Node.js runtime environment, Alana.js consolidates functionality provided by AWS SDK and AWS Console so that you can automate your deployment and configuration tasks and focus on writing code. Create Lambda functions with layers and dependencies, build on API Gateway, and invoke functions locally — all with one simple installation. Here is a [medium]**insert link** article describing the story behind alanajs.
+ Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code.
+
+Here is a [medium]**insert link** article describing the story behind alanajs.
 You can also visit us [here]**insert demo link**.
 
 ## Table of Contents
@@ -77,6 +79,10 @@ This section describes the instructions for end users who would like to download
    ```
 
 5. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
+
+<div align="center">
+<img src="./public/npmdemo2.png" width="500px"  align="center"/>
+
 
 
 ## Enhancement and Improvements
