@@ -2,17 +2,12 @@
 
 <!-- PROJECT LOGO -->
 <div align="center">
-<<<<<<< HEAD
-<img src="./public/logo-nobackground-500.png" align="center"/>
 
-  <h1>AWS Lambda and API Gateway, simplified for JavaScript</H1>
-
-=======
 <img src="./public/alanajslogo.png" width="300px" align="center"/>
 <div align="center">
    <h1>AWS Lambda and API Gateway, simplified for JavaScript</h1>
 </div>
->>>>>>> 1b81955e68c6f8c7e9ddc315d6b38b3476489a51
+
 <!-- PROJECT SHIELDS -->
 
 [![Issues][issues-shield]][issues-url]
