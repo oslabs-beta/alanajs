@@ -14,7 +14,7 @@ const archiveZip = {};
 
 
 //should zip files and folders
-archiveZip.zipFiles = async (fileArr, outputFileName, layer = false) => {
+archiveZip.zipFiles = async (fileArr, outputFileName = 'function', layer = false) => {
 
   // breaks up fileArr into the first file and the rest
   let [index, ...args] = fileArr;
@@ -22,9 +22,6 @@ archiveZip.zipFiles = async (fileArr, outputFileName, layer = false) => {
   if (layer) args = fileArr;
 
   console.log(args);
-
-  // if there's no specified output filename, set it to index
-  if (!outputFileName) outputFileName = index;
 
   console.log(starting(`Adding the following files/directories to the output zip file "${outputFileName}.zip" : `));
   if (!layer) console.log(code(`     ${index}`));

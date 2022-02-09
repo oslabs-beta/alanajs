@@ -104,7 +104,7 @@ api.createStage = async (params) => {
   const awsParams = {
     ApiId: params.ApiId,
     DeploymentId: params.DeploymentId,
-    AutoDeployed: true
+    AutoDeploy: true
   };
 
   // it will be the user defined stage name or a random 6 character hex string

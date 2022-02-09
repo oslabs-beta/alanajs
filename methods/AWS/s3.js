@@ -10,6 +10,10 @@ const s3Client = new S3Client(AwsParams);
 
 const s3 = {};
 
+/**
+ * ASYNC Get a list of all the S3 buckets under the user's account
+ * @returns (array) A list of all S3 buckets 
+ */
 s3.getBucketList = async () => {
   console.log(starting('Getting the list of S3 buckets'));
 
@@ -21,16 +25,13 @@ s3.getBucketList = async () => {
   return data.Buckets;
 };
 
-// FuncName: verifyBucket
-// Description: ASYNC. This will check to see if a bucket in aws exists
-// input:
-// bucket - a string containing the bucket name, or the default bucket name
-//
-// output:
-// boolean if the bucket specified in input exists in S3
-//
-s3.verifyBucket = async (bucket = AwsBucket) => {
-  console.log(starting(`Verifying the AWS S3 bucket named "${bucket}"`));
+/**
+ * ASYNC. Verifies whether or not a bucket named bucketName exists in the user's S3 namespace
+ * @param {*} bucketName (string) a string containing the bucket name, or the default bucket name
+ * @returns (boolean) whether or not the bucket specified in input exists in S3
+ */
+s3.verifyBucket = async (bucketName = AwsBucket) => {
+  console.log(starting(`Verifying the AWS S3 bucket named "${bucketName}"`));
 
   // get a list of buckets
   const data = await s3Client.send(new ListBucketsCommand({}))
@@ -41,16 +42,17 @@ s3.verifyBucket = async (bucket = AwsBucket) => {
 
   // iterate through array and check Name against bucket
   for (const el of data.Buckets) {
-    if (el.Name === bucket) return true;
+    if (el.Name === bucketName) return true;
   } 
   return false;
 };
 
-// FuncName: createBucket
-// Description: this will create an s3 bucket
-// input:
-// bucketName - a string representing the s3 bucket name
-//
+/**
+ * ASYNC. This creates an S3 bucket named bucketName
+ * @param {*} bucketName - (string) The name of the bucket to be created
+ * @returns (various) undefined if there's an error. The AWS response object if command is sent properly.
+
+ */
 s3.createBucket = async (bucketName = AwsBucket) => {
   console.log(starting(`Creating an AWS S3 bucket named "${bucketName}"`));
 
@@ -77,17 +79,17 @@ s3.createBucket = async (bucketName = AwsBucket) => {
       }
       return;
     });
-
+  return response;
 };
 
 
-// FuncName: sendFile
-// Description: this will send the zip file to s3
-// input:
-// outputZip - a string representing the zip file that needs to be sent to S3
-//
+/**
+ * ASYNC. This sends a file outputZip to the S3 bucket bucketName
+ * @param {*} outputZip - (string) zip file name that will be sent to S3
+ * @param {*} bucketName - (string) bucket where the zip file is being sent to
+ * @returns (various) undefined if there's an error. OutputZip if command is sent properly.
+ */
 s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
-  console.log('s3 this is the bucketName that should be same as process.env', bucketName);
   console.log(starting(`Sending the file "${outputZip}" to the AWS S3 Bucket "${bucketName}"`));
   // creates a file stream of the zip file
   const fileStream = fs.createReadStream(outputZip);
@@ -115,13 +117,23 @@ s3.sendFile = async (outputZip, bucketName = AwsBucket) => {
 };
 
 
-
+/**
+ * ASYNC. This will send a command to AWS S3 to delete a bucket
+ * @param {*} bucketName - (string) The name of the bucket to be deleted
+ * @returns (object) the AWS metadata from the command
+ */
 s3.deleteBucket = async (bucketName) => {
+  console.log(starting(`Deleting the AWS S3 bucket named "${bucketName}"`));
   const params = {
     Bucket: bucketName
   };
 
   const data  = await s3Client.send(new DeleteBucketCommand(params))
+    .then(data => {
+      // console.log(data);
+      console.log(finished('  Finished deleting the bucket.\n'));
+      return data;
+    })
     .catch(err => {
       console.log(error(`Problem with deleting S3 bucket : ${err.message}`));
       return;

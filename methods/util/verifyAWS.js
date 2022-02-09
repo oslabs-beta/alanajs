@@ -2,6 +2,8 @@ import { STSClient, GetAccessKeyInfoCommand } from "@aws-sdk/client-sts";
 
 import iam from '../AWS/iam.js';
 import s3 from '../AWS/s3.js';
+import lambda from "../AWS/lambda.js";
+
 import {starting, finished, warning, fail} from './chalkColors.js';
 
 // verifies that the role exists and create if create is true
@@ -20,6 +22,15 @@ async function verifyBucket(bucket, create = false) {
   const verifyResult = await s3.verifyBucket(bucket);
   verifyResult ? console.log(finished('  Bucket exists\n')) : console.log(fail('  Bucket doesn\'t exist\n'));
   if (create && !verifyResult) await s3.createBucket(bucket);
+}
+
+// verifies that the function is a valid function
+async function verifyFunction(funcName) {
+  const functionObj = await lambda.getFuncList();
+  const functions = Object.keys(functionObj);
+  const result = functions.includes(funcName);
+  result ? console.log('Verified function name') : console.log(fail('Cannot find function name.'));
+  return result;
 }
 
 async function checkConnection(id, key, account, region) {
@@ -67,4 +78,4 @@ async function checkConnection(id, key, account, region) {
   return data.Account;
 }
 
-export {verifyRole, verifyBucket, checkConnection};
+export {verifyRole, verifyBucket, verifyFunction, checkConnection};

@@ -8,6 +8,7 @@ import { AwsRegion, AwsAccount } from '../util/aws.js';
 //NEED TO ADD THIS TO THE REST OF THE PRODUCT
 
 import { starting, code, error, finished } from '../util/chalkColors.js';
+import { verifyFunction } from '../util/verifyAWS.js';
 
 const methods = ['ANY', 'GET', 'POST', 'PUT', 'PATCH', 'HEAD', 'DELETE', 'OPTIONS'];
 
@@ -37,6 +38,11 @@ const apis = {};
 
 apis.routes = async(apiName, method, route, funcName, options) => {
   if (!options) await apis.getRoutes(apiName);
+  
+  if (funcName) {
+    const validFunction = await verifyFunction(funcName);
+    if (!validFunction) return;
+  }
   if (options.create) {
     await apis.createRoute(apiName, method, route, funcName, options);
     return;
@@ -143,7 +149,7 @@ apis.createRoute = async (apiName, method, route, funcName, options) => {
   if (!addPermissionResponse) return;
 
   // 
-  route ? console.log(`A ${method} request to ${route}" has been created. See \n`) : console.log(`A ${method} request to root has been created.`);
+  route ? console.log(`A ${method} request to ${route} has been created.`) : console.log(`A ${method} request to root has been created.`);
 };
 
 
@@ -251,9 +257,8 @@ apis.deploy = async (apiName, stageName, options) => {
   if (options.description) params.Description = options.description;
 
   // get api id
-  const apiId = await getApiId(apiName);
-  if (!apiId) return;
-
+  params.ApiId = await getApiId(apiName);
+  if (!params.ApiId) return;
 
   // add a deployment
   const createDeploymentResponse = await awsApi.createDeployment(params);
@@ -268,6 +273,10 @@ apis.deploy = async (apiName, stageName, options) => {
   else {
     outputParams.StageName = createStageResponse.StageName;
   }
+
+  // get the apiData
+  const getApiResponse = await getApi.getApi(params);
+  outputParams.ApiEndpoint = getApiResponse.ApiEndpoint;
 
   console.log(finished(`The API "${apiName}" has been deloyed. See: \n `));
   console.log(code(`      ${outputParams.ApiEndpoint}/${outputParams.StageName}/\n`));

@@ -5,11 +5,12 @@
     "lambda",
     "sdk",
     "cli"
+
   ],
   "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
-  "version": "0.0.1",
+  "version": "0.9.0",
   "license": "MIT",
-  "description": "",
+  "description": "A free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and build on API gateway.",
   "main": "npm_package/index.js",
   "bin": {
     "alana": "./bin/cli.js"
@@ -35,7 +36,6 @@
     "aws-sdk-client-mock": "^0.5.6",
     "eslint": "^8.6.0",
     "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "jest": "^27.5.0"
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }

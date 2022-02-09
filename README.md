@@ -2,10 +2,12 @@
 
 <!-- PROJECT LOGO -->
 <div align="center">
+
 <img src="./public/alanajslogo.png" width="300px" align="center"/>
 <div align="center">
    <h1>AWS Lambda and API Gateway, simplified for JavaScript</h1>
 </div>
+
 <!-- PROJECT SHIELDS -->
 
 [![Issues][issues-shield]][issues-url]
