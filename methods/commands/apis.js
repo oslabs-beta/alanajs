@@ -38,19 +38,21 @@ const apis = {};
 
 apis.routes = async(apiName, method, route, funcName, options) => {
   if (!options) await apis.getRoutes(apiName);
-  if (await verifyFunction(funcName)) {
-    if (options.create) {
-      await apis.createRoute(apiName, method, route, funcName, options);
-      return;
-    }
-    else if (options.update) {
-      await apis.deleteRoute(apiName, method, route);
-      await apis.createRoute(apiName, method, route, funcName, options);
-      return;
-    }
+  
+  if (funcName) {
+    const validFunction = await verifyFunction(funcName);
+    if (!validFunction) return;
+  }
+  if (options.create) {
+    await apis.createRoute(apiName, method, route, funcName, options);
     return;
   }
-  if (options.delete) {
+  else if (options.update) {
+    await apis.deleteRoute(apiName, method, route);
+    await apis.createRoute(apiName, method, route, funcName, options);
+    return;
+  }
+  else if (options.delete) {
     await apis.deleteRoute(apiName, method, route);
     return;
   }
