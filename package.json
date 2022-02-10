@@ -2,15 +2,25 @@
   "name": "alanajs",
   "keywords": [
     "AWS",
-    "lambda",
-    "sdk",
-    "cli"
-
+    "Lambda",
+    "AWS-Lambda",
+    "amazon web services",
+    "cli",
+    "api",
+    "api gateway",
+    "serverless",
+    "microservices",
+    "AWS-SDK"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oslabs-beta/alanajs"
+  },
   "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
   "version": "0.9.0",
   "license": "MIT",
   "description": "A free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and build on API gateway.",
+  "homepage": "https://www.alanajs.com/",
   "main": "npm_package/index.js",
   "bin": {
     "alana": "./bin/cli.js"

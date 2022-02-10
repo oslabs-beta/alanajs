@@ -29,7 +29,7 @@ You can also visit us <a href="https://www.alanajs.com" target="_blank">here</a>
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-      <li><a href="#about">About alanajs</a></li>
+      <li><a href="#about-alanajs">About alanajs</a></li>
       <li><a href="#getting-started">Getting Started</a></li>
         <ul>
             <li><a href="#installation-and-setup">Installation and Setup</a></li>  
@@ -126,7 +126,7 @@ This section describes the instructions for developers who would like to contrib
 The alanajs application was built using the following:
 
 - <a href="https://nodejs.org/en/" target="_blank">Node</a>
-- <a href="https://tj.github.io/commander.js/" target="_blank">Commaander</a>
+- <a href="https://github.com/tj/commander.js#readme" target="_blank">Commander</a>
 - <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html" target="_blank">AWS SDK for Javascript V3</a>
 
 1. Fork the project.
@@ -207,7 +207,7 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 <a href="https://www.linkedin.com/in/jae-hyun-ha/" target="_blank">Linkedin</a>
 
 
-Project Links:<a href="https://github.com/oslabs-beta/alanajs" target="_blank">Github</a> | <a href="https://www.linkedin.com/company/alanajs" target="_blank">Linkedin</a> | <a href="mediumarticle" target="_blank">Medium</a>**Insert Medium article Link here** | <a href="https://www.alanajs.com" target="_blank">Visit Us</a>
+Project Links: <a href="https://github.com/oslabs-beta/alanajs" target="_blank">Github</a> | <a href="https://www.linkedin.com/company/alanajs" target="_blank">Linkedin</a> | <a href="mediumarticle" target="_blank">Medium</a>**Insert Medium article Link here** | <a href="https://www.alanajs.com" target="_blank">Visit Us</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- LICENSE -->
