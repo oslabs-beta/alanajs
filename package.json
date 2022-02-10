@@ -1,43 +1,51 @@
 {
   "name": "alanajs",
-  "version": "0.1",
-  "description": "",
-  "main": "server/server.js",
+  "keywords": [
+    "AWS",
+    "Lambda",
+    "AWS-Lambda",
+    "amazon web services",
+    "cli",
+    "api",
+    "api gateway",
+    "serverless",
+    "microservices",
+    "AWS-SDK"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/oslabs-beta/alanajs"
+  },
+  "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
+  "version": "0.9.0",
+  "license": "MIT",
+  "description": "A free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and build on API gateway.",
+  "homepage": "https://www.alanajs.com/",
+  "main": "npm_package/index.js",
+  "bin": {
+    "alana": "./bin/cli.js"
+  },
   "scripts": {
-    "build": "NODE_ENV=production webpack",
-    "start": "NODE_ENV=production webpack",
-    "dev": "NODE_ENV=development concurrently \"NODE_ENV=development webpack serve --open\" \"NODE_ENV=development nodemon server/server.js\""
+    "test": "jest"
   },
   "type": "module",
   "dependencies": {
-    "@aws-sdk/client-cloudwatch": "^3.46.0",
+    "@aws-sdk/client-apigatewayv2": "^3.48.0",
     "@aws-sdk/client-iam": "^3.47.0",
     "@aws-sdk/client-lambda": "^3.46.0",
     "@aws-sdk/client-s3": "^3.46.0",
-    "@babel/preset-env": "^7.16.8",
-    "@babel/preset-react": "^7.16.7",
-    "babel-loader": "^8.2.3",
-    "concurrently": "^7.0.0",
-    "css-loader": "^6.5.1",
+    "@aws-sdk/client-sts": "^3.49.0",
+    "archiver": "^5.3.0",
+    "chalk": "^5.0.0",
+    "commander": "^8.3.0",
     "dotenv": "^11.0.0",
-    "express": "^4.17.2",
     "fs": "^0.0.1-security",
-    "html-webpack-plugin": "^5.5.0",
-    "jszip": "^3.7.1",
-    "path": "^0.12.7",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "sass-loader": "^12.4.0",
-    "style-loader": "^3.3.1",
-    "url": "^0.11.0"
+    "path": "^0.12.7"
   },
   "devDependencies": {
+    "aws-sdk-client-mock": "^0.5.6",
     "eslint": "^8.6.0",
     "eslint-plugin-react": "^7.28.0",
-    "eslint-plugin-react-hooks": "^4.3.0",
-    "nodemon": "^2.0.15",
-    "webpack": "^5.65.0",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.7.3"
+    "eslint-plugin-react-hooks": "^4.3.0"
   }
 }
