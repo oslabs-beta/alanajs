@@ -20,7 +20,7 @@
 
 Make setting up Lambda microservices easier than ever. alanajs is a free, open-source npm package that consolidates functionality provided by AWS SDK and AWS CLI, automating deployment and configuration tasks by making intelligent assumptions about the deployment sequence according to best practices. alanajs makes it easy to deploy Lambda functions with dependencies and layers, and it also simplifies creating routes, APIs, and integrations with Lambda on AWS API Gateway.
 
-Here is a [medium]**insert link** article describing the story behind alanajs.
+Here is a [medium](https://medium.com/@jaehyunha/introducing-alanajs-aws-lambda-and-api-gateway-simplified-for-javascript-5108cb8773eb) article describing the story behind alanajs.
 
 You can also visit us <a href="https://www.alanajs.com" target="_blank">here</a>.
 
@@ -207,7 +207,7 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 <a href="https://www.linkedin.com/in/jae-hyun-ha/" target="_blank">Linkedin</a>
 
 
-Project Links: <a href="https://github.com/oslabs-beta/alanajs" target="_blank">Github</a> | <a href="https://www.linkedin.com/company/alanajs" target="_blank">Linkedin</a> | <a href="mediumarticle" target="_blank">Medium</a>**Insert Medium article Link here** | <a href="https://www.alanajs.com" target="_blank">Visit Us</a>
+Project Links: <a href="https://github.com/oslabs-beta/alanajs" target="_blank">Github</a> | <a href="https://www.linkedin.com/company/alanajs" target="_blank">Linkedin</a> | <a href="https://medium.com/@jaehyunha/introducing-alanajs-aws-lambda-and-api-gateway-simplified-for-javascript-5108cb8773eb" target="_blank">Medium</a> | <a href="https://www.alanajs.com" target="_blank">Visit Us</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- LICENSE -->
