@@ -3,7 +3,6 @@ import s3 from '../methods/AWS/s3.js';
 import zip from '../methods/util/archiver.js';
 import lambdaFunctions from '../methods/commands/functions.js';
 import layers from '../methods/commands/layers.js';
-import API from '../methods/AWS/gatewayv2';
 
 const alana = {}; 
 
