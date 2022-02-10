@@ -98,7 +98,7 @@ alana.createAlias = async (params, aliasName) => {
  */
 alana.updateAlias = async (params, aliasName) => {
   const {funcName, version} = params; 
-  console.log('alana.createAlias invoked');
+  console.log('alana.updateAlias invoked');
   await lambda.updateAlias(funcName, version, aliasName);
   console.log('Lambda Alias function has been updated');
 };
@@ -110,7 +110,7 @@ alana.updateAlias = async (params, aliasName) => {
  */
 alana.deleteAlias = async (params, aliasName) => {
   const {funcName} = params; 
-  console.log('alana.createAlias invoked');
+  console.log('alana.deleteAlias invoked');
   await lambda.deleteAlias(funcName, aliasName);
   console.log('Lambda Alias function has been deleted');
 };

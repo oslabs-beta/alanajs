@@ -82,7 +82,7 @@ if (hasCredentials) {
     + '\nSee below for the command line usage\n');
   
   program
-  .command('create')
+    .command('create')
     .addHelpText('before', intro('alanajs\n')
     + 'This allows you to interact with Lambda functions, verifying that requirements exist and create them before attempting to create.\n'
     + 'Usage Examples:\n\n     '
@@ -229,7 +229,7 @@ if (hasCredentials) {
     .addHelpText('before', intro('alanajs\n')
     + 'This allows for creation of Lambda Layer dependencies. By default, the Layers need to be inside the folder\n'
     + 'nodejs/node_modules. This will automatically insert the files inside the correct directory structure\n'
-    + '\sage Examples:\n\n     '
+    + 'Usage Examples:\n\n     '
     + code('alana createLayer layer1 file1.js                          ') + '- this will create a Lambda layer named layer1 from file1.js\n     '
     + '\nSee below for the command line usage\n')
     .description('creates an AWS Lambda layer')
@@ -278,7 +278,7 @@ if (hasCredentials) {
       await aliases(funcName, version, options);
     });
 
-    program
+  program
     .command('api')
     .addHelpText('before', intro('alanajs\n')
     + 'This lets you interact with API HTTP Gateway\n'
