@@ -18,13 +18,11 @@
 
 ## About alanajs
 
-
-
-Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API Gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code. 
+Make setting up Lambda microservices easier than ever. alanajs is a free, open-source npm package that consolidates functionality provided by AWS SDK and AWS CLI, automating deployment and configuration tasks by making intelligent assumptions about the deployment sequence according to best practices. alanajs makes it easy to deploy Lambda functions with dependencies and layers, and it also simplifies creating routes, APIs, and integrations with Lambda on AWS API Gateway.
 
 Here is a [medium]**insert link** article describing the story behind alanajs.
 
-You can also visit us [here](https://www.alanajs.com).
+You can also visit us <a href="https://www.alanajs.com" target="_blank">here</a>.
 
 ## Table of Contents
 <!-- TABLE OF CONTENTS -->
@@ -72,7 +70,7 @@ This section describes the instructions for end users who would like to download
    FOLDER=
    ```
 
-3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to [documentation](https://www.alanajs.com/documentation) for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
+3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to <a href="https://www.alanajs.com/documentation" target="_blank">documentation</a> for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
 
    ```sh
    alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME] -d [DIRECTORY]
@@ -88,30 +86,30 @@ This section describes the instructions for end users who would like to download
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <div align="center">
-   <img src="./public/cli_demo1.gif" width="700rem"/>
+   <img src="https://www.alanajs.com/cli_demo1.gif" width="700rem"/>
 </div>
 <p align="center">Figure 1: Create and Update Lambda Function</p>
 <br/>
 <div align="center">
-   <img src="./public/cli_demo2.gif" width="700rem"/>
+   <img src="https://www.alanajs.com/cli_demo2.gif" width="700rem"/>
 </div>
 <p align="center">Figure 2: Create and Update Lambda Layers</p>
 
 <br/>
 <div align="center">
-   <img src="./public/cli_demo3.gif" width="700rem"/>
+   <img src="https://www.alanajs.com/cli_demo3.gif" width="700rem"/>
 </div>
 <p align="center">Figure 3: Create, Update and Delete Alias</p>
 
 <br/>
 <div align="center">
-   <img src="./public/cli_demo4.gif" width="700rem"/>
+   <img src="https://www.alanajs.com/cli_demo4.gif" width="700rem"/>
 </div>
 <p align="center">Figure 4: Create, Update and Delete API Gateway</p>
 
 <br/>
 <div align="center">
-   <img src="./public/cli_demo5.gif" width="700rem"/>
+   <img src="https://www.alanajs.com/cli_demo5.gif" width="700rem"/>
 </div>
 <p align="center">Figure 5: Create, Update and Delete Routes</p>
 
@@ -127,9 +125,9 @@ This section describes the instructions for developers who would like to contrib
 
 The alanajs application was built using the following:
 
-- [Node](https://nodejs.org/en/)
-- [Commander](https://tj.github.io/commander.js/)
-- [AWS SDK for Javascript V3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html)
+- <a href="https://nodejs.org/en/" target="_blank">Node</a>
+- <a href="https://tj.github.io/commander.js/" target="_blank">Commaander</a>
+- <a href="https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html" target="_blank">AWS SDK for Javascript V3</a>
 
 1. Fork the project.
 
@@ -164,7 +162,8 @@ The alanajs application was built using the following:
 5. Add and commit your changes.
 
    ```sh
-   git commit -am 'Add some feature functionality'
+   git add ...
+   git commit -m 'Add some feature functionality'
    ```
 
 6. Push to the branch.
@@ -173,7 +172,7 @@ The alanajs application was built using the following:
    git push origin feature/featureName
    ```
 
-7. Open a Pull Request [here](https://github.com/oslabs-beta/alanajs/pulls)
+7. Open a Pull Request <a href="https://github.com/oslabs-beta/alanajs/pulls" target="_blank">here</a>.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- Reporting Issues -->
@@ -192,12 +191,23 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 
 ## Contributors
 
-- Tin Khin  - [Github](https://github.com/Khin92) | [Linkedin](https://www.linkedin.com/in/tin-khin/)
-- Eugene Lee - [Github](github.com/scc135/) | [Linkedin](https://www.linkedin.com/in/eugleenyc/)
-- Amy Liang - [Github](https://github.com/connor-gillis) | [Linkedin](https://www.linkedin.com/in/connor-gillis/)
-- Jae Hyun Ha - [Github](https://github.com/msmintyfresh) | [Linkedin](https://www.linkedin.com/in/jae-hyun-ha/)
+- Tin Khin  - 
+<a href="https://github.com/Khin92" target="_blank">Github</a> | 
+<a href="https://www.linkedin.com/in/tin-khin/" target="_blank">Linkedin</a>
+- Eugene Lee - 
+<a href="github.com/scc135/" target="_blank">Github</a> | 
+<a href="https://www.linkedin.com/in/eugleenyc/" target="_blank">Linkedin</a>
 
-Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us](https://www.alanajs.com)
+- Amy Liang - 
+<a href="github.com/amyliangny/" target="_blank">Github</a> | 
+<a href="https://www.linkedin.com/in/aliang18/" target="_blank">Linkedin</a>
+
+- Jae Hyun Ha - 
+<a href="https://github.com/msmintyfresh" target="_blank">Github</a> | 
+<a href="https://www.linkedin.com/in/jae-hyun-ha/" target="_blank">Linkedin</a>
+
+
+Project Links:<a href="https://github.com/oslabs-beta/alanajs" target="_blank">Github</a> | <a href="https://www.linkedin.com/company/alanajs" target="_blank">Linkedin</a> | <a href="mediumarticle" target="_blank">Medium</a>**Insert Medium article Link here** | <a href="https://www.alanajs.com" target="_blank">Visit Us</a>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- LICENSE -->
