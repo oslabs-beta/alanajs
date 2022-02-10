@@ -205,7 +205,8 @@ apis.deleteRoute = async (apiName, method, route) => {
   };
 
   // get methods and then the specific integration
-  const routeKey = method.toUpperCase() + ' /' + route;
+  let routeKey = method.toUpperCase() + ' /' + route;
+  if (route !== '.') routeKey += route;
   const routes = await getApi.getRoutes(params);
   
   for (const item of routes.Items) {
@@ -217,6 +218,10 @@ apis.deleteRoute = async (apiName, method, route) => {
     }
   }
 
+  if(!params.IntegrationId) {
+    console.log(error('  No matching integration found.'));
+    return;
+  }
   // get the information from the integration
   const integration = await getApi.getIntegration(params);
   const functinBreak = integration.IntegrationUri.indexOf('function:') + 9;

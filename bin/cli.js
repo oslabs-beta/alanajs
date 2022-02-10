@@ -305,10 +305,10 @@ if (hasCredentials) {
     .addHelpText('before', intro('alanajs\n')
     + 'This lets you interact with API HTTP Gateway routes\n'
     + 'Usage Examples:\n\n     '
-    + code('alana routes -c GET . testFunc                             ') + '- this will create a GET method integration to testFunc at the root endpoint\n     '
-    + code('alana routes -c POST valid validateData -d "description"   ') + '- this will create a POST method integration to validateDate at the endpoint valid with a description\n     '
-    + code('alana routes -u PUT abc foo                                ') + '- this will update the PUT method integration at root with the function foo\n     '
-    + code('alana routes --delete GET .                                ') + '- this will delete the GET method integration at root\n     '
+    + code('alana routes -c testapi GET . testFunc                     ') + '- this will create a GET method integration to testFunc at the root endpoint of the api testapi\n     '
+    + code('alana routes -c myapi POST valid validateData -d "test"    ') + '- this will create a POST method integration to validateDate at the endpoint valid of the api myapi with a description \n     '
+    + code('alana routes -u bar PUT abc foo                            ') + '- this will update the PUT method integration at root of the api bar with the function foo\n     '
+    + code('alana routes --delete test-api GET .                       ') + '- this will delete the GET method integration at root of the api test-api\n     '
     + '\nSee below for the command line usage\n')
     .description('interact with a route on the API of choice.')
     .argument('<apiName>', 'name of the api')

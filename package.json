@@ -17,7 +17,7 @@
     "url": "https://github.com/oslabs-beta/alanajs"
   },
   "author": "Tin Khin, Eugene Lee, Amy Liang, Jae Hyun Ha",
-  "version": "0.9.0",
+  "version": "0.9.2",
   "license": "MIT",
   "description": "A free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and build on API gateway.",
   "homepage": "https://www.alanajs.com/",
