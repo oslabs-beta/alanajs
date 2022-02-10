@@ -3,7 +3,7 @@
 <!-- PROJECT LOGO -->
 <div align="center">
 
-<img src="./public/alanajslogo.png" width="300px" align="center"/>
+<img src="https://www.alanajs.com/alana-Logo.png" width="300px" align="center"/>
 <div align="center">
    <h1>AWS Lambda and API Gateway, simplified for JavaScript</h1>
 </div>
@@ -19,11 +19,11 @@
 ## About alanajs
 
 
-Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code. 
+Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API Gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code. 
 
 Here is a [medium]**insert link** article describing the story behind alanajs.
 
-You can also visit us [here]**insert demo link**.
+You can also visit us [here](https://www.alanajs.com).
 
 ## Table of Contents
 <!-- TABLE OF CONTENTS -->
@@ -35,7 +35,7 @@ You can also visit us [here]**insert demo link**.
         <ul>
             <li><a href="#installation-and-setup">Installation and Setup</a></li>  
         </ul>
-      <li><a href="#enhancement-improvements">Enhancement and Improvements</a></li>
+      <li><a href="#enhancement-and-improvements">Enhancement and Improvements</a></li>
       <ul>
             <li><a href="#built-with">Built With</a></li>
         </ul>
@@ -45,9 +45,11 @@ You can also visit us [here]**insert demo link**.
   </ol>
 </details>
 
+<p align="right">(<a href="#top">back to top</a>)</p>
+
 ## Getting Started
 
-This section describes the instructions for end users who would like to download the package and connect their AWS account. For developers who would like to contribute to the open-source project, follow these [instructions](#enhancement-improvements).
+This section describes the instructions for end users who would like to download the package and connect their AWS account. For developers who would like to contribute to the open-source project, follow these [instructions](#enhancement-and-improvements).
 
 ### Installation and Setup
 
@@ -69,7 +71,7 @@ This section describes the instructions for end users who would like to download
    FOLDER=
    ```
 
-3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to **insert demo link documentation here** for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
+3. Run the follow through the command line to update .env file or create one if it does not exist. Replace the parameters with user's details. Refer to [documentation](https://www.alanajs.com/documentation) for more details. The DIRECTORY is the main folder to store files, dependencies, and directories as Lambda functions and layers.
 
    ```sh
    alana init <AWS_ACCESS_KEY_ID> <AWS_SECRET_ACCESS_KEY> [AWS_ACCOUNT] [AWS_REGION] -r [ROLENAME] -b [S3BUCKETNAME] -d [DIRECTORY]
@@ -83,21 +85,35 @@ This section describes the instructions for end users who would like to download
 
 5. That's it! You are ready to start running code through the command line or by running node [fileName] to execute the functions.
 
+<p align="right">(<a href="#top">back to top</a>)</p>
 <div align="center">
-   <img src="./public/cli_demo1.gif" width="700rem" height="300rem"/>
+   <img src="./public/cli_demo1.gif" width="700rem"/>
 </div>
+<p align="center">Figure 1: Create and Update Lambda Function</p>
 <br/>
 <div align="center">
-   <img src="./public/cli_demo2.gif" width="700rem" height="300rem"/>
+   <img src="./public/cli_demo2.gif" width="700rem"/>
 </div>
+<p align="center">Figure 2: Create and Update Lambda Layers</p>
+
 <br/>
 <div align="center">
-   <img src="./public/cli_demo3.gif" width="700rem" height="300rem"/>
+   <img src="./public/cli_demo3.gif" width="700rem"/>
 </div>
+<p align="center">Figure 3: Create, Update and Delete Alias</p>
+
 <br/>
 <div align="center">
-   <img src="./public/cli_demo4.gif" width="700rem" height="300rem"/>
+   <img src="./public/cli_demo4.gif" width="700rem"/>
 </div>
+<p align="center">Figure 4: Create, Update and Delete API Gateway</p>
+
+<br/>
+<div align="center">
+   <img src="./public/cli_demo5.gif" width="700rem"/>
+</div>
+<p align="center">Figure 5: Create, Update and Delete Routes</p>
+
 <br/>
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -112,6 +128,7 @@ The alanajs application was built using the following:
 
 - [Node](https://nodejs.org/en/)
 - [Commander](https://tj.github.io/commander.js/)
+- [AWS SDK for Javascript V3](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html)
 
 1. Fork the project.
 
@@ -175,12 +192,12 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 ## Contributors
 
 - Tin Khin  - [Github](https://github.com/Khin92) | [Linkedin](https://www.linkedin.com/in/tin-khin/)
-- Eugene Lee -[Github](github.com/scc135/) | [Linkedin](https://www.linkedin.com/in/eugleenyc/)
+- Eugene Lee - [Github](github.com/scc135/) | [Linkedin](https://www.linkedin.com/in/eugleenyc/)
 - Amy Liang - [Github](https://github.com/connor-gillis) | [Linkedin](https://www.linkedin.com/in/connor-gillis/)
 - Jae Hyun Ha - [Github](https://github.com/msmintyfresh) | [Linkedin](https://www.linkedin.com/in/jae-hyun-ha/
 )
 
-Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us]**Insert demo Link here**
+Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us](https://www.alanajs.com)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 <!-- LICENSE -->
