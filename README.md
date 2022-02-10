@@ -225,8 +225,8 @@ Distributed under the MIT License. See the [LICENSE](https://github.com/oslabs-b
 [stars-url]: https://github.com/oslabs-beta/alanajs/stargazers
 [issues-shield]: https://img.shields.io/github/issues/oslabs-beta/alanajs.svg?style=for-the-badge
 [issues-url]: https://github.com/oslabs-beta/alanajs/issues
-[license-shield]: https://img.shields.io/github/license/oslabs-beta/Alanajs.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/oslabs-beta/alanajs.svg?style=for-the-badge
 [license-url]: https://github.com/oslabs-beta/alanajs/blob/master/LICENSE
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/company/Alanajs-io
+[linkedin-url]: https://www.linkedin.com/company/alanajs
 [product-screenshot]: client/src/Dashboard/assets/img/helios-blue-logo-t.png
