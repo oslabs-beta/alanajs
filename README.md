@@ -22,7 +22,7 @@ Make setting up Lambda microservices easier than ever. alanajs is a free, open-s
 
 Here is a [medium]**insert link** article describing the story behind alanajs.
 
-You can also visit us <a href="https://www.alanajs.com" target="_blank" rel="noreferrer noopener">here</a>.
+You can also visit us <a href="https://www.alanajs.com" target="_blank">here</a>.
 
 ## Table of Contents
 <!-- TABLE OF CONTENTS -->
