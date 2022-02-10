@@ -19,6 +19,7 @@
 ## About alanajs
 
 
+
 Make setting up Lambda microservices easier than ever. alanajs is a free, open source npm package that makes it easy to create and deploy Lambda functions, incorporate microservices in your application, and add integrations with AWS API Gateway. Designed specifically for the Node.js runtime environment, alanajs consolidates functionality provided by AWS SDK and IDE tookits, automating your deployment and configuration tasks so that you can focus on writing code. 
 
 Here is a [medium]**insert link** article describing the story behind alanajs.
@@ -194,8 +195,7 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 - Tin Khin  - [Github](https://github.com/Khin92) | [Linkedin](https://www.linkedin.com/in/tin-khin/)
 - Eugene Lee - [Github](github.com/scc135/) | [Linkedin](https://www.linkedin.com/in/eugleenyc/)
 - Amy Liang - [Github](https://github.com/connor-gillis) | [Linkedin](https://www.linkedin.com/in/connor-gillis/)
-- Jae Hyun Ha - [Github](https://github.com/msmintyfresh) | [Linkedin](https://www.linkedin.com/in/jae-hyun-ha/
-)
+- Jae Hyun Ha - [Github](https://github.com/msmintyfresh) | [Linkedin](https://www.linkedin.com/in/jae-hyun-ha/)
 
 Project Links: [Github](https://github.com/oslabs-beta/alanajs) | [Linkedin](https://www.linkedin.com/company/alanajs) | [Medium]**Insert Medium article Link here** | [Visit Us](https://www.alanajs.com)
 
