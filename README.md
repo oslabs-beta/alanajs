@@ -195,7 +195,7 @@ Bugs are tracked through GitHub issues. Create an issue on our repository and pr
 <a href="https://github.com/Khin92" target="_blank">Github</a> | 
 <a href="https://www.linkedin.com/in/tin-khin/" target="_blank">Linkedin</a>
 - Eugene Lee - 
-<a href="github.com/scc135/" target="_blank">Github</a> | 
+<a href="github.com/eugleenyc/" target="_blank">Github</a> | 
 <a href="https://www.linkedin.com/in/eugleenyc/" target="_blank">Linkedin</a>
 
 - Amy Liang - 
